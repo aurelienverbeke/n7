@@ -1,0 +1,117 @@
+// Calculer les premiers nombres premiers avec le crible d'Eratosthene
+// ENTREES
+// %r1 : adresse tableau
+// %r2 : valeur max (>=1) (unsigned)
+// SORTIES
+// VARIABLES
+// %r3 : index (unsigned)
+// %r4 : index^2 (unsigned)
+// %r5 : valeur lue memoire (unsigned)
+
+// TEST (teste et fonctionne
+/*
+set 0x00000200, %sp
+set 0x00000300, %r1
+set 110, %r2
+call Eratosthene
+stop: ba stop
+*/
+
+Eratosthene:			push %r28
+				push %r3
+				push %r4
+				
+				call Initialiser_Tab_Premiers
+
+				set 2, %r3
+				umulcc %r3, %r3, %r4
+tq_eratosthene:			cmp %r4, %r2
+				bgeu retour_eratosthene
+				ld [%r1+%r3], %r5
+				cmp %r5, 0
+				be nb_suivant_eratosthene
+				call Eliminer_Multiples
+nb_suivant_eratosthene:		inc %r3
+				umulcc %r3, %r3, %r4
+				ba tq_eratosthene
+
+retour_eratosthene:		pop %r4
+				pop %r3
+				pop %r28
+				ret
+
+
+
+// Eliminer un mutiple de d'un nombre dans un tableau d'entiers pour le crible d'Eratosthene
+// ENTREES
+// %r1 : adresse tableau
+// %r2 : valeur max tableau (unsigned) (>=1)
+// %r3 : nombre dont il faut supprimer les multiples (unsigned) (>=2)
+// SORTIES
+// VARIABLES
+// %r4 : index (unsigned)
+
+// TEST (teste et fonctionne)
+/*
+set 0x00000200, %sp
+set 0x00000300, %r1
+set 110, %r2
+call Initialiser_Tab_Premiers
+set 5, %r3
+call Eliminer_Multiples
+stop: ba stop
+*/
+
+Eliminer_Multiples:		push %r28
+				push %r4
+				
+				add %r3, %r3, %r4 // index = 2*nb_a_supp_multiples
+tq_eliminer_multiples:		cmp %r4, %r2
+				bgu retour_eliminer_multiples
+				st %r0, [%r1+%r4] // tab[index] = 0
+				add %r4, %r3, %r4 // index = index + nb_a_supp_multiples
+				ba tq_eliminer_multiples
+
+retour_eliminer_multiples:	pop %r4
+				pop %r28
+				ret
+
+
+
+
+
+// Initialiser le tableau d'entiers pour le crible d'Eratosthene
+// ENTREES
+// %r1 : adresse tableau
+// %r2 : valeur max tableau (unsigned) (>=1)
+// SORTIES
+// VARIABLES
+// %r3 : index (unsigned)
+
+// TEST (teste et fonctionne)
+/*
+set 0x00000200, %sp
+set 0x00000300, %r1
+set 110, %r2
+call Initialiser_Tab_Premiers
+stop: ba stop
+*/
+
+Initialiser_Tab_Premiers:	push %r28
+				push %r3
+
+				clr %r3
+				st %r3, [%r1] // position 0 : 0
+				st %r3, [%r1+1] // position 1 : 0
+				
+				// position i : i
+				set 2, %r3
+tq_init_tab_premiers:		cmp %r3, %r2
+				bgu retour_init_tab_premiers
+				st %r3, [%r1+%r3]
+				inc %r3
+				ba tq_init_tab_premiers
+
+retour_init_tab_premiers:	pop %r3
+				pop %r28
+				ret

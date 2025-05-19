@@ -1,0 +1,487 @@
+// Test du module sequenceur(rst, clk, ir[31..16], N, Z, V, C : fetch, decode, pcplus1, ..., areg[3..0], breg[3..0], dreg[3..0], ualCmd[3..0], dbusIn[1..0], write, setFlags)
+
+
+// Initialisations
+set rst 1
+set rst 0
+set clk 0
+
+// Vérification état de départ
+check fetch 1
+check decode 0
+check pcplus1 0
+
+///////////////////////
+// TEST INSRUCTION add
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// add %r1, %r0, %r2
+set ir[31..16] 0000001000010000
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 1
+
+// decode => pcplus1 : r2 <- r1 + r0
+check areg[3..0] 0001
+check breg[3..0] 0000
+check dreg[3..0] 0010
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+
+///////////////////////
+// TEST INSRUCTION sub
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// sub %r2, %r1, %r2
+set ir[31..16] 0001001000100001
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 1
+
+// decode => pcplus1 : r2 <- r2 - r1
+check areg[3..0] 0010
+check breg[3..0] 0001
+check dreg[3..0] 0010
+check ualCmd[3..0] 0001
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+
+///////////////////////
+// TEST INSRUCTION set
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// set %r2, 12
+set ir[31..16] 1100001000000000
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 0
+
+// decode => pcplus1 : r2 <- 24
+check areg[3..0] 1111
+check breg[3..0] 0000
+check dreg[3..0] 0010
+check ualCmd[3..0] 1100
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+///////////////////////
+// TEST INSRUCTION load
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// load [%r2+%r3], %r4
+set ir[31..16] 1000010000100011
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 0
+
+// decode => add_sum_decode_load_store : r12 <- r2+r3
+check areg[3..0] 0010
+check breg[3..0] 0011
+check dreg[3..0] 1100
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// add_sum_decode_load_store
+check fetch 0
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+// add_sum_decode_load_store => pcplus1 : r4 <- [r12]
+check areg[3..0] 1100
+check breg[3..0] 0000
+check dreg[3..0] 0100
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+///////////////////////
+// TEST INSRUCTION store
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// store %r4, [%r2+%r3]
+set ir[31..16] 1001010000100011
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 0
+
+// decode => add_sum_decode_load_store : r12 <- r2+r3
+check areg[3..0] 0010
+check breg[3..0] 0011
+check dreg[3..0] 1100
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// add_sum_decode_load_store
+check fetch 0
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+// add_sum_decode_load_store => pcplus1 : [r12] <- [r4]
+check areg[3..0] 1100
+check breg[3..0] 0100
+check dreg[3..0] 0100
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 11
+check write 1
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+///////////////////////
+// TEST INSRUCTION bcond VRAI
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// bgu
+set ir[31..16] 1110110000000000
+// flags ok
+set Z 0
+set C 0
+set N 0
+set V 0
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 0
+
+// decode => ajout_saut : pc(r12) <- ir[23..0]
+check areg[3..0] 1111
+check breg[3..0] 0000
+check dreg[3..0] 1100
+check ualCmd[3..0] 1100
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// ajout_saut
+check fetch 0
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+// ajout_saut => pcmoins1 : pc(r14) <- pc(r14) + r12
+check areg[3..0] 1110
+check breg[3..0] 1100
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// pcmoins1
+check fetch 0
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+// pcmoins1 => pcplus1 : pc(r14) <- pc(r14) - r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0001
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+check setFlags 0
+
+///////////////////////
+// TEST INSRUCTION bcond FAUX
+///////////////////////
+
+// fetch => decode : IR <- [PC]
+check areg[3..0] 1110
+check breg[3..0] 0000
+check dreg[3..0] 1111
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 10
+check write 0
+
+set clk 1
+set clk 0
+// bgu
+set ir[31..16] 1110110000000000
+// flags faux
+set Z 0
+set C 1
+set N 0
+set V 0
+
+// decode
+check fetch 0
+check decode 1
+check pcplus1 0
+check setFlags 0
+
+// decode => pcmoins1 : r13 <- r13
+check areg[3..0] 1101
+check breg[3..0] 1101
+check dreg[3..0] 1101
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 11
+check write 0
+
+set clk 1
+set clk 0
+
+// pcplus1
+check fetch 0
+check decode 0
+check pcplus1 1
+check setFlags 0
+
+// pcplus1 => fetch : PC <- PC + r1
+check areg[3..0] 1110
+check breg[3..0] 0001
+check dreg[3..0] 1110
+check ualCmd[3..0] 0000
+check dbusIn[1..0] 01
+check write 0
+
+set clk 1
+set clk 0
+
+// fetch
+check fetch 1
+check decode 0
+check pcplus1 0
+check setFlags 0

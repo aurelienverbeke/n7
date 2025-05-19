@@ -1,0 +1,2 @@
+Balises fin : :%s/<\/[0-9a-zA-Z\._\-:]\+>//g
+Balises debut : :%s/<[0-9a-zA-Z\._\-:]\+>//g

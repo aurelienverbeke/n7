@@ -1,0 +1,55 @@
+1.1.3
+
+Debut execution
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+   2468    2481    2481    2481 pts/0      12518 Ss   57562   0:00 bash
+   2481   12518   12518    2481 pts/0      12518 S+   57562   0:00  \_ ./exo1
+  12518   12519   12518    2481 pts/0      12518 S+   57562   0:00      \_ ./exo1
+
+Apres fin processus fils
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+   2468    2481    2481    2481 pts/0      12518 Ss   57562   0:00 bash
+   2481   12518   12518    2481 pts/0      12518 S+   57562   0:00  \_ ./exo1
+  12518   12519   12518    2481 pts/0      12518 Z+   57562   0:00      \_ [exo1] <defunct>
+
+
+
+1.1.4
+
+Debut execution
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+   2468    2481    2481    2481 pts/0      14001 Ss   57562   0:00 bash
+   2481   14001   14001    2481 pts/0      14001 S+   57562   0:00  \_ ./exo1
+  14001   14002   14001    2481 pts/0      14001 S+   57562   0:00      \_ ./exo1
+
+Tout se termine directement
+
+
+
+1.2
+père: processus 15014, de père 2481 et code du fork 15015
+pere: variable = 100
+fils: processus 15015, de père 15014 et code du fork 0
+fils: variable = 10
+fin du fils, variable = 10
+fin du père, variable = 100
+
+Bah c'est logique
+
+
+
+1.3.1
+père: processus 17174, de père 2481 et code du fork 17175
+pere: variable = 100
+fils: processus 17175, de père 17174 et code du fork 0
+fils: variable = 10
+fin du fils, variable = 10
+Le processus fils 17175 s'est termine avec le code 0
+fin du père, variable = 100
+
+père: processus 17410, de père 2481 et code du fork 17411
+pere: variable = 100
+fils: processus 17411, de père 17410 et code du fork 0
+fils: variable = 10
+Le processus fils 17411 s’est termine par le signal 2
+fin du père, variable = 100
