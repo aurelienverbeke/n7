@@ -154,37 +154,50 @@ int main(void) {
 
 	while (!fini) {
 		printf("> ");
-		struct cmdline *commande = readcmd();
+		struct cmdline *ligneCommande = readcmd();
 
-		if (commande == NULL) {
-			// commande == NULL -> erreur readcmd()
-			perror("erreur lecture commande \n");
+		if (ligneCommande == NULL) {
+			// ligneCommande == NULL -> erreur readcmd()
+			perror("erreur lecture ligneCommande \n");
 			exit(EXIT_FAILURE);
 		}
 	
 		else {
-			if (commande->err) {
-				// commande->err != NULL -> commande->seq == NULL
-				printf("erreur saisie de la commande : %s\n", commande->err);
+			if (ligneCommande->err) {
+				// ligneCommande->err != NULL -> ligneCommande->seq == NULL
+				printf("erreur saisie de la ligneCommande : %s\n", ligneCommande->err);
 			}
 			
 			else {
-				int indexseq= 0;
-				char **cmd;
-				while ((cmd = commande->seq[indexseq])) {
-					if (cmd[0]) {
-						if (strcmp(cmd[0], "exit") == 0) {
-							fini= true;
+				int indexCommande = 0;
+				char **commande;
+
+				int sortie_precedente = 1; // stdout comme sortie initiale
+				int tube[2]; // pour pipeline
+
+				while ((commande = ligneCommande->seq[indexCommande])) {
+					if (commande[0]) {
+						// il y a une commande qui suit la commande actuelle
+						// preparation du tube pour la pipeline
+						if (ligneCommande->seq[indexCommande+1]) {
+							if (pipe(t) == -1) {
+								perror("Erreur a la creation du tube\n");
+								exit(EXIT_FAILURE);
+							}
+						}	
+
+						if (strcmp(commande[0], "exit") == 0) {
+							fini = true;
 							printf("Au revoir ...\n");
 						}
 
-						else if (strcmp(cmd[0], "cd") == 0) {
-							changerRepertoireCourant(cmd[1]);
+						else if (strcmp(commande[0], "cd") == 0) {
+							changerRepertoireCourant(commande[1]);
 							printf("Repertoire courant change a %s\n", getcwd(NULL, 0));
 						}
 
-						else if (strcmp(cmd[0], "dir") == 0) {
-							afficherRepertoire(cmd[1]);
+						else if (strcmp(commande[0], "dir") == 0) {
+							afficherRepertoire(commande[1]);
 						}
 						
 						else {
@@ -207,10 +220,10 @@ int main(void) {
 								*/
 
 								// redirections
-								if (commande->in != NULL) {
+								if (ligneCommande->in != NULL) {
 									int fdSource;
 
-									if ((fdSource = open(commande->in, O_RDONLY)) == -1) {
+									if ((fdSource = open(ligneCommande->in, O_RDONLY)) == -1) {
 										fprintf(stderr, "Erreur ouverture fichier source\n");
 										exit(EXIT_FAILURE);
 									}
@@ -222,10 +235,10 @@ int main(void) {
 
 									close(fdSource);
 								}
-								if (commande->out != NULL) {
+								if (ligneCommande->out != NULL) {
 									int fdDest;
 
-									if ((fdDest = open(commande->out, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1) {
+									if ((fdDest = open(ligneCommande->out, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1) {
 										fprintf(stderr, "Erreur ouverture fichier destination\n");
 										exit(EXIT_FAILURE);
 									}
@@ -238,18 +251,23 @@ int main(void) {
 									close(fdDest);
 								}
 
+								// pipelines
+								if (indexCommande > 0) {
+									
+								}
+
 								sigprocmask(SIG_SETMASK, &masqueFils, NULL);
 
-								if (commande->backgrounded != NULL) {
+								if (ligneCommande->backgrounded != NULL) {
 									setpgrp();
 								}
 
-								execvp(cmd[0], cmd);
+								execvp(commande[0], commande);
 								exit(EXIT_FAILURE);
 							}
 							else {
 								/* pere */
-								if (commande->backgrounded == NULL) {
+								if (ligneCommande->backgrounded == NULL) {
 									/*
 									int status;
 									if (waitpid(pidFils, &status, 0) == -1) {
@@ -261,7 +279,7 @@ int main(void) {
 							}
 						}
 
-						indexseq++;
+						indexCommande++;
 					}
 				}
 			}
