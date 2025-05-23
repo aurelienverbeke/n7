@@ -22,20 +22,20 @@ void handlerFilsTermine() {
 	pid_t pid = waitpid(-1, &status, WNOHANG|WUNTRACED|WCONTINUED);
 
 	if (WIFEXITED(status)) {
-		printf("Handler : Fils %d termine avec le code %d\n", pid, WEXITSTATUS(status));
+		fprintf(stderr, "Handler : Fils %d termine avec le code %d\n", pid, WEXITSTATUS(status));
 	} else if (WIFSTOPPED(status)) {
-		printf("Handler : Fils %d suspendu\n", pid);
+		fprintf(stderr, "Handler : Fils %d suspendu\n", pid);
 	} else if (WIFCONTINUED(status)) {
-		printf("Handler : Fils %d repris\n", pid);
+		fprintf(stderr, "Handler : Fils %d repris\n", pid);
 	} else if (WIFSIGNALED(status)) {
-		printf("Handler : Fils %d tue\n", pid);
+		fprintf(stderr, "Handler : Fils %d tue\n", pid);
 	}
 }
 
 
 
 void handlerCtrlCZ() {
-	printf("Signal ignore par le pere.");
+	fprintf(stderr, "Signal ignore par le pere.");
 }
 
 
@@ -184,7 +184,7 @@ int main(void) {
 					int existeCommandeSuivante = (ligneCommande->seq[indexCommande+1] != NULL);
 
 					if (commande[0]) {
-						printf("%s\n", commande[0]);
+						//fprintf(stderr, "%s\n", commande[0]);
 						ancienTube[LECTURE] = tube[LECTURE];
 						ancienTube[ECRITURE] = tube[ECRITURE];
 						// il y a une commande qui suit la commande actuelle
@@ -194,7 +194,7 @@ int main(void) {
 								perror("Erreur a la creation du tube\n");
 								exit(EXIT_FAILURE);
 							}
-							printf("Tube : %d %d\n", tube[LECTURE], tube[ECRITURE]);
+							//fprintf(stderr, "Tube : %d %d\n", tube[LECTURE], tube[ECRITURE]);
 						}	
 
 						if (strcmp(commande[0], "exit") == 0) {
@@ -264,7 +264,7 @@ int main(void) {
 								// pipelines
 								// sortie
 								if (existeCommandeSuivante) {
-									printf("Stdout %d\n", tube[ECRITURE]);
+									//fprintf(stderr, "Stdout %d\n", tube[ECRITURE]);
 									close(tube[LECTURE]);
 									if (dup2(tube[ECRITURE], 1) == -1) {
 										fprintf(stderr, "Erreur duplication tube dans stdout\n");
@@ -274,7 +274,7 @@ int main(void) {
 								}
 								//entree
 								if (indexCommande > 0) {
-									printf("Stdin %d\n", ancienTube[LECTURE]);
+									//fprintf(stderr, "Stdin %d\n", ancienTube[LECTURE]);
 									close(ancienTube[ECRITURE]);
 									if (dup2(ancienTube[LECTURE], 0) == -1) {
 										fprintf(stderr, "Erreur duplication tube dans stdin\n");
@@ -294,10 +294,6 @@ int main(void) {
 							}
 							else {
 								/* pere */
-								if (existeCommandeSuivante) {
-									close(tube[ECRITURE]);
-									close(tube[LECTURE]);
-								}
 								
 								// commande en avant-plan
 								if (ligneCommande->backgrounded == NULL) {
@@ -308,6 +304,12 @@ int main(void) {
 									};
 									*/
 									pause();
+									if (existeCommandeSuivante) {
+										close(tube[ECRITURE]);
+									}
+									if (indexCommande > 0) {
+										close(ancienTube[LECTURE]);
+									}
 								}
 							}
 						}
