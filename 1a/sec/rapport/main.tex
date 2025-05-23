@@ -1,0 +1,224 @@
+\documentclass[a4paper, 12pt]{article}
+
+%====================== PACKAGES ======================
+
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage[french]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{titlesec}
+\usepackage{titletoc,tocloft}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{setspace}
+\usepackage{abstract}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{subfig}
+\usepackage{moresize}
+\usepackage{hyperref}
+\usepackage{minted}
+
+%====================== INFORMATION ET REGLES ======================
+
+\hypersetup{							% Information sur le document
+pdfauthor = {Aurélien Verbeke},			% Auteurs
+pdftitle = {Rapport projet minishell SEC}			% Titre du document
+}
+
+%code
+\definecolor{couleur_fond_code_fonce}{HTML}{272822}
+\definecolor{couleur_fond_code_clair}{HTML}{EAEAEA}
+\newminted{c}{autogobble, samepage, bgcolor=couleur_fond_code_clair, style=staroffice}
+\newmintedfile{c}{autogobble, samepage, bgcolor=couleur_fond_code_fonce, style=monokai}
+\newmintinline{c}{style=staroffice, bgcolor=couleur_fond_code_clair}
+
+% a chaque nouvelle partie, la numérotation des sections repart de zéro
+\makeatletter
+\@addtoreset{section}{part}
+\makeatother
+
+% affichage des titres
+\titlespacing*{\section}{0cm}{2.5cm}{0.5cm}
+\titlespacing*{\part}{0cm}{1cm}{1cm}
+\titleformat{\part}[hang]{\bfseries\Huge}{\thepart \ --}{12pt}{}
+\titleformat*{\section}{\Large\bfseries}
+
+\setcounter{tocdepth}{2} % dans la table des matières, on s'arrête aux sous-sections
+
+% affichage des différentes tables
+\setlength{\cftsecindent}{0.5cm}
+\setlength{\cftsubsecindent}{1cm}
+\renewcommand{\cftbeforesecskip}{0.3cm}
+\renewcommand{\cftfigpresnum}{\textsc{Figure} \ }
+\setlength{\cftfignumwidth}{2.5cm}
+\renewcommand{\cfttabpresnum}{\textsc{Table} \ }
+\setlength{\cfttabnumwidth}{2.3cm}
+
+%espacement entre les lignes d'un tableau
+\renewcommand{\arraystretch}{1.5}
+
+%régler l'espacement entre les lignes
+\newcommand{\HRule}{\rule{\linewidth}{1.5mm}}
+
+%======================== DEBUT DU DOCUMENT ========================
+\begin{document}
+
+%page de garde
+\renewcommand\thepage{} % ne pas numéroter
+
+\begin{titlepage}
+\begin{center}
+
+% Upper part of the page. The '~' is needed because only works if a paragraph has started.
+\textsc{\Huge Enseeiht}\\[1cm]
+
+\vfill
+
+% Title
+\HRule
+
+\textsc{\huge{\textbf{Rapport projet SEC\\[1cm]Minishell}}}
+
+\HRule
+
+\vfill
+
+% Author and supervisor
+\Large{Aurélien \textsc{Verbeke}}
+
+\vspace{1cm}
+
+\large{Année 2024 - 2025}
+
+\vspace{2cm}
+
+\includegraphics[height=2.cm, valign=m]{3-Toulouse-INP-N7-couleur-sans-fond.png}
+
+\vspace*{-0.5cm}
+
+\end{center}
+\end{titlepage}
+
+%sommaire
+\setcounter{page}{1}
+\renewcommand\thepage{\arabic{page}}
+\tableofcontents
+
+%====================== INCLUSION DES PARTIES ======================
+
+\newpage
+\part{Introduction}
+
+Le \textsc{Minishell} est un shell minimaliste qui permet de lancer des commandes, changer de répertoire courant, afficher le contenu d'un répertoire.
+
+Les commandes peuvent être lancées en arrière-plan et chaînées, et l'utilisateur peut faire des redirections d'entrées / sorties.
+
+\part{Processus}
+
+\noindent
+\textbf{Etape 2}
+
+On ajoute \cinline/execvp(commande[0], commande)/. Cela permet de remplacer le code courant par celui de la commande.
+
+On utilise la version \texttt{vp} pour pouvoir transmettre tous les arguments en une seule fois et pour pouvoir utiliser le \texttt{PATH}.
+
+\bigskip
+\noindent
+\textbf{Etape 3}
+
+Dans le père, on ajoute la directive \cinline/wait()/ pour attendre la termiaison du fils lancé.
+
+\bigskip
+\noindent
+\textbf{Etape 4}
+
+Dans le père, on remplace \cinline/wait()/ par
+\begin{ccode}
+if (ligneCommande->backgrounded == NULL) {
+	int status;
+	if (waitpid(pidFils, &status, 0) == -1) {
+		exit(EXIT_FAILURE);
+	}
+}
+\end{ccode}
+
+On attendra alors que l'éxécution des fils en avant-plan se termine.
+
+Il est nécessaire d'effectuer un \cinline/waitpid()/ sur le fils lancé pour ne pas que le traitement du père soit rétabli après la terminaison du fils en arrière-plan.
+
+\part{Signaux}
+
+\noindent
+\textbf{Question}
+
+Voir étape 4.
+
+\bigskip
+\noindent
+\textbf{Etape 5}
+
+On ajoute
+
+\begin{ccode}
+actionFilsTermine.sa_handler = handlerFilsTermine;
+actionFilsTermine.sa_flags = SA_RESTART;
+sigemptyset(&actionFilsTermine.sa_mask);
+if (sigaction(SIGCHLD, &actionFilsTermine, NULL) == -1) {
+	exit(EXIT_FAILURE);
+}
+\end{ccode}
+
+\noindent
+en début de \cinline/main()/.
+
+La fonction de traitement est
+
+\begin{ccode}
+void handlerFilsTermine() {
+	fprintf(stderr, "Handler : Le fils a change d'etat\n");
+}
+\end{ccode}
+
+\bigskip
+\noindent
+\textbf{Etape 6}
+
+On peut remplacer la fonction de traitement par
+\begin{ccode}
+void handlerFilsTermine() {
+	int status;
+	pid_t pid = waitpid(-1, &status, WNOHANG|WUNTRACED|WCONTINUED);
+
+	if (WIFEXITED(status)) {
+		fprintf(stderr, "Handler : Fils %d termine avec le code %d\n",
+						pid, WEXITSTATUS(status));
+	} else if (WIFSTOPPED(status)) {
+		fprintf(stderr, "Handler : Fils %d suspendu\n", pid);
+	} else if (WIFCONTINUED(status)) {
+		fprintf(stderr, "Handler : Fils %d repris\n", pid);
+	} else if (WIFSIGNALED(status)) {
+		fprintf(stderr, "Handler : Fils %d tue\n", pid);
+	}
+}
+\end{ccode}
+
+\bigskip
+\noindent
+\textbf{Etape 7}
+
+On remplace le \cinline/waitpid()/ du traitement du père par un simple \cinline/pause()/.
+
+
+
+\part{Remarques supplémentaires}
+
+On fait bien attention à ne pas faire de \cinline/printf()/ pour ce qui ne concerne pas les commandes (informations, erreurs...).
+Sinon, on risque d'injecter des données dans les canaux \cinline/stdin/ (0) et \cinline/stdout/ (1).
+
+\end{document}
