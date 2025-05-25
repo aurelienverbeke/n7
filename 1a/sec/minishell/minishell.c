@@ -44,17 +44,20 @@ void changerRepertoireCourant(const char* _nouveauRepertoire) {
 	char erreur[512];
 	char* nouveauRepertoire;
 
+	// pas de repertoire fourni, on va dans le HOME
 	if (_nouveauRepertoire == NULL) {
 		nouveauRepertoire = getenv("HOME");
 		sprintf(erreur, "Erreur changement repertoire vers home\n");
 	}
 
+	// on va dans le repertoire fourni
 	else {
 		nouveauRepertoire = malloc(256*sizeof(char));
 		strcpy(nouveauRepertoire, _nouveauRepertoire);
 		sprintf(erreur, "Erreur changement repertoire vers %s\n", nouveauRepertoire);
 	}
 	
+	// execution du changement de repertoire
 	if (chdir(nouveauRepertoire) == -1) {
 		fprintf(stderr, erreur);
 		exit(EXIT_FAILURE);
@@ -69,26 +72,31 @@ void afficherRepertoire(const char* _repertoire) {
 	DIR* entreesRepertoire;
 	struct dirent* entreeRepertoire;
 
+	// pas de repertoire fourni, on affiche le repertoire courant
 	if (_repertoire == NULL) {
 		repertoire = getcwd(NULL, 0);
 		sprintf(erreur, "Erreur ouverture repertoire courant\n");
 	}
 
+	// on affiche le repertoire fourni
 	else {
 		repertoire = malloc(256*sizeof(char));
 		strcpy(repertoire, _repertoire);
 		sprintf(erreur, "Erreur ouverture repertoire %s\n", repertoire);
 	}
 
+	// ouverture du repertoire
 	if ((entreesRepertoire = opendir(repertoire)) == NULL) {
 		fprintf(stderr, erreur);
 		exit(EXIT_FAILURE);
 	}
 
+	// affichage du contenu
 	while ((entreeRepertoire = readdir(entreesRepertoire)) != NULL) {
 		printf("%s\n", entreeRepertoire->d_name);
 	}
 
+	// fermeture du repertoire
 	if (closedir(entreesRepertoire) == -1) {
 		fprintf(stderr, "Erreur fermeture repertoire\n");
 		exit(EXIT_FAILURE);

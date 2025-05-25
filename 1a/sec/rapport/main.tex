@@ -37,6 +37,7 @@ pdftitle = {Rapport projet minishell SEC}			% Titre du document
 \newminted{c}{autogobble, samepage, bgcolor=couleur_fond_code_clair, style=staroffice}
 \newmintedfile{c}{autogobble, samepage, bgcolor=couleur_fond_code_fonce, style=monokai}
 \newmintinline{c}{style=staroffice, bgcolor=couleur_fond_code_clair}
+\newminted{bash}{autogobble, samepage, bgcolor=couleur_fond_code_clair, style=staroffice, fontsize=\tiny}
 
 % a chaque nouvelle partie, la numérotation des sections repart de zéro
 \makeatletter
@@ -166,6 +167,7 @@ Voir étape 4.
 On ajoute
 
 \begin{ccode}
+struct sigaction actionFilsTermine;
 actionFilsTermine.sa_handler = handlerFilsTermine;
 actionFilsTermine.sa_flags = SA_RESTART;
 sigemptyset(&actionFilsTermine.sa_mask);
@@ -176,6 +178,8 @@ if (sigaction(SIGCHLD, &actionFilsTermine, NULL) == -1) {
 
 \noindent
 en début de \cinline/main()/.
+
+\medskip
 
 La fonction de traitement est
 
@@ -195,16 +199,7 @@ void handlerFilsTermine() {
 	int status;
 	pid_t pid = waitpid(-1, &status, WNOHANG|WUNTRACED|WCONTINUED);
 
-	if (WIFEXITED(status)) {
-		fprintf(stderr, "Handler : Fils %d termine avec le code %d\n",
-						pid, WEXITSTATUS(status));
-	} else if (WIFSTOPPED(status)) {
-		fprintf(stderr, "Handler : Fils %d suspendu\n", pid);
-	} else if (WIFCONTINUED(status)) {
-		fprintf(stderr, "Handler : Fils %d repris\n", pid);
-	} else if (WIFSIGNALED(status)) {
-		fprintf(stderr, "Handler : Fils %d tue\n", pid);
-	}
+	fprintf(stderr, "Handler : Fils %d termine\n", pid);
 }
 \end{ccode}
 
@@ -214,11 +209,273 @@ void handlerFilsTermine() {
 
 On remplace le \cinline/waitpid()/ du traitement du père par un simple \cinline/pause()/.
 
+On constate que le terminal rend la main après le \texttt{sleep 10 &}. C'est normal puisque on attend n'importe quel signal, en particulier un pouvant venir d'un fils en arrière plan.
+
+\bigskip
+\noindent
+\textbf{Etape 8}
+
+L'envoi du signal \texttt{SIGSTOP} fait entrer le processus dans un état de pause (\texttt{T+}).
+
+L'envoi du signal \texttt{SIGCONT} relance le processus (état \texttt{S+} puisque \texttt{sleep}).
+
+\bigskip
+\noindent
+\textbf{Etape 9}
+
+On remplace le simple affichage de la fonction de traitement \cinline/handlerFilsTermine()/ par :
+
+\begin{ccode}
+if (WIFEXITED(status)) {
+	fprintf(stderr, "Handler : Fils %d termine avec le code %d\n",
+					pid, WEXITSTATUS(status));
+} else if (WIFSTOPPED(status)) {
+	fprintf(stderr, "Handler : Fils %d suspendu\n", pid);
+} else if (WIFCONTINUED(status)) {
+	fprintf(stderr, "Handler : Fils %d repris\n", pid);
+} else if (WIFSIGNALED(status)) {
+	fprintf(stderr, "Handler : Fils %d tue\n", pid);
+}
+\end{ccode}
+
+\bigskip
+\noindent
+\textbf{Résultats}
+
+Pour le lancement de \texttt{sleep 60 &} et les envois consécutifs des signaux \texttt{SIGSTOP} et \texttt{SIGCONT} :
+\begin{bashcode}
+> Handler : Fils 48136 suspendu
+Handler : Fils 48136 repris
+Handler : Fils 48136 termine avec le code 0
+\end{bashcode}
+
+\begin{bashcode}
+ave9761@forge:~/git_perso/1a/sec/rapport$ ps -fjn
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+  41282   41289   41289   41289 pts/1      48123 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  41289   41292   41292   41289 pts/1      48123 S    57562   0:00  \_ /bin/bash -i
+  41292   48123   48123   41289 pts/1      48123 S+   57562   0:00      \_ ./minishell
+  48123   48136   48123   41289 pts/1      48123 S+   57562   0:00          \_ sleep 20
+  40174   40176   40176   40176 pts/0      48146 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  40176   40179   40179   40176 pts/0      48146 S    57562   0:00  \_ /bin/bash -i
+  40179   48146   48146   40176 pts/0      48146 R+   57562   0:00      \_ ps -fjn
+ave9761@forge:~/git_perso/1a/sec/rapport$ kill -STOP 48136
+ave9761@forge:~/git_perso/1a/sec/rapport$ ps -fjn
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+  41282   41289   41289   41289 pts/1      48123 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  41289   41292   41292   41289 pts/1      48123 S    57562   0:00  \_ /bin/bash -i
+  41292   48123   48123   41289 pts/1      48123 S+   57562   0:00      \_ ./minishell
+  48123   48136   48123   41289 pts/1      48123 T+   57562   0:00          \_ sleep 20
+  40174   40176   40176   40176 pts/0      48167 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  40176   40179   40179   40176 pts/0      48167 S    57562   0:00  \_ /bin/bash -i
+  40179   48167   48167   40176 pts/0      48167 R+   57562   0:00      \_ ps -fjn
+ave9761@forge:~/git_perso/1a/sec/rapport$ kill -CONT 48136
+ave9761@forge:~/git_perso/1a/sec/rapport$ ps -fjn
+   PPID     PID    PGID     SID TTY        TPGID STAT   UID   TIME COMMAND
+  41282   41289   41289   41289 pts/1      48123 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  41289   41292   41292   41289 pts/1      48123 S    57562   0:00  \_ /bin/bash -i
+  41292   48123   48123   41289 pts/1      48123 S+   57562   0:00      \_ ./minishell
+  48123   48136   48123   41289 pts/1      48123 S+   57562   0:00          \_ sleep 20
+  40174   40176   40176   40176 pts/0      48188 Ss   57562   0:00 bash -c source ~/.bashrc; $SHELL -i
+  40176   40179   40179   40176 pts/0      48188 S    57562   0:00  \_ /bin/bash -i
+  40179   48188   48188   40176 pts/0      48188 R+   57562   0:00      \_ ps -fjn
+\end{bashcode}
+
+\bigskip
+\noindent
+\textbf{Etape 10}
+
+Que le processus soit en arrière-plan ou en avant-plan, on tue le minishell et la commande lancée.
+
+\bigskip
+\noindent
+\textbf{Etape 11.1}
+
+On ajoute :
+
+\begin{ccode}
+struct sigaction actionCtrlCZ;
+actionCtrlCZ.sa_handler = handlerCtrlCZ;
+actionCtrlCZ.sa_flags = SA_RESTART;
+sigemptyset(&actionCtrlCZ.sa_mask);
+
+if (sigaction(SIGTSTP, &actionCtrlCZ, NULL) == -1) {
+	exit(EXIT_FAILURE);
+}
+if (sigaction(SIGINT, &actionCtrlCZ, NULL) == -1) {
+	exit(EXIT_FAILURE);
+}
+\end{ccode}
+
+\medskip
+La fonction de traitement est :
+\begin{ccode}
+void handlerCtrlCZ() {
+	fprintf(stderr, "Signal ignore par le pere.");
+}
+\end{ccode}
+
+Le minishell bloque alors tout \texttt{Ctrl-C} et \texttt{Ctrl-Z} pour les fils et lui-même, ce qui est problématique.
+
+\bigskip
+\noindent
+\textbf{Etape 11.2}
+
+De même qu'à l'étape précédente, on associe le traitement \texttt{SIG\_IGN} aux signaux \texttt{SIGTSTP} et \texttt{SIGINT} avant le \cinline/fork()/.
+
+Il faut alors, dans le fils, réassocier les traitements initiaux avec \texttt{SIG\_DFL} aux signaux \texttt{SIGTSTP} et \texttt{SIGINT} pour qu'ils continue à les recevoir.
+
+Pour plus de cohérence, on continue d'utiliser la fonction \cinline/sigaction()/.
+
+\bigskip
+Le résultat obtenu est celui qui était attendu : seulement les processus fils sont suspendus ou stoppés.
+
+\bigskip
+\noindent
+\textbf{Etape 11.3}
+
+On a :
+\begin{ccode}
+sigset_t masquePere;
+sigset_t masqueFils;
+
+sigemptyset(&masqueFils);
+
+sigemptyset(&masquePere);
+sigaddset(&masquePere, SIGINT);
+sigaddset(&masquePere, SIGTSTP);
+\end{ccode}
+
+Et on ajoute \cinline/sigprocmask(SIG_SETMASK, &masquePere, NULL);/ avant le \cinline/fork()/ et \cinline/sigprocmask(SIG_SETMASK, &masqueFils, NULL);/ dans le fils.
+
+Le comportement est alors le même qu'à l'étape précédente, comme espéré.
+
+\bigskip
+\noindent
+\textbf{Etape 12}
+
+On effectue \cinline/setpgrp()/ dans le fils uniquement dans le cas où la commande est lancée en arrière-plan. Le fils est alors détaché du groupe de son père et ne reçoit plus les signaux correspondant à \texttt{Ctrl-C} et \texttt{Ctrl-Z}.
+
+\part{Fichiers et redirections}
+
+\bigskip
+\noindent
+\textbf{Etape 13}
+
+Pour la redirection en entrée : il faut ouvrir le fichier donné\\
+\noindent(\cinline/fdSource = open(ligneCommande->in, O_RDONLY)/) et remplacer le descripteur de l'entrée standard par celui du fichier ouvert (\cinline/dup2(fdSource, 0)/).
+
+Pour la redirection en sortie : il faut ouvrir le fichier donné et le créer s'il n'existe pas (\cinline/fdDest = open(ligneCommande->out, O_WRONLY|O_CREAT|O_TRUNC, 0644)/) et remplacer le descripteur de la sortie standard par celui du fichier ouvert (\cinline/dup2(fdDest, 1)/).
+
+\bigskip
+\noindent
+\textbf{Etape 14}
+
+On crée d'abord une fonction qui change de répertoire :
+
+\begin{ccode}
+void changerRepertoireCourant(const char* _nouveauRepertoire) {
+	char erreur[512];
+	char* nouveauRepertoire;
+
+	// pas de repertoire fourni, on va dans le HOME
+	if (_nouveauRepertoire == NULL) {
+		nouveauRepertoire = getenv("HOME");
+		sprintf(erreur, "Erreur changement repertoire vers home\n");
+	}
+
+	// on va dans le repertoire fourni
+	else {
+		nouveauRepertoire = malloc(256*sizeof(char));
+		strcpy(nouveauRepertoire, _nouveauRepertoire);
+		sprintf(erreur, "Erreur changement repertoire vers %s\n",
+							nouveauRepertoire);
+	}
+
+	// execution du changement de repertoire
+	if (chdir(nouveauRepertoire) == -1) {
+		fprintf(stderr, erreur);
+		exit(EXIT_FAILURE);
+	}
+}
+\end{ccode}
+
+On ajoute ensuite la prise en compte de la commande dans la boucle principale :
+
+\begin{ccode}
+else if (strcmp(commande[0], "cd") == 0) {
+	changerRepertoireCourant(commande[1]);
+}
+\end{ccode}
+
+Enfin, on modifie l'affichage du prompt pour savoir où on est :\\
+\cinline/printf("(%s) > ", getcwd(NULL, 0));/.
+
+\bigskip
+\noindent
+\textbf{Etape 15}
+
+De même, on crée d'abord une fonction qui affiche un répertoire :
+
+\begin{ccode}
+void afficherRepertoire(const char* _repertoire) {
+        char erreur[512];
+        char* repertoire;
+        DIR* entreesRepertoire;
+        struct dirent* entreeRepertoire;
+
+        // pas de repertoire fourni, on affiche le repertoire courant
+	if (_repertoire == NULL) {
+                repertoire = getcwd(NULL, 0);
+                sprintf(erreur, "Erreur ouverture repertoire courant\n");
+        }
+
+	// on affiche le repertoire fourni
+        else {
+                repertoire = malloc(256*sizeof(char));
+                strcpy(repertoire, _repertoire);
+                sprintf(erreur, "Erreur ouverture repertoire %s\n", repertoire);
+        }
+
+	// ouverture du repertoire
+        if ((entreesRepertoire = opendir(repertoire)) == NULL) {
+                fprintf(stderr, erreur);
+                exit(EXIT_FAILURE);
+        }
+
+	// affichage du contenu
+        while ((entreeRepertoire = readdir(entreesRepertoire)) != NULL) {
+                printf("%s\n", entreeRepertoire->d_name);
+        }
+
+	// fermeture du repertoire
+        if (closedir(entreesRepertoire) == -1) {
+                fprintf(stderr, "Erreur fermeture repertoire\n");
+                exit(EXIT_FAILURE);
+        };
+}
+\end{ccode}
+
+Puis on ajoute la prise en compte de la commande dans la boucle principale :
+
+\begin{ccode}
+else if (strcmp(commande[0], "dir") == 0) {
+	afficherRepertoire(commande[1]);
+}
+\end{ccode}
+
+\part{Tubes}
+
+\noindent
+\textbf{Etapes 16 et 17}
+
 
 
 \part{Remarques supplémentaires}
 
 On fait bien attention à ne pas faire de \cinline/printf()/ pour ce qui ne concerne pas les commandes (informations, erreurs...).
 Sinon, on risque d'injecter des données dans les canaux \cinline/stdin/ (0) et \cinline/stdout/ (1).
+
+Dans le fils, il faut ajouter toutes les commandes avant le \texttt{exec}. Sinon, elles ne sont jamais éxécutées et remplacées par le code de la commande lancée.
 
 \end{document}
