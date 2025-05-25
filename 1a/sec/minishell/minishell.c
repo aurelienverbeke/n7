@@ -302,6 +302,9 @@ int main(void) {
 							}
 							else {
 								/* pere */
+								if (existeCommandeSuivante) {
+									close(tube[ECRITURE]);
+								}
 								
 								// commande en avant-plan
 								if (ligneCommande->backgrounded == NULL) {
@@ -312,12 +315,6 @@ int main(void) {
 									};
 									*/
 									pause();
-									if (existeCommandeSuivante) {
-										close(tube[ECRITURE]);
-									}
-									if (indexCommande > 0) {
-										close(ancienTube[LECTURE]);
-									}
 								}
 							}
 						}

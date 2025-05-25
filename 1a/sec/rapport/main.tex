@@ -125,6 +125,7 @@ Les commandes peuvent être lancées en arrière-plan et chaînées, et l'utilis
 \noindent
 \textbf{Etape 2}
 
+\bigskip
 On ajoute \cinline/execvp(commande[0], commande)/. Cela permet de remplacer le code courant par celui de la commande.
 
 On utilise la version \texttt{vp} pour pouvoir transmettre tous les arguments en une seule fois et pour pouvoir utiliser le \texttt{PATH}.
@@ -133,12 +134,14 @@ On utilise la version \texttt{vp} pour pouvoir transmettre tous les arguments en
 \noindent
 \textbf{Etape 3}
 
+\bigskip
 Dans le père, on ajoute la directive \cinline/wait()/ pour attendre la termiaison du fils lancé.
 
 \bigskip
 \noindent
 \textbf{Etape 4}
 
+\bigskip
 Dans le père, on remplace \cinline/wait()/ par
 \begin{ccode}
 if (ligneCommande->backgrounded == NULL) {
@@ -153,18 +156,21 @@ On attendra alors que l'éxécution des fils en avant-plan se termine.
 
 Il est nécessaire d'effectuer un \cinline/waitpid()/ sur le fils lancé pour ne pas que le traitement du père soit rétabli après la terminaison du fils en arrière-plan.
 
+\newpage
 \part{Signaux}
 
 \noindent
 \textbf{Question}
 
+\bigskip
 Voir étape 4.
 
 \bigskip
 \noindent
 \textbf{Etape 5}
 
-On ajoute
+\bigskip
+On ajoute en début de \cinline/main()/ :
 
 \begin{ccode}
 struct sigaction actionFilsTermine;
@@ -175,11 +181,6 @@ if (sigaction(SIGCHLD, &actionFilsTermine, NULL) == -1) {
 	exit(EXIT_FAILURE);
 }
 \end{ccode}
-
-\noindent
-en début de \cinline/main()/.
-
-\medskip
 
 La fonction de traitement est
 
@@ -193,6 +194,7 @@ void handlerFilsTermine() {
 \noindent
 \textbf{Etape 6}
 
+\bigskip
 On peut remplacer la fonction de traitement par
 \begin{ccode}
 void handlerFilsTermine() {
@@ -207,6 +209,7 @@ void handlerFilsTermine() {
 \noindent
 \textbf{Etape 7}
 
+\bigskip
 On remplace le \cinline/waitpid()/ du traitement du père par un simple \cinline/pause()/.
 
 On constate que le terminal rend la main après le \texttt{sleep 10 &}. C'est normal puisque on attend n'importe quel signal, en particulier un pouvant venir d'un fils en arrière plan.
@@ -215,6 +218,7 @@ On constate que le terminal rend la main après le \texttt{sleep 10 &}. C'est no
 \noindent
 \textbf{Etape 8}
 
+\bigskip
 L'envoi du signal \texttt{SIGSTOP} fait entrer le processus dans un état de pause (\texttt{T+}).
 
 L'envoi du signal \texttt{SIGCONT} relance le processus (état \texttt{S+} puisque \texttt{sleep}).
@@ -223,6 +227,7 @@ L'envoi du signal \texttt{SIGCONT} relance le processus (état \texttt{S+} puisq
 \noindent
 \textbf{Etape 9}
 
+\bigskip
 On remplace le simple affichage de la fonction de traitement \cinline/handlerFilsTermine()/ par :
 
 \begin{ccode}
@@ -238,11 +243,11 @@ if (WIFEXITED(status)) {
 }
 \end{ccode}
 
-\bigskip
 \noindent
 \textbf{Résultats}
 
 Pour le lancement de \texttt{sleep 60 &} et les envois consécutifs des signaux \texttt{SIGSTOP} et \texttt{SIGCONT} :
+
 \begin{bashcode}
 > Handler : Fils 48136 suspendu
 Handler : Fils 48136 repris
@@ -285,12 +290,14 @@ ave9761@forge:~/git_perso/1a/sec/rapport$ ps -fjn
 \noindent
 \textbf{Etape 10}
 
+\bigskip
 Que le processus soit en arrière-plan ou en avant-plan, on tue le minishell et la commande lancée.
 
-\bigskip
+\newpage
 \noindent
 \textbf{Etape 11.1}
 
+\bigskip
 On ajoute :
 
 \begin{ccode}
@@ -307,8 +314,8 @@ if (sigaction(SIGINT, &actionCtrlCZ, NULL) == -1) {
 }
 \end{ccode}
 
-\medskip
 La fonction de traitement est :
+
 \begin{ccode}
 void handlerCtrlCZ() {
 	fprintf(stderr, "Signal ignore par le pere.");
@@ -321,6 +328,7 @@ Le minishell bloque alors tout \texttt{Ctrl-C} et \texttt{Ctrl-Z} pour les fils 
 \noindent
 \textbf{Etape 11.2}
 
+\bigskip
 De même qu'à l'étape précédente, on associe le traitement \texttt{SIG\_IGN} aux signaux \texttt{SIGTSTP} et \texttt{SIGINT} avant le \cinline/fork()/.
 
 Il faut alors, dans le fils, réassocier les traitements initiaux avec \texttt{SIG\_DFL} aux signaux \texttt{SIGTSTP} et \texttt{SIGINT} pour qu'ils continue à les recevoir.
@@ -334,7 +342,9 @@ Le résultat obtenu est celui qui était attendu : seulement les processus fils 
 \noindent
 \textbf{Etape 11.3}
 
+\bigskip
 On a :
+
 \begin{ccode}
 sigset_t masquePere;
 sigset_t masqueFils;
@@ -350,7 +360,7 @@ Et on ajoute \cinline/sigprocmask(SIG_SETMASK, &masquePere, NULL);/ avant le \ci
 
 Le comportement est alors le même qu'à l'étape précédente, comme espéré.
 
-\bigskip
+\newpage
 \noindent
 \textbf{Etape 12}
 
@@ -362,6 +372,7 @@ On effectue \cinline/setpgrp()/ dans le fils uniquement dans le cas où la comma
 \noindent
 \textbf{Etape 13}
 
+\bigskip
 Pour la redirection en entrée : il faut ouvrir le fichier donné\\
 \noindent(\cinline/fdSource = open(ligneCommande->in, O_RDONLY)/) et remplacer le descripteur de l'entrée standard par celui du fichier ouvert (\cinline/dup2(fdSource, 0)/).
 
@@ -371,6 +382,7 @@ Pour la redirection en sortie : il faut ouvrir le fichier donné et le créer s'
 \noindent
 \textbf{Etape 14}
 
+\bigskip
 On crée d'abord une fonction qui change de répertoire :
 
 \begin{ccode}
@@ -400,6 +412,7 @@ void changerRepertoireCourant(const char* _nouveauRepertoire) {
 }
 \end{ccode}
 
+\newpage
 On ajoute ensuite la prise en compte de la commande dans la boucle principale :
 
 \begin{ccode}
@@ -408,13 +421,17 @@ else if (strcmp(commande[0], "cd") == 0) {
 }
 \end{ccode}
 
-Enfin, on modifie l'affichage du prompt pour savoir où on est :\\
-\cinline/printf("(%s) > ", getcwd(NULL, 0));/.
+Enfin, on modifie l'affichage du prompt pour savoir où on est :
+
+\begin{ccode}
+printf("(%s) > ", getcwd(NULL, 0));
+\end{ccode}
 
 \bigskip
 \noindent
 \textbf{Etape 15}
 
+\bigskip
 De même, on crée d'abord une fonction qui affiche un répertoire :
 
 \begin{ccode}
@@ -456,6 +473,7 @@ void afficherRepertoire(const char* _repertoire) {
 }
 \end{ccode}
 
+\newpage
 Puis on ajoute la prise en compte de la commande dans la boucle principale :
 
 \begin{ccode}
@@ -469,13 +487,42 @@ else if (strcmp(commande[0], "dir") == 0) {
 \noindent
 \textbf{Etapes 16 et 17}
 
+\bigskip
+Avant la création du fils pour l'éxécution de la commande, si une commande pipelinée suit :
+\begin{itemize}
+	\item On sauvegarde le tube précédent
+	\item On crée un nouveau tube
+\end{itemize}
 
+Puis, dans le fils :
+\begin{itemize}
+	\item Une commande pipelinée suit : on ferme le tube en lecture, on remplace la sortie standard par le tube puis on ferme le tube en écriture.
+	\item La commande est au moins la deuxième du pipeline : on ferme l'ancien tube en écriture, on remplace l'entrée standard par l'ancien tube puis on ferme l'ancien tube en lecture.
+\end{itemize}
+
+Cependant, il faut gérer les tubes dans le père. En effet, il ne faut pas que le père reste rédacteur pour le tube. Sinon, la lecture est bloquante. Il doit cependant rester lecteur pour que la commande suivante puisse remplacer son entrée standard par la sortie du tube.
+
+\bigskip
+\textbf{Remarque : }
+La conception ainsi réalisée ne change donc pas le mécanisme de lancement des commandes.
+
+\bigskip
+Résultat pour 2 terminaux ouverts :
+\begin{bashcode}
+(/home/ave9761/git_perso/1a/sec/minishell) > who | grep ave9761 | wc -l
+Handler : Fils 220861 termine avec le code 0
+Handler : Fils 220862 termine avec le code 0
+2
+Handler : Fils 220863 termine avec le code 0
+(/home/ave9761/git_perso/1a/sec/minishell) >
+\end{bashcode}
 
 \part{Remarques supplémentaires}
 
 On fait bien attention à ne pas faire de \cinline/printf()/ pour ce qui ne concerne pas les commandes (informations, erreurs...).
 Sinon, on risque d'injecter des données dans les canaux \cinline/stdin/ (0) et \cinline/stdout/ (1).
 
+\bigskip
 Dans le fils, il faut ajouter toutes les commandes avant le \texttt{exec}. Sinon, elles ne sont jamais éxécutées et remplacées par le code de la commande lancée.
 
 \end{document}
