@@ -1,0 +1,182 @@
+File allumettes/JoueurRapide.java: 45 tokens, 21 lines
+File allumettes/Arbitre.java: 315 tokens, 80 lines
+File allumettes/Jouer.java: 521 tokens, 126 lines
+File allumettes/CoupInvalideException.java: 68 tokens, 39 lines
+File allumettes/JeuSecurise.java: 74 tokens, 57 lines
+File allumettes/JoueurTricheur.java: 119 tokens, 42 lines
+File allumettes/JeuBase.java: 132 tokens, 56 lines
+File allumettes/Jeu.java: 23 tokens, 21 lines
+File allumettes/JoueurHumain.java: 191 tokens, 75 lines
+File allumettes/JoueurNaif.java: 61 tokens, 31 lines
+File allumettes/ConfigurationException.java: 21 tokens, 16 lines
+File allumettes/Joueur.java: 47 tokens, 40 lines
+File allumettes/JoueurExpert.java: 77 tokens, 37 lines
+File allumettes/OperationInterditeException.java: 9 tokens, 6 lines
+Total input: 14 files (14 new, 0 old), 1703 tokens
+
+allumettes/Jouer.java: line 97-101 [47]
+allumettes/Jouer.java: line 101-105
+< 		if (paramsJoueur[1].equals("naif")) {
+< 			return new JoueurNaif(paramsJoueur[0]);
+< 		} else if (paramsJoueur[1].equals("rapide")) {
+< 			return new JoueurRapide(paramsJoueur[0]);
+< 		} else if (paramsJoueur[1].equals("expert")) {
+---
+> 		} else if (paramsJoueur[1].equals("expert")) {
+> 			return new JoueurExpert(paramsJoueur[0]);
+> 		} else if (paramsJoueur[1].equals("tricheur")) {
+> 			return new JoueurTricheur(paramsJoueur[0]);
+> 		} else {
+
+allumettes/Arbitre.java: line 68-71 [30]
+allumettes/Arbitre.java: line 71-74
+< 			if (joueurEnCours == joueur1) {
+< 				System.out.println(joueur1.getNom() + " gagne !");
+< 				System.out.println(joueur2.getNom() + " perd !");
+< 			} else {
+---
+> 			} else {
+> 				System.out.println(joueur1.getNom() + " perd !");
+> 				System.out.println(joueur2.getNom() + " gagne !");
+> 			}
+
+allumettes/JoueurTricheur.java: line 1-18 [28]
+allumettes/JoueurExpert.java: line 1-20
+< package allumettes;
+< 
+< /**
+<  * Definit un joueur tricheur du jeu des allumettes.
+<  * Il tente de ne laisser que 2 allumettes, puis d'en prendre une.
+<  */
+< public class JoueurTricheur extends Joueur {
+< 
+< 	/**
+< 	 * Constructeur
+< 	 * Crée un joueur nommé
+< 	 * @param nom Nom du joueur
+< 	 */
+< 	public JoueurTricheur(String nom) {
+< 		super(nom);
+< 	}
+< 
+< 	public int getPrise(Jeu jeu) {
+---
+> package allumettes;
+> 
+> /**
+>  * Definit un joueur expert du jeu des allumettes.
+>  * Il joue de manière à gagner.
+>  */
+> public class JoueurExpert extends Joueur {
+> 
+> 	/**
+> 	 * Constructeur
+> 	 * Crée un joueur nommé
+> 	 * @param nom Nom du joueur
+> 	 */
+> 	public JoueurExpert(String nom) {
+> 		super(nom);
+> 	}
+> 
+> 
+> 
+> 	public int getPrise(Jeu jeu) {
+
+allumettes/JoueurRapide.java: line 1-18 [28]
+allumettes/JoueurTricheur.java: line 1-18
+< package allumettes;
+< 
+< /**
+<  * Definit un joueur rapide du jeu des allumettes.
+<  * Il prend le plus d'allumettes possible (max PRISE_MAX).
+<  */
+< public class JoueurRapide extends Joueur {
+< 
+< 	/**
+< 	 * Constructeur
+< 	 * Crée un joueur nommé
+< 	 * @param nom Nom du joueur
+< 	 */
+< 	public JoueurRapide(String nom) {
+< 		super(nom);
+< 	}
+< 
+< 	public int getPrise(Jeu jeu) {
+---
+> package allumettes;
+> 
+> /**
+>  * Definit un joueur tricheur du jeu des allumettes.
+>  * Il tente de ne laisser que 2 allumettes, puis d'en prendre une.
+>  */
+> public class JoueurTricheur extends Joueur {
+> 
+> 	/**
+> 	 * Constructeur
+> 	 * Crée un joueur nommé
+> 	 * @param nom Nom du joueur
+> 	 */
+> 	public JoueurTricheur(String nom) {
+> 		super(nom);
+> 	}
+> 
+> 	public int getPrise(Jeu jeu) {
+
+allumettes/JoueurNaif.java: line 1-24 [27]
+allumettes/JoueurExpert.java: line 1-20
+< package allumettes;
+< 
+< import java.util.Random;
+< 
+< 
+< 
+< /**
+<  * Definit un joueur naïf du jeu des allumettes.
+<  * Il prend un nombre aléatoire d'allumettes (max PRISE_MAX).
+<  */
+< public class JoueurNaif extends Joueur {
+< 
+< 	/**
+< 	 * Constructeur
+< 	 * Crée un joueur nommé
+< 	 * @param nom Nom du joueur
+< 	 */
+< 	public JoueurNaif(String nom) {
+< 		super(nom);
+< 	}
+< 
+< 
+< 
+< 	public int getPrise(Jeu jeu) throws OperationInterditeException {
+---
+> package allumettes;
+> 
+> /**
+>  * Definit un joueur expert du jeu des allumettes.
+>  * Il joue de manière à gagner.
+>  */
+> public class JoueurExpert extends Joueur {
+> 
+> 	/**
+> 	 * Constructeur
+> 	 * Crée un joueur nommé
+> 	 * @param nom Nom du joueur
+> 	 */
+> 	public JoueurExpert(String nom) {
+> 		super(nom);
+> 	}
+> 
+> 
+> 
+> 	public int getPrise(Jeu jeu) {
+
+allumettes/Jouer.java: line 101-103 [24]
+allumettes/Jouer.java: line 103-105
+< 		} else if (paramsJoueur[1].equals("expert")) {
+< 			return new JoueurExpert(paramsJoueur[0]);
+< 		} else if (paramsJoueur[1].equals("tricheur")) {
+---
+> 		} else if (paramsJoueur[1].equals("tricheur")) {
+> 			return new JoueurTricheur(paramsJoueur[0]);
+> 		} else {
+

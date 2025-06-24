@@ -1,0 +1,93 @@
+Date de l'évaluation : lun. 03 mars 2025 22:20:37 CET
+
+Nombre de similitudes : 6	(voir evaluation1/sim_java.txt)
+Les similitudes indiquent généralement du code à restructurer.
+
+Erreurs checkstyle (différentes/types) : 0/0	(voir evaluation1//checkstyle.txt)
+
+Classe OperationInterditeException : OperationInterditeException (ok)
+
+Procuration sur le jeu réel : allumettes/JeuSecurise.java (ok)
+
+OperationInterditeException, levée dans : allumettes/JeuSecurise.java (ok)
+OperationInterditeException, récupérée dans : allumettes/Arbitre.java (ok)
+
+Throwable, Exception et RuntimeException ne devraient pas être récupérées car trop générales... ok
+
+AssertionError ne doit pas être récupérée... ok
+
+Autres exceptions récupérées :
+  | allumettes/Arbitre.java:61:             } catch (CoupInvalideException e) {
+  | allumettes/Jouer.java:39:       } catch (ConfigurationException e) {
+  | allumettes/JoueurTricheur.java:35:          } catch (CoupInvalideException e) {
+  | allumettes/JoueurHumain.java:55:                    } catch (CoupInvalideException e) {
+
+Utilisation de 'Scanner' : ok
+  | allumettes/JoueurHumain.java:13:    private Scanner scanner;
+  | allumettes/JoueurHumain.java:22:        scanner = new Scanner(System.in);
+
+Utilisation de 'split' : ok
+  | allumettes/Jouer.java:36:               paramsJoueurs[i] = args[args.length - i - 1].split("@", 2);
+
+Utilisation de 'Random' : ok
+  | allumettes/JoueurNaif.java:3:import java.util.Random;
+  | allumettes/JoueurNaif.java:25:      Random generateurAleatoire = new Random();
+
+Utilisation de '3' : ok
+
+Affichage de 'Impossible !' : ok
+
+Utilisation de 'System.exit' : ok
+
+Compilation de Jouer.java : OK.
+Compilation de Arbitre.java : OK.
+Compilation de TestJoueurNaif.java : OK.
+Compilation de TestJeuSecurise.java : OK.
+Compilation de TestJoueurHumain.java : OK.
+Compilation de TestJoueurTricheur.java : OK.
+Compilation de TestJeuProxy.java : OK.
+Compilation de TestJeuBase.java : OK.
+Compilation de TestJoueurRapide.java : OK.
+Compilation de TestJoueurExpert.java : OK.
+Test exemplePresqueSujet : NON CONFORME	(voir evaluation1/exemplePresqueSujet.diff)
+Test exempleTricheurSujet : NON CONFORME	(voir evaluation1/exempleTricheurSujet.diff)
+Test exempleConfiantTricheurSujet : NON CONFORME	(voir evaluation1/exempleConfiantTricheurSujet.diff)
+Test exempleRobustesse : NON CONFORME	(voir evaluation1/exempleRobustesse.diff)
+Test exempleHumainTricheurExpert : NON CONFORME	(voir evaluation1/exempleHumainTricheurExpert.diff)
+Test exempleMaxLou : NON CONFORME	(voir evaluation1/exempleMaxLou.diff)
+Test exempleRapideRapide : NON CONFORME	(voir evaluation1/exempleRapideRapide.diff)
+Test exempleTricheurExpert : NON CONFORME	(voir evaluation1/exempleTricheurExpert.diff)
+
+Test RobustesseTest : OK (25 tests)	(voir evaluation1/RobustesseTest.txt)
+
+On recommence avec les classes/interfaces fournies : Jeu ConfigurationException CoupInvalideException
+Compilation de Jouer.java : OK.
+Compilation de Arbitre.java : OK.
+
+Vérification du respect du diagramme de classe...
+Test FormeTest : Tests run: 2,  Failures: 1	(voir evaluation1/FormeTest.txt)
+    1) testerC14_C15(FormeTest)
+        AssertionError: Joueur devrait avoir deux attributs expected:<2> but was:<1>
+
+
+Compilation de TestJoueurNaif.java : OK.
+Test allumettes.TestJoueurNaif : OK (2 tests)	(voir evaluation1/allumettes.TestJoueurNaif.txt)
+Compilation de TestJeuSecurise.java : OK.
+Test allumettes.TestJeuSecurise : OK (1 test)	(voir evaluation1/allumettes.TestJeuSecurise.txt)
+Compilation de TestJoueurHumain.java : OK.
+Test allumettes.TestJoueurHumain : Tests run: 2,  Failures: 2	(voir evaluation1/allumettes.TestJoueurHumain.txt)
+    1) testerGetPriseJeuSecurise(allumettes.TestJoueurHumain)
+        Exception: Unexpected exception, expected<allumettes.OperationInterditeException> but was<java.util.NoSuchElementException>
+    2) testerGetPriseJeuBase(allumettes.TestJoueurHumain)
+        java.util.NoSuchElementException
+
+Compilation de TestJoueurTricheur.java : OK.
+Test allumettes.TestJoueurTricheur : OK (2 tests)	(voir evaluation1/allumettes.TestJoueurTricheur.txt)
+Compilation de TestJeuProxy.java : OK.
+Test allumettes.TestJeuProxy : OK (2 tests)	(voir evaluation1/allumettes.TestJeuProxy.txt)
+Compilation de TestJeuBase.java : OK.
+Test allumettes.TestJeuBase : OK (6 tests)	(voir evaluation1/allumettes.TestJeuBase.txt)
+Compilation de TestJoueurRapide.java : OK.
+Test allumettes.TestJoueurRapide : OK (2 tests)	(voir evaluation1/allumettes.TestJoueurRapide.txt)
+Compilation de TestJoueurExpert.java : OK.
+Test allumettes.TestJoueurExpert : OK (2 tests)	(voir evaluation1/allumettes.TestJoueurExpert.txt)

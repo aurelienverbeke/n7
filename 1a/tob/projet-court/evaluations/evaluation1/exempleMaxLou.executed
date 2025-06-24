@@ -1,0 +1,11 @@
+Allumettes restantes : 13
+Lou, combien d'allumettes ? 2
+Lou prend 2allumettes.
+Allumettes restantes : 11
+Max, combien d'allumettes ? Vous devez donner un entier.
+Exception in thread "main" java.util.NoSuchElementException
+	at java.base/java.util.Scanner.throwFor(Scanner.java:937)
+	at java.base/java.util.Scanner.next(Scanner.java:1478)
+	at allumettes.JoueurHumain.getPrise(JoueurHumain.java:65)
+	at allumettes.Arbitre.arbitrer(Arbitre.java:36)
+	at allumettes.Jouer.main(Jouer.java:63)

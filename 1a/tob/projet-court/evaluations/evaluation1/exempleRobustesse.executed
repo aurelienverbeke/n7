@@ -1,0 +1,58 @@
+Allumettes restantes : 13
+Ordinateur prend 1allumette.
+Allumettes restantes : 12
+Xavier, combien d'allumettes ? 4
+Xavier prend 4allumettes.
+Impossible ! Nombre invalide : 4 (> 3)
+Allumettes restantes : 12
+Xavier, combien d'allumettes ? 5
+Xavier prend 5allumettes.
+Impossible ! Nombre invalide : 5 (> 3)
+Allumettes restantes : 12
+Xavier, combien d'allumettes ? 0
+Xavier prend 0allumette.
+Impossible ! Nombre invalide : 0 (< 1)
+Allumettes restantes : 12
+Xavier, combien d'allumettes ? -1
+Xavier prend -1allumette.
+Impossible ! Nombre invalide : -1 (< 1)
+Allumettes restantes : 12
+Xavier, combien d'allumettes ? 3
+Xavier prend 3allumettes.
+Allumettes restantes : 9
+Ordinateur prend 1allumette.
+Allumettes restantes : 8
+Xavier, combien d'allumettes ? 3
+Xavier prend 3allumettes.
+Allumettes restantes : 5
+Ordinateur prend 1allumette.
+Allumettes restantes : 4
+Xavier, combien d'allumettes ? 1
+Xavier prend 1allumette.
+Allumettes restantes : 3
+Ordinateur prend 2allumettes.
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? 4
+Xavier prend 4allumettes.
+Impossible ! Nombre invalide : 4 (pas assez d'allumettes)
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? 3
+Xavier prend 3allumettes.
+Impossible ! Nombre invalide : 3 (pas assez d'allumettes)
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? 2
+Xavier prend 2allumettes.
+Impossible ! Nombre invalide : 2 (pas assez d'allumettes)
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? 0
+Xavier prend 0allumette.
+Impossible ! Nombre invalide : 0 (< 1)
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? -1
+Xavier prend -1allumette.
+Impossible ! Nombre invalide : -1 (< 1)
+Allumettes restantes : 1
+Xavier, combien d'allumettes ? 1
+Xavier prend 1allumette.
+Ordinateur gagne !
+Xavier perd !

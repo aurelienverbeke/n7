@@ -1,0 +1,77 @@
+--------------------------------------------------------------------------------
+Nom       : VERBEKE
+Prénom    : Aurélien
+Groupe TP : G
+--------------------------------------------------------------------------------
+
+Consigne : Dans ce fichier, les « ... » indiquent les endroits à compléter.
+Il s'agit de remplacer les « ... » par votre texte.  Merci de laisser une
+ligne blanche avant.  Le texte déjà écrit doit être conservé !
+
+
+=====[ Temps passé ]============================================================
+
+Ces informations de temps sont demandées à titre indicatif et ne sont pas
+prises en compte dans la notation du projet.
+Il faut remplacer les ... par des nombres.
+
+
+* Temps passé sur la V1 : 12 heures 00 minutes
+* Temps passé sur la V2 : 6 heures 00 minutes
+
+Pour la V2 on ne tiendra pas compte du temps passé sur la V1.
+
+
+=====[ Questions ]==============================================================
+
+--------------------------------------------------------------------------------
+Pourquoi l'exception OperationInterditeException ne peut pas être définie
+comme vérifiée par le compilateur ?
+--------------------------------------------------------------------------------
+
+On ne doit pas signaler à l'utilisateur de prendre en compte l'exception,
+puisqu'elle signale une utilisation illicite du jeu.
+
+
+--------------------------------------------------------------------------------
+Expliquer ce qu'il faut faire pour ajouter un nouveau niveau de jeu, par
+exemple la stratégie lente (C13).  Pour plus de précision, on numérotera
+les étapes à faire.
+--------------------------------------------------------------------------------
+
+1. Ajouter un type de strategie (classe réalisant l'interface Strategie)
+2. Ajouter une entree dans attribuerJoueur(),
+				verifierConfigJoueurArguments() et
+				afficherUsage() dans la classe Jouer
+
+
+--------------------------------------------------------------------------------
+Expliquer ce qui permet, dans votre conception, de changer dynamiquement
+(en cours d'exécution du programme) la stratégie d'un joueur (C14).
+--------------------------------------------------------------------------------
+
+Il suffit de remplacer la propriete strategie du joueur en question
+via la methode remplacerStrategie.
+
+
+=====[ Explications ]===========================================================
+
+--------------------------------------------------------------------------------
+Donner ici les explications supplémentaires utiles à la compréhension du
+travail rendu.
+--------------------------------------------------------------------------------
+
+Réponses aux remarques du retour 1 :
+- C3 : Le code ne me paraît pas mal structuré, il est aéré et bien lisible
+	Des commentaires ont été ajoutés.
+	Pour les redondances, le code a été corrigé.
+- C9 : code corrigé
+- C13 : L'arbitre n'utilise ni ne teste la stratégie d'aucun joueur
+- C14 : Il est possible de changer de stratégie avec remplacerStrategie(), il n'était
+  pas demandé de l'implémenter plus
+- C16 : code adapté (retrait d'une classe), je laisse les multiples tests volontairement
+- Proxy : implantation changée
+- LISEZ-MOI : j'avais répondu aux questions, vous aviez certainement une ancienne version
+		du code
+
+--------------------------------------------------------------------------------
