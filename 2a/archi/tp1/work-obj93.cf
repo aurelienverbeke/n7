@@ -1,0 +1,7 @@
+v 4
+file . "test_additionneur_4bits.vhd" "76e5072749692359fe59c52315c700af7afc6448" "20250924155408.539":
+  entity test_additionneur at 1( 0) + 0 on 13;
+  architecture arch_test of test_additionneur at 8( 152) + 0 on 14;
+file . "additionneur_4bits.vhd" "7d10784d6552727e0e920c4842bf7dfa7a9c9674" "20250924155213.334":
+  entity additionneur_4bits at 1( 0) + 0 on 11;
+  architecture vue_structurelle of additionneur_4bits at 19( 334) + 0 on 12;

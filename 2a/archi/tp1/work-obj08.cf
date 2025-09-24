@@ -1,0 +1,21 @@
+v 4
+file . "test_additionneur_4bits.vhd" "27470ff54947a568831688080b1f06989674ef38" "20250924155800.233":
+  entity test_additionneur_4bits at 1( 0) + 0 on 23;
+  architecture arch_test of test_additionneur_4bits at 8( 164) + 0 on 24;
+file . "additionneur_4bits.vhd" "7d10784d6552727e0e920c4842bf7dfa7a9c9674" "20250924155800.155":
+  entity additionneur_4bits at 1( 0) + 0 on 19;
+  architecture vue_structurelle of additionneur_4bits at 19( 334) + 0 on 20;
+file . "porte_ou.vhd" "97bfbc20ef97753e188d257d8a1bb15749a94351" "20250924155800.085":
+  entity porte_ou at 1( 0) + 0 on 13;
+  architecture vue_flot of porte_ou at 11( 158) + 0 on 14;
+file . "demi_additionneur.vhd" "666643fdc3a1da4f183c608f73d50da41bc3e0cf" "20250924155800.054":
+  entity demi_additionneur at 1( 0) + 0 on 11;
+  architecture vue_flot of demi_additionneur at 11( 185) + 0 on 12;
+file . "additionneur.vhd" "17e06c51f9190f55cb0cf35af0db610f68cb9496" "20250924155800.120":
+  entity additionneur at 1( 0) + 0 on 15;
+  architecture vue_structurelle of additionneur at 13( 266) + 0 on 16;
+  architecture vue_flot of additionneur at 51( 1344) + 0 on 17;
+  architecture vue_comportementale of additionneur at 68( 1762) + 0 on 18;
+file . "test_additionneur.vhd" "e8dacf6dd1ac15883e7870f942cf3f8e56e0c491" "20250924155800.194":
+  entity test_additionneur at 1( 0) + 0 on 21;
+  architecture arch_test of test_additionneur at 8( 152) + 0 on 22;
