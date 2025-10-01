@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Wed Oct  1 09:48:50 2025
+# Process ID: 675302
+# Current directory: /home/ave9761/git_perso/2a/archi/vivado/additionneur_4bits/additionneur_4bits.runs/synth_1
+# Command line: vivado -log Nexys4.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source Nexys4.tcl
+# Log file: /home/ave9761/git_perso/2a/archi/vivado/additionneur_4bits/additionneur_4bits.runs/synth_1/Nexys4.vds
+# Journal file: /home/ave9761/git_perso/2a/archi/vivado/additionneur_4bits/additionneur_4bits.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source Nexys4.tcl -notrace
