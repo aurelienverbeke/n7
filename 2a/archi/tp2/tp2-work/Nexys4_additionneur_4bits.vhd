@@ -43,7 +43,7 @@ architecture synthesis of Nexys4 is
 
 begin
 
-  -- afficheurs 1 et 2 sélectionnés
+  -- afficheur 1 sélectionné
   an(7 downto 0) <= (0 => '0', others => '1');
   led(4 downto 1) <= sortie(3 downto 0);
 
