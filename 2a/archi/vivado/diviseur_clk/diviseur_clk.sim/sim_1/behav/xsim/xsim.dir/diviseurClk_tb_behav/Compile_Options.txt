@@ -1,0 +1,1 @@
+-wto "ed24c3f2036d49c6a26d5ffcad99a4da" --incr --debug "typical" --relax --mt "8" -L "xil_defaultlib" -L "secureip" --snapshot "diviseurClk_tb_behav" "xil_defaultlib.diviseurClk_tb" -log "elaborate.log" 
