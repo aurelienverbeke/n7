@@ -47,3 +47,4 @@ source diviseurClk_tb.tcl
 close_sim
 launch_simulation
 source diviseurClk_tb.tcl
+close_sim
