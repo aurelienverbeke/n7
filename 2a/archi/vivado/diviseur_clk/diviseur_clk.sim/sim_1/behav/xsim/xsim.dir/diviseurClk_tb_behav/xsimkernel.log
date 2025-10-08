@@ -1,4 +1,4 @@
-Running: xsim.dir/diviseurClk_tb_behav/xsimk -simmode gui -wdb diviseurClk_tb_behav.wdb -simrunnum 0 -socket 54863
+Running: xsim.dir/diviseurClk_tb_behav/xsimk -simmode gui -wdb diviseurClk_tb_behav.wdb -simrunnum 0 -socket 46855
 Design successfully loaded
 Design Loading Memory Usage: 33020 KB (Peak: 33732 KB)
 Design Loading CPU Usage: 10 ms
