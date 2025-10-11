@@ -60,18 +60,71 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
-      <File Path="$PPRDIR/../../tp3-4/fonctionnel_complet/dec7seg_full.vhd">
+      <File Path="$PSRCDIR/sources_1/imports/fonctionnel_complet/Nexys4_dec7seg_full.vhd">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/fonctionnel_complet/Nexys4_dec7seg_full.vhd"/>
+          <Attr Name="ImportTime" Val="1760029973"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/tp3-4/fonctionnel_complet/compteur.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/fonctionnel_complet/compteur.vhd"/>
+          <Attr Name="ImportTime" Val="1759844193"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/tp3-4/composants/dec7seg.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/composants/dec7seg.vhd"/>
+          <Attr Name="ImportTime" Val="1737105278"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/tp3-4/composants/decalage.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/composants/decalage.vhd"/>
+          <Attr Name="ImportTime" Val="1739951359"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/tp3-4/diviseurClk/diviseurClk.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/diviseurClk/diviseurClk.vhd"/>
+          <Attr Name="ImportTime" Val="1750262945"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/tp3-4/composants/mux8_to_1.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/composants/mux8_to_1.vhd"/>
+          <Attr Name="ImportTime" Val="1737105278"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/fonctionnel_complet/dec7seg_full.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../tp3-4/fonctionnel_complet/dec7seg_full.vhd"/>
+          <Attr Name="ImportTime" Val="1760030084"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="dec7seg_full"/>
-        <Option Name="TopLib" Val="xil_defaultlib"/>
-        <Option Name="TopArchitecture" Val="Structural"/>
-        <Option Name="TopAutoSet" Val="TRUE"/>
+        <Option Name="TopModule" Val="Nexys4"/>
       </Config>
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
