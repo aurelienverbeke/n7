@@ -1,8 +1,0 @@
-
-****** Webtalk v2019.2 (64-bit)
-  **** SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
-  **** IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
-    ** Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
-
-source /home/ave9761/git_perso/2a/archi/vivado/additionneur_1bit/additionneur_1bit.hw/webtalk/labtool_webtalk.tcl -notrace
-INFO: [Common 17-206] Exiting Webtalk at Wed Oct  1 09:03:45 2025...
