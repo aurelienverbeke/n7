@@ -131,7 +131,16 @@ let%test _ = not (appartient_arbre ['l';'o';'n';'g'] (retrait_arbre ['l';'o';'n'
 (*   résultat   : la liste des mots présents dans l'arbre                     *)
 (******************************************************************************)
 
-let parcours_arbre _ = failwith "TO DO parcours_arbre"
+let parcours_arbre arb =
+  let rec parcours_aux pile mot =
+    match pile with
+      | [] -> []
+      | Noeud(fin, br)::r -> match fin with
+        | false -> parcours_aux 
+        | true -> match br with
+          | [] -> 
+  in parcours_aux arb []
+  
 
 
 (* [eq_perm l l'] retourne true ssi [l] et [l']
