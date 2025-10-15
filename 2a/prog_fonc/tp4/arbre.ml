@@ -131,16 +131,30 @@ let%test _ = not (appartient_arbre ['l';'o';'n';'g'] (retrait_arbre ['l';'o';'n'
 (*   résultat   : la liste des mots présents dans l'arbre                     *)
 (******************************************************************************)
 
+(*
 let parcours_arbre arb =
   let rec parcours_aux pile mot =
+    let traiter_branches branches =
+      match branches with
+        | [] -> []
+        | branche::r -> 
     match pile with
       | [] -> []
-      | Noeud(fin, br)::r -> match fin with
-        | false -> parcours_aux 
-        | true -> match br with
-          | [] -> 
-  in parcours_aux arb []
-  
+      | Noeud(fin, br)::r -> match br with
+        | [] -> parcours_aux ?? mot@[]
+        | 
+  in parcours_aux [arb] []
+*)
+
+let rec parcours_arbre (Noeud(b,lb)) = 
+  let rec parcours_reste_branche lb = 
+    match lb with 
+    | [] -> []
+    | (caract,a)::q -> (List.map (fun m -> caract::m) (parcours_arbre a)) @ parcours_reste_branche q
+    (*pour chacune des sous arbres je récupère les mots quelle forme et j'ajoute le caractère actuel *)
+  in 
+  if b = true then []::(parcours_reste_branche lb) (*mot vide dans arbre*)
+  else parcours_reste_branche lb 
 
 
 (* [eq_perm l l'] retourne true ssi [l] et [l']
@@ -149,7 +163,6 @@ let parcours_arbre arb =
    let eq_perm l l' =
       List.length l = List.length l' && List.for_all (fun x -> List.mem x l) l'
   
-  (*
   let%test _ = parcours_arbre (Noeud(true,[])) = [[]]
   
   let%test _ = parcours_arbre (Noeud(false,[])) = []
@@ -157,7 +170,6 @@ let parcours_arbre arb =
   let%test _ = eq_perm (parcours_arbre arbre_sujet) [['b';'a';'s']; ['b';'a';'t']; ['d';'e']; ['l';'a']; ['l';'a';'i'];
   ['l';'a';'i';'d']; ['l';'a';'i';'t']; ['l';'a';'r';'d']; ['l';'e'];
   ['l';'e';'s']; ['l';'o';'n';'g']]
-  *)
 
 
 (******************************************************************************)
@@ -167,7 +179,27 @@ let parcours_arbre arb =
 (*   résultat   : l'arbre d'entrée sans branche inutiles                      *)
 (******************************************************************************)
 
-let normalisation _ = failwith "TO DO normalisation"
+let fins_depuis_branches br = List.map fst (List.map snd br)
+
+let faux_si_tous_faux l = List.fold_right (fun boolean acc -> boolean || acc) l false
+
+let rec remonter_faux (Noeud(fin, br)) =
+    match br with
+      | [] -> fin
+      | _ -> faux_si_tous_faux (fins_depuis_branches br)
+
+(*let normalisation (Noeud(fin, br)) = *)
+
+let rec normalisation (Noeud(b,lb)) =
+  let rec normal_branches l =
+    match l with
+    | [] -> []
+    | (c,arbre)::q ->
+      let arbre_norm = normalisation arbre in
+      match arbre_norm with
+      | Noeud(false,[]) -> normal_branches q
+      | _ -> (c,arbre_norm)::normal_branches q
+    in Noeud(b,(normal_branches lb))
 
 (*
 let%test _ = normalisation (Noeud (true,[('a',Noeud(false,[]))])) = Noeud(true,[])
