@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parallélisme régulé</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Parallélisme régulé</h1>
+</header>
+<h1 id="objectifs">Objectifs</h1>
+<ul>
+<li>gérer le parallélisme à gros grain</li>
+<li>paralléliser un algorithme par décomposition en sous-tâches</li>
+<li>connaître les services d’exécution de la plateforme Java</li>
+</ul>
+<h2 id="exercices">Exercices</h2>
+<p>Chaque exercice comporte un calcul séquentiel qu’il faut
+paralléliser.</p>
+<p>Les exercices utilisent des tableaux d’entiers stockés sur disque.
+L’archive fournie comporte une classe <code>LargeIntArray</code>
+permettant de générer, charger en mémoire, sauvegarder, comparer ou
+trier de tels tableaux. La méthode <code>main</code> permet en outre
+d’appeler les méthodes de la classe <code>LargeIntArray</code> depuis la
+console.</p>
+<p>Cette application sera utilisée pour générer les jeux de données
+utiles aux tests. En effet, pour que le gain apporté par les versions
+parallèles soit sensible, il est nécessaire que les volumes de données
+traités soient significatifs (tableaux de 1 à 100 millions d’entrées),
+ce qui aurait alourdi l’archive.</p>
+<ul>
+<li>Génération d’un gros fichier avec des valeurs entre -1000 et 1000
+(<code>foo</code> est le nom du fichier créé) :<br />
+<code>java LargeIntArray -g foo 10000000 1000</code></li>
+<li>Tri du tableau (pour les exercices de comptage) :<br />
+<code>java LargeIntArray -s foo</code></li>
+<li><em>Penser à supprimer les fichiers créés une fois le TP
+passé.</em></li>
+</ul>
+<h3 id="calcul-du-maximum-dun-tableau-répertoire-max">Calcul du maximum
+d’un tableau (répertoire <code>max</code>)</h3>
+<p>Le but est de trouver l’élément maximal du tableau. La méthode
+<code>LargeIntArray.max(int[] array, int start, int end)</code> calcule
+le max en parcourant séquentiellement le tableau entre les indices
+<code>[start..end[</code>.</p>
+<ol type="1">
+<li><code>MaxTabSequential.java</code> contient une version purement
+séquentielle.</li>
+<li>Compléter <code>MaxTabThread.java</code> en s’inspirant de
+<code>exemples/SommeThreadPlus.java</code>.</li>
+<li>Compléter <code>MaxTabPool.java</code> en s’inspirant de
+<code>exemples/SommePool.java</code>.</li>
+<li>Compléter <code>MaxTabForkJoin.java</code> en s’inspirant de
+<code>exemples/SchemaForkJoin.java</code>.</li>
+<li>Comparer les performances des solutions avec un gros tableau
+<code>foo</code> :<br />
+<code>java MaxTabSequential foo 20</code> – 20 = nombre
+d’expériences<br />
+<code>java MaxTabThread foo 20 4</code> – 4 = nombre de threads<br />
+<code>java MaxTabPool foo 20 4 8</code> – 4 = taille du pool, 8 = nombre
+de jobs<br />
+<code>java MaxTabForkJoin foo 20 1000</code> – 1000 = seuil d’arrêt de
+la décomposition</li>
+<li>Faire varier le nombre de threads / taille du pool / seuil
+d’arrêt.</li>
+<li>Analyser les résultats : quelle est la version la plus facile à
+écrire ? Quelle la version la plus efficace ?</li>
+</ol>
+<h3 id="comptage-des-éléments-dans-un-intervalle">Comptage des éléments
+dans un intervalle</h3>
+<p><em>Attention</em> : le tableau doit être trié. Le but est de compter
+le nombre de valeurs dans le tableau entre 0 et 9 (constantes VMIN/VMAX
+arbitrairement fixées). La méthode
+<code>LargeIntArray.count(int[] array, int start, int end, int vmin, int vmax)</code>
+compte le nombre d’éléments entre vmin et vmax (inclus) en parcourant
+séquentiellement le tableau entre les indices <code>[start..end[</code>.
+Observer que vu que le tableau est trié, il est inutile de parcourir un
+tronçon si le premier élément du tronçon est supérieur à VMAX ou si le
+dernier est inférieur à VMIN : il y a nécessairement 0 valeur entre VMIN
+et VMAX. Ceci induit que la décomposition est irrégulière avec certaines
+tâches quasi-instantanées et d’autres longues.</p>
+<ol type="1">
+<li><code>CountSequential.java</code> contient une version purement
+séquentielle.</li>
+<li>Compléter <code>CountThread.java</code>.</li>
+<li>Compléter <code>CountPool.java</code>.</li>
+<li>Compléter <code>CountForkJoin.java</code>.</li>
+<li>Comparer les performances des solutions avec un gros tableau
+<code>foo</code> :<br />
+<code>java CountSequential foo 20</code> – 20 = nombre
+d’expériences<br />
+<code>java CountThread foo 20 4</code> – 4 = nombre de threads<br />
+<code>java CountPool foo 20 4 8</code> – 4 = taille du pool, 8 = nombre
+de jobs<br />
+<code>java CountForkJoin foo 20 1000</code> – 1000 = seuil d’arrêt de la
+décomposition</li>
+<li>Faire varier le nombre de threads / taille du pool / seuil
+d’arrêt.</li>
+<li>Analyser les résultats : quelle est la version la plus facile à
+écrire ? Quelle la version la plus efficace ?</li>
+</ol>
+<h3 id="comptage-des-mots-dans-les-fichiers-dune-arborescence">Comptage
+des mots dans les fichiers d’une arborescence</h3>
+<p><strong>Pour aller plus loin</strong> (non demandé pour ce TP),
+l’application de comptage de mots dans une arborescence (répertoire
+<code>wordcount</code>) réalise la commande
+<code>find repertoire -type f -exec grep mot {} \; | wc</code>. Elle
+permet d’illustrer la parallélisation d’un problème irrégulier.</p>
+<ul>
+<li>Paralléliser l’algorithme récursif proposé en utilisant le schéma
+fork/join.</li>
+<li>Comparer cette version avec la version séquentielle en termes de
+facilité de conception et de performances. Pour le test, on pourra
+prendre un répertoire contenant des fichiers sources et rechercher un
+mot clé du langage.</li>
+</ul>
+<h2 id="outils">Outils</h2>
+<ul>
+<li><code>System.nanoTime()</code> et
+<code>System.currentTimeMillis()</code> fournissent une durée écoulée
+(en ns et ms) depuis une date d’origine non spécifiée. La différence
+entre les valeurs retournées par deux appels successifs permet d’évaluer
+le temps écoulé entre ces deux appels.</li>
+<li><code>Runtime.getRuntime().availableProcessors()</code> fournit le
+nombre de processeurs disponibles pour la JVM.</li>
+</ul>
+<h2
+id="tester-les-performances-dapplications-concurrentes-en-java">Tester
+les performances d’applications concurrentes en Java</h2>
+<ul>
+<li>sources de perturbation : cache, compilateur à la volée, ramasse
+miettes et optimiseur, charge de l’environnement (matériel, réseau)
+-&gt; répéter les mesures</li>
+<li>tester sur des volumes de données significatifs</li>
+<li>connaître le nombre de processeurs réels disponibles</li>
+<li>éviter les optimisations sauvages</li>
+<li>avoir des tâches suffisamment complexes</li>
+<li>avoir un jeu de données varié (non constant en valeur et dans le
+temps)</li>
+<li>arrêter la décomposition en sous-tâches à un seuil raisonnable</li>
+</ul>
+<h1 id="rappel-activités-en-java">Rappel : Activités en Java</h1>
+<p>La présentation qui suit peut être complétée par la lecture de la
+partie correspondante du cours sur les activités (chapitre 6) et par la
+<a
+href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/package-summary.html">documentation
+Java en ligne</a>.</p>
+<h2 id="création-manuelle-des-activités">Création manuelle des
+activités</h2>
+<p>La classe <code>Thread</code> peut être instanciée avec un
+<code>Runnable</code> pour créer une nouvelle activité. Le cycle de vie
+de l’activité est à la charge du programmeur. Si l’activité doit fournir
+un résultat quand elle termine, le programmeur doit prévoir un mécanisme
+de transmission de ce résultat via des variables partagées (ce qui
+induit la nécessité de synchronisation, a minima l’exclusion mutuelle
+pour protéger les accès concurrents).</p>
+<h3 id="un-exemple">Un exemple</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Sum <span class="kw">implements</span> <span class="bu">Runnable</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> from<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> to<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Sum</span><span class="op">(</span><span class="dt">long</span> from<span class="op">,</span> <span class="dt">long</span> to<span class="op">)</span> <span class="op">{</span> <span class="kw">this</span><span class="op">.</span><span class="fu">from</span> <span class="op">=</span> from<span class="op">;</span> <span class="kw">this</span><span class="op">.</span><span class="fu">to</span> <span class="op">=</span> to<span class="op">;}</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> s <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> from<span class="op">;</span> i <span class="op">&lt;=</span> to<span class="op">;</span> i<span class="op">++)</span> s <span class="op">=</span> s <span class="op">+</span> i<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Calcul terminé. Sigma(&quot;</span> <span class="op">+</span> from <span class="op">+</span> <span class="st">&quot;,&quot;</span> <span class="op">+</span> to <span class="op">+</span> <span class="st">&quot;) = &quot;</span> <span class="op">+</span> s<span class="op">);</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SommeThread <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span>Sum<span class="op">&gt;</span> jobs <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Sum</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">1_000_000_000L</span><span class="op">),</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                                       <span class="kw">new</span> <span class="fu">Sum</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">4_000_000_000L</span><span class="op">),</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                       <span class="kw">new</span> <span class="fu">Sum</span><span class="op">(</span><span class="dv">900_000</span><span class="op">,</span> <span class="dv">1_000_000_000L</span><span class="op">),</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                                       <span class="kw">new</span> <span class="fu">Sum</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">100</span><span class="op">),</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                                       <span class="kw">new</span> <span class="fu">Sum</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">3_000_000_000L</span><span class="op">));</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Set</span><span class="op">&lt;</span><span class="bu">Thread</span><span class="op">&gt;</span> threads <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;();</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>Sum j <span class="op">:</span> jobs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">Thread</span> t <span class="op">=</span> <span class="kw">new</span> <span class="bu">Thread</span><span class="op">(</span>j<span class="op">);</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            threads<span class="op">.</span><span class="fu">add</span><span class="op">(</span>t<span class="op">);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            t<span class="op">.</span><span class="fu">start</span><span class="op">();</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="bu">Thread</span> t <span class="op">:</span> threads<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            t<span class="op">.</span><span class="fu">join</span><span class="op">();</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="commentaires">Commentaires</h3>
+<ul>
+<li>L’application crée autant d’activités qu’il y a de calculs à faire.
+Ces activités sont démarrées et l’application attend ensuite leur
+terminaison.</li>
+<li>L’archive contient une variante <code>SommeThreadPlus</code> où
+chaque activité fournit un résultat qui est récupéré dans le programme
+principal.</li>
+</ul>
+<h2 id="création-automatique-des-activités">Création automatique des
+activités</h2>
+<p>La plateforme Java fournit la classe <code>Executor</code> destinée à
+séparer la gestion des activités des aspects purement applicatifs. Le
+principe est qu’un objet de la classe <code>Executor</code> (« exécuteur
+») fournit un <em>service</em> de gestion et d’ordonnancement
+d’activités, auquel on soumet des <em>tâches</em> à traiter. Une
+application est donc vue comme un ensemble de tâches qui sont fournies à
+l’exécuteur. L’exécuteur gère l’exécution des tâches qui lui sont
+soumises de manière indépendante et transparente pour l’application.
+L’objectif de ce service est de permettre :</p>
+<ul>
+<li>de simplifier la tâche du programmeur puisqu’il n’a plus à gérer le
+démarrage des activités ni leur ordonnancement ;</li>
+<li>d’adapter le nombre d’activités exécutées à la charge et au nombre
+de processeurs physiques disponibles.</li>
+</ul>
+<p>Le paquetage <code>java.util.concurrent</code> définit trois
+interfaces pour les exécuteurs :</p>
+<ul>
+<li><code>Executor</code> fournit une méthode <code>execute</code>,
+permettant de soumettre une tâche <code>Runnable</code>.</li>
+<li><code>ExecutorService</code> étend <code>Executor</code> avec une
+méthode <code>submit</code> permettant de soumettre une tâche
+<code>Callable</code> et renvoyant un objet <code>Future</code>, lequel
+permet de récupérer la valeur de retour de la tâche
+<code>Callable</code> soumise. Un <code>ExecutorService</code> permet en
+outre de soumettre des ensembles de tâches <code>Callable</code> et de
+gérer la terminaison de l’exécuteur.</li>
+<li><code>ScheduledExecutorService</code> étend
+<code>ExecutorService</code> avec des méthodes permettant de spécifier
+l’ordonnancement des tâches soumises.</li>
+</ul>
+<p>Différentes implantations d’exécuteurs sont fournies. Le principe
+commun est de distribuer les tâches soumises à un ensemble d’ouvriers.
+Chaque ouvrier est un thread cyclique qui traite une par une les tâches
+qui lui sont attribuées.</p>
+<p>Les exécuteurs fournis par le paquetage
+<code>java.util.concurrent</code> sont de deux sortes : les pools
+d’activités et les pools pour fork/join.</p>
+<h2 id="pools-de-threads">Pools de threads</h2>
+<p>La classe <code>java.util.concurrent.Executors</code> fournit des
+méthodes permettant de créer des pools de threads implantant
+<code>ExecutorService</code> avec un nombre d’ouvriers fixe
+(<code>newFixedThreadPool</code>), variable
+(<code>newCachedThreadPool</code>) ou permettant une régulation par vol
+de tâches (<code>newWorkStealingPool</code>). Une variante implantant
+<code>ScheduledExecutorService</code> est proposée pour chacune de ces
+méthodes afin d’intervenir sur l’ordonnancement des tâches. Enfin, les
+classes <code>ThreadPoolExecutor</code> et
+<code>ScheduledThreadPoolExecutor</code> proposent encore davantage
+d’options sur la paramétrage et la supervision de l’ordonnancement.</p>
+<p>Les pools de threads évitent la création de nouveaux threads pour
+chaque tâche à traiter puisque qu’un même ouvrier est réutilisé pour
+traiter une suite de tâches, ce qui présente plusieurs avantages :</p>
+<ul>
+<li>éviter la création de threads apporte un gain (significatif lorsque
+les tâches sont nombreuses) en termes de consommation de ressources
+mémoire et processeur ;</li>
+<li>le délai de prise en charge des requêtes est réduit du temps de la
+création du traitant de la requête ;</li>
+<li>le contrôle du nombre d’ouvriers va permettre de réguler l’exécution
+en fonction des ressources matérielles disponibles au lieu d’avoir une
+exécution directement dépendante du flux de tâches à traiter. Ainsi dans
+le cas d’un flux de tâches augmentant brutalement, les performances se
+dégraderont progressivement (car le délai de prise en charge augmentera
+proportionnellement au nombre de tâches en attente) mais il n’y aura pas
+d’écroulement dû à un épuisement des ressources nécessaires.</li>
+<li>Les pools de threads sont bien adaptés au traitement de problèmes
+réguliers, décomposables en sous-problèmes de « taille » équivalente, ce
+qui garantit une bonne répartition des tâches entre ouvriers.</li>
+</ul>
+<h3 id="classes-et-méthodes-utiles">Classes et méthodes utiles</h3>
+<ul>
+<li>La classe <code>java.util.concurrent.Executors</code> permet de
+créer des pools de threads par appel de
+<code>newFixedThreadPool()</code> ou
+<code>newCachedThreadPool()</code>.</li>
+<li>La classe <code>ExecutorService</code> et sa superclasse
+<code>Executor</code> définissent l’interface d’un exécuteur, avec
+notamment les méthodes <code>submit()</code>, <code>execute()</code> et
+<code>shutdown()</code> (gestion de la terminaison de l’exécuteur).</li>
+<li>La classe <code>Future</code> fournit immédiatement une référence
+vers le résultat à venir d’une tâche <code>Callable</code>soumise à
+l’exécuteur par <code>submit()</code>. L’appel de la méthode
+<code>get()</code> permet d’obtenir le résultat effectif, en bloquant
+s’il n’est pas encore disponible.</li>
+<li>Les tâches ne renvoyant pas de résultat sont des
+<code>Runnable</code>, soumises à l’exécuteur par
+<code>execute()</code>.</li>
+</ul>
+<h3 id="un-exemple-1">Un exemple</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">Future</span><span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">Callable</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">Executors</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">ExecutorService</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SigmaC <span class="kw">implements</span> <span class="bu">Callable</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> from<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> to<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SigmaC</span><span class="op">(</span><span class="dt">long</span> from<span class="op">,</span> <span class="dt">long</span> to<span class="op">)</span> <span class="op">{</span> <span class="kw">this</span><span class="op">.</span><span class="fu">from</span> <span class="op">=</span> from<span class="op">;</span> <span class="kw">this</span><span class="op">.</span><span class="fu">to</span> <span class="op">=</span> to<span class="op">;}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">Long</span> <span class="fu">call</span><span class="op">()</span> <span class="op">{</span> <span class="co">// le résultat doit être un objet</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> s <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> from<span class="op">;</span> i <span class="op">&lt;=</span> to<span class="op">;</span> i<span class="op">++)</span> s <span class="op">=</span> s <span class="op">+</span> i<span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> s<span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SigmaR <span class="kw">implements</span> <span class="bu">Runnable</span> <span class="op">{</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> from<span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> to<span class="op">;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SigmaR</span><span class="op">(</span><span class="dt">long</span> from<span class="op">,</span> <span class="dt">long</span> to<span class="op">)</span> <span class="op">{</span> <span class="kw">this</span><span class="op">.</span><span class="fu">from</span> <span class="op">=</span> from<span class="op">;</span> <span class="kw">this</span><span class="op">.</span><span class="fu">to</span> <span class="op">=</span> to<span class="op">;}</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> s <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> from<span class="op">;</span> i <span class="op">&lt;=</span> to<span class="op">;</span> i<span class="op">++)</span> s <span class="op">=</span> s <span class="op">+</span> i<span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Calcul terminé. Sigma(&quot;</span> <span class="op">+</span> from <span class="op">+</span> <span class="st">&quot;,&quot;</span> <span class="op">+</span> to <span class="op">+</span> <span class="st">&quot;) = &quot;</span> <span class="op">+</span> s<span class="op">);</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SommePool <span class="op">{</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">ExecutorService</span> executor <span class="op">=</span> <span class="bu">Executors</span><span class="op">.</span><span class="fu">newFixedThreadPool</span><span class="op">(</span><span class="dv">2</span><span class="op">);</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Future</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> f1 <span class="op">=</span> executor<span class="op">.</span><span class="fu">submit</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SigmaC</span><span class="op">(</span><span class="dv">0L</span><span class="op">,</span> <span class="dv">1_000_000_000L</span><span class="op">));</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Future</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> f2 <span class="op">=</span> executor<span class="op">.</span><span class="fu">submit</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SigmaC</span><span class="op">(</span><span class="dv">0L</span><span class="op">,</span> <span class="dv">4_000_000_000L</span><span class="op">));</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        executor<span class="op">.</span><span class="fu">execute</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SigmaR</span><span class="op">(</span><span class="dv">900_000L</span><span class="op">,</span> <span class="dv">1_000_000_000L</span><span class="op">));</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Future</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> f3 <span class="op">=</span> executor<span class="op">.</span><span class="fu">submit</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SigmaC</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">100</span><span class="op">));</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Future</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> f4 <span class="op">=</span> executor<span class="op">.</span><span class="fu">submit</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SigmaC</span><span class="op">(</span><span class="dv">0L</span><span class="op">,</span> <span class="dv">3_000_000_000L</span><span class="op">));</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Résultat obtenu. f1 = &quot;</span> <span class="op">+</span> f1<span class="op">.</span><span class="fu">get</span><span class="op">());</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Résultat obtenu. f2 = &quot;</span> <span class="op">+</span> f2<span class="op">.</span><span class="fu">get</span><span class="op">());</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Résultat obtenu. f3 = &quot;</span> <span class="op">+</span> f3<span class="op">.</span><span class="fu">get</span><span class="op">());</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Résultat obtenu. f4 = &quot;</span> <span class="op">+</span> f4<span class="op">.</span><span class="fu">get</span><span class="op">());</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        executor<span class="op">.</span><span class="fu">shutdown</span><span class="op">();</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="commentaires-1">Commentaires</h3>
+<ul>
+<li>L’application crée un pool avec un nombre fixe d’ouvriers (deux)
+puis lance cinq tâches : les deux premières et les deux dernières
+soumises (<code>Callable</code>, soumises par appel à
+<code>submit()</code>) rendent un résultat <code>Future</code>, récupéré
+de manière bloquante par l’appel à la méthode <code>get()</code>. La
+troisième (<code>Runnable</code>, soumise par appel à
+<code>execute()</code>) s’exécute de manière asynchrone.</li>
+<li>L’exécution voit la tâche <code>Runnable</code> terminer après la
+première soumise (<code>f1</code>), car bien que plus courte, elle ne
+peut démarrer tant que l’une des deux premières tâches lancées n’est pas
+terminée, la taille du pool étant de deux. L’appel <code>f2.get()</code>
+entraîne l’attente de la terminaison de <code>f2</code>, plus longue que
+<code>f1</code> et la tâche <code>Runnable</code> cumulées. L’appel de
+<code>f3.get()</code> retourne immédiatement, car <code>f3</code>,
+courte, est déjà terminée. L’appel <code>f4.get()</code> entraîne
+l’attente de la terminaison de <code>f4</code>.</li>
+<li><code>shutdown</code> permet de terminer proprement l’exécuteur qui
+dès lors n’accepte plus de nouvelles tâches. L’application Java termine
+avec la dernière tâche traitée.</li>
+<li>L’archive contient une variante (<code>SommePoolPlus</code>) qui
+illustre l’utilisation de <code>invokeAll()</code> pour soumettre une
+collection de <code>Callable</code>.</li>
+</ul>
+<h2 id="pool-forkjoin-schéma-mapreduce">Pool Fork/Join (Schéma
+Map/Reduce)</h2>
+<p>La classe <code>ForkJoinPool</code> est un exécuteur dont
+l’ordonnancement est adapté à une parallélisation selon le schéma
+<em>fork/join</em> (voir cours). Le principe récursif est</p>
+<ul>
+<li>de traiter directement (séquentiellement) un problème si sa taille
+est suffisamment petite ;</li>
+<li>sinon de diviser le problème en sous-problèmes qui seront traités en
+parallèle (<code>fork</code>) et dont les résultats seront attendus et
+agrégés (<code>join</code>).</li>
+</ul>
+<p>Ce schéma de programmation permet de créer dynamiquement un nombre de
+tâches adapté à la taille de chacun des problèmes rencontrés, chacune
+des tâches créées représentant une charge de travail équivalente. Ce
+schéma est donc bien adapté au traitement de problèmes irréguliers de
+grande taille. L’ordonnanceur de la classe <code>ForkJoinPool</code>
+comporte en outre une régulation (vol de tâches) qui permet l’adaptation
+de l’exécution aux capacités de calcul disponibles.</p>
+<h3 id="classes-et-méthodes-utiles-1">Classes et méthodes utiles</h3>
+<ul>
+<li><code>ForkJoinPool</code>: classe définissant l’exécuteur.</li>
+<li><code>RecursiveTask&lt;V&gt;</code> : définit une tâche soumise à
+l’exécuteur, fournissant un résultat.</li>
+<li><code>RecursiveAction</code> : définit une tâche soumise à
+l’exécuteur, ne fournissant pas de résultat.</li>
+<li><code>ForkJoinTask&lt;V&gt;</code> : superclasse de
+<code>RecursiveTask</code> et <code>RecursiveAction</code>, définissant
+la plupart des méthodes utiles comme <code>fork()</code> et
+<code>join()</code>.</li>
+</ul>
+<h3 id="un-exemple-2">Un exemple</h3>
+<p>Dans cette application, les données à traiter sont représentées par
+un simple entier qui symbolise leur volume.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">RecursiveTask</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">concurrent</span><span class="op">.</span><span class="im">ForkJoinPool</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Problem <span class="kw">extends</span> RecursiveTask<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span> SEUIL <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">int</span> size<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> indent<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Problem</span><span class="op">(</span><span class="dt">int</span> size<span class="op">,</span> <span class="bu">String</span> indent<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">size</span> <span class="op">=</span> size<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">indent</span> <span class="op">=</span> indent<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="bu">Integer</span> <span class="fu">compute</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span><span class="kw">this</span><span class="op">.</span><span class="fu">size</span> <span class="op">&gt;</span> SEUIL<span class="op">)</span> <span class="op">{</span> <span class="co">// la tâche est trop grosse, on la décompose en deux</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>indent <span class="op">+</span> <span class="st">&quot;Fork : &quot;</span> <span class="op">+</span> size<span class="op">);</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            Problem sp1 <span class="op">=</span> <span class="kw">new</span> <span class="fu">Problem</span><span class="op">(</span>size <span class="op">/</span> <span class="dv">2</span><span class="op">,</span> indent <span class="op">+</span> <span class="st">&quot;  &quot;</span><span class="op">);</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            Problem sp2 <span class="op">=</span> <span class="kw">new</span> <span class="fu">Problem</span><span class="op">(</span>size <span class="op">/</span> <span class="dv">2</span><span class="op">,</span> indent <span class="op">+</span> <span class="st">&quot;  &quot;</span><span class="op">);</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            sp1<span class="op">.</span><span class="fu">fork</span><span class="op">();</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            sp2<span class="op">.</span><span class="fu">fork</span><span class="op">();</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="co">// en commençant par sp2.join, la jvm va réutiliser ce thread pour exécuter sp2.</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> result <span class="op">=</span> sp2<span class="op">.</span><span class="fu">join</span><span class="op">()</span> <span class="op">+</span> sp1<span class="op">.</span><span class="fu">join</span><span class="op">();</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>indent <span class="op">+</span> <span class="st">&quot;Traitement direct : &quot;</span> <span class="op">+</span> size<span class="op">);</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">10</span> <span class="op">*</span> size<span class="op">;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SchemaForkJoin <span class="op">{</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">static</span> <span class="dt">final</span> <span class="dt">int</span> TAILLE <span class="op">=</span> <span class="dv">1024</span><span class="op">;</span> <span class="co">// Puissance de 2 pour cet exemple naïf</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        RecursiveTask<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> pb <span class="op">=</span> <span class="kw">new</span> <span class="fu">Problem</span><span class="op">(</span>TAILLE<span class="op">,</span> <span class="st">&quot;&quot;</span><span class="op">);</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        ForkJoinPool fjp <span class="op">=</span> <span class="kw">new</span> <span class="fu">ForkJoinPool</span><span class="op">();</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> startTime <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">nanoTime</span><span class="op">();</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> result <span class="op">=</span> fjp<span class="op">.</span><span class="fu">invoke</span><span class="op">(</span>pb<span class="op">);</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> endTime <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">nanoTime</span><span class="op">();</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Résultat final = &quot;</span> <span class="op">+</span> result<span class="op">);</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Durée exécution : &quot;</span> <span class="op">+</span> <span class="op">(</span>endTime <span class="op">-</span> startTime<span class="op">)</span> <span class="op">/</span> <span class="dv">1000000L</span> <span class="op">+</span> <span class="st">&quot; ms&quot;</span><span class="op">);</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="commentaires-2">Commentaires</h3>
+<ul>
+<li>La méthode abstraite <code>compute()</code> définie dans
+<code>RecursiveTask</code> et <code>RecursiveAction</code> contient le
+code du calcul récursif proprement dit. C’est l’analogue de la méthode
+<code>run()</code> pour la classe <code>Runnnable</code> ou de la
+méthode <code>call()</code> pour la classe <code>Callable</code>.</li>
+<li><code>SEUIL</code> est la taille de problème à partir duquel le
+travail n’est plus subdivisé. Sa valeur est un compromis dépendant de la
+nature du problème. Une règle empirique est que le nombre de sous-tâches
+créées devrait être compris entre 100 et 10 000. Il faut aussi savoir
+que le pool ne peut pas comporter plus de 32K ouvriers.</li>
+<li>Le <code>ForkJoinPool</code> doit être créé une fois et une seule
+pour toute la durée de l’application (ce n’est pas obligatoire mais
+c’est conseillé même pour les experts). On peut aussi utiliser le pool
+par défaut (<code>ForkJoinPool.commonPool()</code>).</li>
+<li>L’appel <code>fjp.invoke(pb);</code> permet de soumettre la tâche
+racine au pool.</li>
+</ul>
+</body>
+</html>
