@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Condition;
  *
  * Implantation: moniteur (java 5), une var condition par taille de demande.
  */
-public class Allocateur_Petits implements Allocateur {
+public class Allocateur_Gros implements Allocateur {
 
     // Nombre total de ressources.
     private final int nbRessources;
@@ -30,7 +30,7 @@ public class Allocateur_Petits implements Allocateur {
     private int[] tailleClasse;
 
     /** Initilialise un nouveau gestionnaire de ressources pour nbRessources. */
-    public Allocateur_Petits(int nbRessources) {
+    public Allocateur_Gros(int nbRessources) {
         this.nbRessources = nbRessources;
         this.nbLibres = nbRessources;
         this.moniteur = new ReentrantLock();
@@ -52,8 +52,8 @@ public class Allocateur_Petits implements Allocateur {
         return demandeOk;
     }*/
 
-    private void reveillerPlusPetit() {
-        for (int etageReveil = 1 ; etageReveil<=nbLibres ; etageReveil++) {
+    private void reveillerPlusGros() {
+        for (int etageReveil = nbLibres ; etageReveil>0 ; etageReveil--) {
             if (tailleClasse[etageReveil] > 0) {
                 classe[etageReveil].signal();
                 break;
@@ -70,7 +70,7 @@ public class Allocateur_Petits implements Allocateur {
         }
         tailleClasse[demande]--;
         nbLibres -= demande;
-        reveillerPlusPetit();
+        reveillerPlusGros();
         moniteur.unlock();
     }
 
@@ -78,14 +78,14 @@ public class Allocateur_Petits implements Allocateur {
     public void liberer(int rendu) throws InterruptedException {
         moniteur.lock();
         nbLibres += rendu;
-        reveillerPlusPetit();
+        reveillerPlusGros();
         moniteur.unlock();
     }
 
     /** Chaîne décrivant la stratégie d'allocation. */
     public String nomStrategie()
     {
-        return "Priorité aux petits demandeurs";
+        return "Priorité aux gros demandeurs";
     }
 
 }
