@@ -179,6 +179,7 @@ let rec parcours_arbre (Noeud(b,lb)) =
 (*   résultat   : l'arbre d'entrée sans branche inutiles                      *)
 (******************************************************************************)
 
+(*
 let fins_depuis_branches br = List.map fst (List.map snd br)
 
 let faux_si_tous_faux l = List.fold_right (fun boolean acc -> boolean || acc) l false
@@ -187,19 +188,20 @@ let rec remonter_faux (Noeud(fin, br)) =
     match br with
       | [] -> fin
       | _ -> faux_si_tous_faux (fins_depuis_branches br)
+*)
 
 (*let normalisation (Noeud(fin, br)) = *)
 
 let rec normalisation (Noeud(b,lb)) =
   let rec normal_branches l =
     match l with
-    | [] -> []
-    | (c,arbre)::q ->
-      let arbre_norm = normalisation arbre in
-      match arbre_norm with
-      | Noeud(false,[]) -> normal_branches q
-      | _ -> (c,arbre_norm)::normal_branches q
-    in Noeud(b,(normal_branches lb))
+      | [] -> []
+      | (c,arbre)::q ->
+        let arbre_norm = normalisation arbre in
+        match arbre_norm with
+          | Noeud(false,[]) -> normal_branches q
+          | _ -> (c,arbre_norm)::normal_branches q
+  in Noeud(b,(normal_branches lb))
 
 (*
 let%test _ = normalisation (Noeud (true,[('a',Noeud(false,[]))])) = Noeud(true,[])
