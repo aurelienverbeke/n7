@@ -151,9 +151,8 @@ let rec parcours_arbre (Noeud(b,lb)) =
     match lb with 
     | [] -> []
     | (caract,a)::q -> (List.map (fun m -> caract::m) (parcours_arbre a)) @ parcours_reste_branche q
-    (*pour chacune des sous arbres je récupère les mots quelle forme et j'ajoute le caractère actuel *)
   in 
-  if b = true then []::(parcours_reste_branche lb) (*mot vide dans arbre*)
+  if b = true then []::(parcours_reste_branche lb)
   else parcours_reste_branche lb 
 
 
@@ -203,7 +202,6 @@ let rec normalisation (Noeud(b,lb)) =
           | _ -> (c,arbre_norm)::normal_branches q
   in Noeud(b,(normal_branches lb))
 
-(*
 let%test _ = normalisation (Noeud (true,[('a',Noeud(false,[]))])) = Noeud(true,[])
 let%test _ = normalisation (Noeud (true,[('a',Noeud(false,[]));('e',Noeud(false,[]));('p',Noeud(false,[]))])) = Noeud(true,[])
 let%test _ = normalisation (Noeud (true,[('a',Noeud(false,[('a',Noeud(false,[]));('e',Noeud(false,[]));('p',Noeud(false,[]))]))])) = Noeud(true,[])
@@ -212,4 +210,3 @@ let%test _ = normalisation (retrait_arbre ['d';'e'] arbre_sujet) = Noeud(false,[
 let bb' = ('b',Noeud(false,[('a',Noeud(false,[('s',Noeud(true,[]))]))]))
 let%test _ = normalisation (retrait_arbre ['b';'a';'t'] arbre_sujet) = Noeud(false,[bb';bd;bl])
 let%test _ = normalisation  (retrait_arbre ['b';'a';'s'] (retrait_arbre ['b';'a';'t'] arbre_sujet)) = Noeud(false,[bd;bl])
-*)

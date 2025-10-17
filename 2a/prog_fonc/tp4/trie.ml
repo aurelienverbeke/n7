@@ -9,8 +9,8 @@ type ('a,'b) trie = Trie of ('b arbre) * ('a -> 'b list) * ('b list -> 'a)
 
 (* Pour les tests *)
 let trie_sujet = Trie (arbre_sujet, decompose_chaine, recompose_chaine)
-let trie_vide = Trie ( Noeud (false,[]), decompose_chaine, recompose_chaine)
-let trie_presque_vide = Trie ( Noeud (true,[]), decompose_chaine, recompose_chaine)
+let trie_vide = Trie (Noeud (false,[]), decompose_chaine, recompose_chaine)
+let trie_presque_vide = Trie (Noeud (true,[]), decompose_chaine, recompose_chaine)
 
 
 (******************************************************************************)
@@ -80,7 +80,12 @@ in a <> arbre_sujet
 (*                - un trie                                                   *)
 (*   résultat   : le trie, avec l'arbre non normalisé, avec le mot retiré     *)
 (******************************************************************************)
+
+(*
+Ancienne version sans normalisation
 let retrait mot (Trie(arbre, decompose, recompose)) = Trie(retrait_arbre (decompose mot) arbre, decompose, recompose)
+*)
+let retrait mot (Trie(arbre, decompose, recompose)) = Trie(normalisation (retrait_arbre (decompose mot) arbre), decompose, recompose)
 
 let%test _ = let Trie (a,_decomp,_recomp)= retrait "" trie_presque_vide in a = (Noeud(false,[]))
 let%test _ = let Trie (a,_decomp,_recomp)= retrait "" trie_vide in a = (Noeud(false,[]))
@@ -102,13 +107,12 @@ let%test _ = not (appartient "long" (retrait "long" trie_sujet))
 (*   paramètre(s) : le trie                                                   *)
 (*   résultat     : la liste des mots                                         *)
 (******************************************************************************)
-let parcours _ = failwith "TO DO trie_dico"
+let parcours (Trie(arbre, _, recompose)) = List.map recompose (parcours_arbre arbre)
 
-(*
 let%test _ = parcours trie_presque_vide = [""]
 let%test _ = parcours trie_vide = []
 let%test _ = eq_perm (parcours trie_sujet) ["bas"; "bat"; "de"; "la"; "lai"; "laid"; "lait"; "lard"; "le"; "les"; "long"]
-*)
+
 
 (******************************************************************************)
 (* procédure d'affichage d'un trie                                            *)
@@ -117,9 +121,8 @@ let%test _ = eq_perm (parcours trie_sujet) ["bas"; "bat"; "de"; "la"; "lai"; "la
 (*                - un trie                                                   *)
 (*   résultat   : aucun                                                       *)
 (******************************************************************************)
-let affiche _ = failwith "TO DO affiche"
+let affiche fonction_affichage arbre = List.iter fonction_affichage (parcours arbre)
 
-(*
 let%expect_test _ = (affiche affiche_chaine trie_presque_vide);
 [%expect{| |}]
 let%expect_test _ = (affiche affiche_chaine trie_vide);
@@ -137,4 +140,3 @@ le
 les
 long
           |}]
-*)
