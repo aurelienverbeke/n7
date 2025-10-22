@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
@@ -34,12 +35,17 @@ public class MaxTabPool {
         // Le traitement du tableau est décomposé en segement de taille taskSize : [0..taskSize[, [taskSize..2*taskSize[ etc
         // et une tâche est créée pour traiter chaque segment.
         // On fera attention que la taille du tableau n'est pas nécessairement un multiple de taskSize : le dernier segment peut être plus court (utiliser Math.min(..., array.length)).
-        /* XXXX À COMPLÉTER XXXX */
+        for (int iTask=0 ; iTask<numberOfTasks ; iTask++) {
+            results.add(executor.submit(new PartialMax(array, iTask*taskSize, Math.min((iTask+1)*taskSize, array.length))));
+        }
 
         // Récupérer les résultats et les fusionner
-        /* XXXX À COMPLÉTER XXXX */
+        int max = 0;
+        for (Future<Integer> result : results) {
+            max = Math.max(result.get(), max);
+        }
 
-        return 0; // pour que ça compile
+        return max; // pour que ça compile
     }
     
     public static void main(String[] args) throws Exception {

@@ -20,8 +20,14 @@ public class MaxTabForkJoin {
         /* Si l'intervalle à explorer est supérieur au seuil (threshold), on décompose
            en deux sous-tâches. Sinon, on utilise directement LargeIntArray.max. */
         public Integer compute() {
-            /* XXXX À COMPLÉTER XXXX */
-            return 0; // pour que ça compile
+            if (array.length > threshold) {
+                int indiceSeparation = (start-end)/2;
+                PartialMax p1 = new PartialMax(array, start, indiceSeparation, threshold);
+                PartialMax p2 = new PartialMax(array, indiceSeparation+1, end, threshold);
+                return Math.max(p1.join(), p2.join());
+            } else {
+                return LargeIntArray.max(array, start, end);
+            }
        }
     }
         

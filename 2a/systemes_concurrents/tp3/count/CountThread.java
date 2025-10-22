@@ -36,15 +36,28 @@ public class CountThread {
         List<Integer> results = new LinkedList<>();
 
         // Démarrer les activités
-        /* XXXX À COMPLÉTER XXXX */
+        List<PartialCount> jobs = new ArrayList<>();
+        for (int iJob=0 ; iJob<numberOfThreads ; iJob++) {
+            jobs.add(new PartialCount(array, iJob*taskSize, Math.min((iJob+1)*taskSize, array.length), results));
+        }
+
+        for (PartialCount j : jobs) {
+            Thread t = new Thread(j);
+            threads.add(t);
+            t.start();
+        }
 
         // Attendre la terminaison des activités
-        /* XXXX À COMPLÉTER XXXX */
+        for (Thread t : threads) {
+            t.join();
+        }
 
         // Récupérer les résultats et les fusionner
-        /* XXXX À COMPLÉTER XXXX */
-
-        return 0; // pour que ça compile
+        int count = 0;
+        for (Integer r : results) {
+            count += r;
+        }
+        return count;
     }
     
     public static void main(String[] args) throws Exception {
