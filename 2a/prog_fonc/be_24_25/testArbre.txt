@@ -1,0 +1,135 @@
+
+  (* TESTS - ATTENTION les tests peuvent échouer car l'ordre des branches n'est pas fixé *)  
+
+  let a1 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(6,
+              Noeud
+                ([],
+                 [(6,
+                   Noeud
+                     ([],
+                      [(5,
+                        Noeud
+                          ([],
+                           [(6,
+                             Noeud
+                               ([], [(8, Noeud ([], [(7, Noeud (["bonjour"], []))]))]))]))]))]))]))])
+  let%test _ = a1 = ajouter [2;6;6;5;6;8;7] "bonjour" empty
+
+  let a2 = Noeud
+      ([],
+       [(6,
+         Noeud
+           ([],
+            [(2,
+              Noeud
+                ([],
+                 [(2, Noeud ([], [(6, Noeud ([], [(5, Noeud (["ocaml"], []))]))]))]))]))])
+
+  let%test _ = a2 = ajouter [6;2;2;6;5] "ocaml" empty
+
+  let a3 =   Noeud
+      ([],
+       [(2, Noeud (["a"], []));
+        (6,
+         Noeud
+           ([],
+            [(2,
+              Noeud
+                ([],
+                 [(2, Noeud ([], [(6, Noeud ([], [(5, Noeud (["ocaml"], []))]))]))]))]))])
+
+  let%test _ = a3 = ajouter [2] "a" a2
+
+  let a4 = Noeud ([], [(2, Noeud ([], [(8, Noeud (["au"], []))]))])
+
+  let%test _ = a4 = ajouter [2;8] "au" empty
+
+  let a5 = Noeud
+      ([], [(2, Noeud ([], [(6, Noeud (["an"], [])); (8, Noeud (["au"], []))]))])
+
+  let%test _ = a5 = ajouter [2;6] "an" a4
+
+  let a6 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(6, Noeud (["an"], [(3, Noeud (["ane"], []))]));
+             (8, Noeud (["au"], []))]))])
+
+  let%test _ = a6 = ajouter [2;6;3] "ane" a5
+
+  let a7 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(6, Noeud (["an"], [(3, Noeud (["ame";"ane"], []))]));
+             (8, Noeud (["au"], []))]))])
+
+
+  let%test _ = a7 = ajouter [2;6;3] "ame" a6
+
+  let a8 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(6, Noeud (["an"], [(3, Noeud (["bof";"ame";"ane"], []))]));
+             (8, Noeud (["au"], []))]))])
+
+
+  let%test _ = a8 = ajouter [2;6;3] "bof" a7
+
+  let a9_1 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(6, Noeud (["an"], [(3, Noeud (["bof";"ame";"ane"], []))]));
+             (8, Noeud (["bu";"au"], []))]))])
+  let a9_2 = Noeud
+      ([],
+       [(2,
+         Noeud
+           ([],
+            [(8, Noeud (["bu"; "au"], []));
+             (6, Noeud (["an"], [(3, Noeud (["bof"; "ame"; "ane"], []))]))]))])
+
+
+  let%test _ = (a9_1 = ajouter [2;8] "bu" a8 || a9_2 = ajouter [2;8] "bu" a8)
+
+  let%test _ = eq_perm (chercher [2;8] a9_1) ["bu"; "au"]
+  let%test _ = eq_perm (chercher [2;6] a9_1) ["an"]
+  let%test _ = eq_perm (chercher [2;6;3] a9_1) ["bof"; "ame"; "ane"]
+  let%test _ = eq_perm (chercher [1;4;5] a9_1) []
+  let%test _ = eq_perm (chercher [2;8] a9_2) ["bu"; "au"]
+  let%test _ = eq_perm (chercher [2;6] a9_2) ["an"]
+  let%test _ = eq_perm (chercher [2;6;3] a9_2) ["bof"; "ame"; "ane"]
+  let%test _ = eq_perm (chercher [1;4;5] a9_2) []
+
+  let%test _ = max_mots_code_identique a9_1 = 3
+  let%test _ = max_mots_code_identique a9_2 = 3
+  let%test _ = max_mots_code_identique a8 = 3
+  let%test _ = max_mots_code_identique a7 = 2
+  let%test _ = max_mots_code_identique a6 = 1
+  let%test _ = max_mots_code_identique a5 = 1
+  let%test _ = max_mots_code_identique a4 = 1
+  let%test _ = max_mots_code_identique a3 = 1
+  let%test _ = max_mots_code_identique a2 = 1
+  let%test _ = max_mots_code_identique a1 = 1
+
+
+
+  let%test _ = eq_perm (prefixe [2] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
+  let%test _ = eq_perm (prefixe [2;6] a9_1) ["ame";"an";"ane";"bof"]
+  let%test _ = eq_perm (prefixe [2;8] a9_1) ["au";"bu"]
+  let%test _ = eq_perm (prefixe [3;8] a9_1) []
+  let%test _ = eq_perm (prefixe [] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
+  let%test _ = eq_perm (prefixe [] a9_2) ["ame";"an";"ane";"au";"bof";"bu"]
+  let%test _ = eq_perm (prefixe [] a6) ["an";"ane";"au"]
