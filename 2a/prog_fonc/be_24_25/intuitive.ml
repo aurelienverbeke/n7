@@ -16,7 +16,9 @@ struct
   (* Le paramètre est la lettre à encoder *)
   (* Renvoie la touche à utiliser si c'est une lettre minuscule,
      0 pour les autres caractères *)
-  let encoder_lettre = assert false
+  let encoder_lettre lettre = match List.find_opt (fun (_, lettres) -> List.mem lettre lettres) E.map with
+     | None -> 0
+     | Some (chiffre, _) -> chiffre
 
 
   (* encoder_mot : string -> int list *)
@@ -25,7 +27,7 @@ struct
   (* Le paramètre est le mot à encoder *)
   (* Renvoie la liste des touches à composer *)
 
-  let encoder_mot = assert false
+  let encoder_mot mot = List.map encoder_lettre (Chaines.decompose_chaine mot)
 
 
   (***************************************************************************)

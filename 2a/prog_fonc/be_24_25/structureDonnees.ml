@@ -97,27 +97,75 @@ let%test _ = eq_perm (ListAssoc.prefixe [2;2] [([2;2],["bb";"aa";"cc"]); ([2;7;3
 
 (* Implémente la structure de données du dictionnaire avec un arbre *)
 type dico_t = Noeud of ( string list * ( int * dico_t ) list )
+
+(* Fonctions utilitaires pour la manipulation d'arbres *)
+module ManipulationArbre =
+struct
+  (*  Revoie le noeud correspondant à un certain prefixe ou None s'il n'existe pas 
+      Paramètres :
+        - prefixe : le prefixe
+        - arbre : l'arbre dans lequel chercher le noeud
+      Retourne :
+        - sous-arbre correspondant au prefixe fourni
+  *)
+  let rec arbre_prefixe prefixe (Noeud(mots, branches)) = match prefixe with
+    | [] -> Some (Noeud(mots, branches))
+    | chiffre::r -> match List.assoc_opt chiffre branches with
+      | None -> None
+      | Some sous_arbre -> arbre_prefixe r sous_arbre
+  
+  (*  Parcours tous les mots d'un arbre
+      EN LES LAISSANT GROUPES PAR NOEUD
+      Paramètre : arbre a parcourir
+      Retourne : liste des mots trouvés dans l'arbre
+  *)
+  let rec parcours_groupe (Noeud(mots, branches)) =
+    mots::List.flatten(List.map (fun (_, sous_arbre) -> parcours_groupe sous_arbre) branches)
+  
+  (*  Parcours tous les mots d'un arbre
+      Paramètre : arbre a parcourir
+      Retourne : liste des mots trouvés dans l'arbre
+  *)
+  let rec parcours arbre = List.flatten (parcours_groupe arbre)
+end
+
 module Arbre : StructureDonnees with type dico = dico_t =
 struct
   type dico = dico_t
+
   let empty = Noeud([], [])
+
   let rec ajouter encodage mot (Noeud(mots, branches)) = match encodage with
+      (* On est arrivé à la fin de l'encodage, on ajoute le mot à la liste *)
     | [] -> if List.mem mot mots then Noeud(mots, branches) else Noeud(mot::mots, branches)
+      (* Il reste des chiffres à parcourir dans l'encodage *)
     | chiffre::r ->
-      let branches_maj = List.map
-        (fun (chiffre_branche, sous_arbre) -> if chiffre = chiffre_branche
-          then (chiffre_branche, ajouter r mot sous_arbre)
-          else (chiffre_branche, sous_arbre)
-        )
-        branches
+      (* Nouvelle liste des branches *)
+      let branches_maj = if List.mem_assoc chiffre branches
+        then
+          (* Le prochain chiffre dispose déjà d'une branche
+              On met à jour la bonne branche *)
+          List.map
+          (fun (chiffre_branche, sous_arbre) -> if chiffre = chiffre_branche
+            then (chiffre_branche, ajouter r mot sous_arbre)
+            else (chiffre_branche, sous_arbre)
+          )
+          branches
+        else
+          (* Le prochain chiffre ne dispose pas déjà d'une branche
+              On la rajoute *)
+          (chiffre, ajouter r mot empty)::branches
       in Noeud(mots, branches_maj)
-  let rec chercher encodage (Noeud(mots, branches)) = match encodage with
-      | [] -> mots
-      | chiffre::r -> match List.assoc_opt chiffre branches with
-        | None -> []
-        | Some sous_arbre -> chercher r sous_arbre
-  let max_mots_code_identique (Noeud(mots, branches)) = failwith ""
-  let prefixe prefixe_encodage (Noeud(mots, branches)) = failwith ""
+
+  let rec chercher encodage arbre = match ManipulationArbre.arbre_prefixe encodage arbre with
+      | None -> []
+      | Some (Noeud(mots, _)) -> mots
+
+  let max_mots_code_identique arbre = List.fold_right (fun groupe acc -> max acc (List.length groupe)) (ManipulationArbre.parcours_groupe arbre) 0
+
+  let prefixe prefixe_encodage arbre = match ManipulationArbre.arbre_prefixe prefixe_encodage arbre with
+    | None -> []
+    | Some sous_arbre -> ManipulationArbre.parcours sous_arbre
 end
 
 
@@ -234,25 +282,23 @@ let%test _ = eq_perm (Arbre.chercher [2;6] a9_2) ["an"]
 let%test _ = eq_perm (Arbre.chercher [2;6;3] a9_2) ["bof"; "ame"; "ane"]
 let%test _ = eq_perm (Arbre.chercher [1;4;5] a9_2) []
 
-(*
-let%test _ = max_mots_code_identique a9_1 = 3
-let%test _ = max_mots_code_identique a9_2 = 3
-let%test _ = max_mots_code_identique a8 = 3
-let%test _ = max_mots_code_identique a7 = 2
-let%test _ = max_mots_code_identique a6 = 1
-let%test _ = max_mots_code_identique a5 = 1
-let%test _ = max_mots_code_identique a4 = 1
-let%test _ = max_mots_code_identique a3 = 1
-let%test _ = max_mots_code_identique a2 = 1
-let%test _ = max_mots_code_identique a1 = 1
+
+let%test _ = Arbre.max_mots_code_identique a9_1 = 3
+let%test _ = Arbre.max_mots_code_identique a9_2 = 3
+let%test _ = Arbre.max_mots_code_identique a8 = 3
+let%test _ = Arbre.max_mots_code_identique a7 = 2
+let%test _ = Arbre.max_mots_code_identique a6 = 1
+let%test _ = Arbre.max_mots_code_identique a5 = 1
+let%test _ = Arbre.max_mots_code_identique a4 = 1
+let%test _ = Arbre.max_mots_code_identique a3 = 1
+let%test _ = Arbre.max_mots_code_identique a2 = 1
+let%test _ = Arbre.max_mots_code_identique a1 = 1
 
 
-
-let%test _ = eq_perm (prefixe [2] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
-let%test _ = eq_perm (prefixe [2;6] a9_1) ["ame";"an";"ane";"bof"]
-let%test _ = eq_perm (prefixe [2;8] a9_1) ["au";"bu"]
-let%test _ = eq_perm (prefixe [3;8] a9_1) []
-let%test _ = eq_perm (prefixe [] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
-let%test _ = eq_perm (prefixe [] a9_2) ["ame";"an";"ane";"au";"bof";"bu"]
-let%test _ = eq_perm (prefixe [] a6) ["an";"ane";"au"]
-*)
+let%test _ = eq_perm (Arbre.prefixe [2] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
+let%test _ = eq_perm (Arbre.prefixe [2;6] a9_1) ["ame";"an";"ane";"bof"]
+let%test _ = eq_perm (Arbre.prefixe [2;8] a9_1) ["au";"bu"]
+let%test _ = eq_perm (Arbre.prefixe [3;8] a9_1) []
+let%test _ = eq_perm (Arbre.prefixe [] a9_1) ["ame";"an";"ane";"au";"bof";"bu"]
+let%test _ = eq_perm (Arbre.prefixe [] a9_2) ["ame";"an";"ane";"au";"bof";"bu"]
+let%test _ = eq_perm (Arbre.prefixe [] a6) ["an";"ane";"au"]
