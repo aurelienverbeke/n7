@@ -75,3 +75,5 @@ struct
                 "cacaber"]
   let%test _ = (List.sort (String.compare) (IntuitiveT9.prefixe [] S.empty)) = []
 end
+
+module Intuitive9Arbre = IntuitiveT9S(Arbre)

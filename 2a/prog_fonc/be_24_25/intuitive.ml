@@ -42,7 +42,7 @@ struct
      être ajouté *)
   (* Le second paramètre est le mot à ajouter *)
   (* Renvoie le nouveau dictionnaire *)
-  let ajouter = assert false
+  let ajouter dic mot = S.ajouter (encoder_mot mot) mot dic
 
 
   (* decoder_mot -> dico -> int list -> string list *)
@@ -51,7 +51,7 @@ struct
   (* Le second paramètre est le dictionnaire *)
   (* Renvoie l'ensemble des mots du dictionnaire correspondants aux touches appuyées *)
 
-  let decoder_mot  = assert false
+  let decoder_mot touches dic = S.chercher touches dic
 
   (* Pour les tests combinés de ajoute et decoder_mot *)
   (* Doivent passer, car ne dépendent pas de l'ordre dans les listes *)
@@ -76,12 +76,10 @@ struct
   (* max_mots_code_identique : dico -> int *)
   (* Calcule le nombre maximum de mots associés à un même code dans un
      dictionnaire *)
-  let max_mots_code_identique  = assert false
+  let max_mots_code_identique dic = S.max_mots_code_identique dic
 
   (* prefixe : int list -> dico -> string list *)
   (* Liste tous les mots dont le préfix est la liste de touches passée en paramètre *)
   (* Lorsque le prefixe est vide, liste l'ensemble des mots du dictionnaire *)
-  let prefixe  = assert false
-
-
+  let prefixe touches dic = S.prefixe touches dic
 end

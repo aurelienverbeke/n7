@@ -81,3 +81,5 @@ struct
   let%test _ = (List.sort (String.compare) (IntuitiveStupide.prefixe [] S.empty)) = []
 
 end
+
+module IntuitiveStupideArbre = IntuitiveStupideS(Arbre)
