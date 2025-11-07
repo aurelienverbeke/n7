@@ -35,7 +35,7 @@ architecture behavior of MasterOpl is
 
   type t_buffer is array (N_OCTETS-1 downto 0) of std_logic_vector(7 downto 0);
   type t_attentes is array (N_OCTETS-1 downto 0) of natural;
-  type t_etat is (REPOS, ER_1OCTET);
+  type t_etat is (REPOS, ER_OCTET, ATTENTE_ER);
 
   signal etat : t_etat;
   signal octets_a_envoyer : t_buffer;
@@ -81,27 +81,41 @@ begin
             octets_a_envoyer(1) <= v2;
             octets_a_envoyer(0) <= (others => '0');
             ss <= '0';
-            etat <= ER_1OCTET;
-            cpt_octet := N_OCTETS;
+            etat <= ER_OCTET;
+            cpt_octet := N_OCTETS-1;
             cpt := attentes(cpt_octet);
           end if;
 
-        when ER_1OCTET =>
-          if (cpt_octet > 0) then
-            if (cpt > 0) then
-              -- attendre
-              cpt := cpt - 1;
-            else
-              -- envoyer l'octet
-              
-
-              -- avancer à l'octet suivant
+        when ER_OCTET =>
+          if (cpt > 0) then
+            -- attendre
+            cpt := cpt - 1;
+          else
+            -- envoyer l'octet
+            octet_a_envoyer <= octets_a_envoyer(cpt_octet);
+            en_er_1octet <= '1';
+            etat <= ATTENTE_ER;
+          end if;
+        
+        when ATTENTE_ER =>
+          -- on attend que le composant er_1octet ait fini de travailler
+          if (busy_er_1octet = '0') then
+            octets_recus(cpt_octet) <= octet_recu;
+            en_er_1octet <= '0';
+            if (cpt_octet > 0) then
+              -- il reste des octets a envoyer
               cpt_octet := cpt_octet - 1;
               cpt := attentes(cpt_octet);
-            end if
-          else
-            -- envoyer les octets
-            etat <= REPOS
+              etat <= ER_OCTET;
+            else
+              -- on a envoyé tous les octets
+              val_nand <= octets_recus(2);
+              val_nor <= octets_recus(1);
+              val_xor <= octets_recus(0);
+              ss <= '1';
+              busy <= '0';
+              etat <= REPOS;
+            end if;
           end if;
       end case;
     end if;
