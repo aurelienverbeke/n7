@@ -40,7 +40,7 @@ architecture behavior of MasterOpl is
   signal etat : t_etat;
   signal octets_a_envoyer : t_buffer;
   signal octets_recus : t_buffer;
-  signal attentes : t_attentes;
+  signal attentes : t_attentes := (15, 3, 5);
 
   signal en_er_1octet : std_logic;
   signal busy_er_1octet : std_logic;
@@ -69,7 +69,6 @@ begin
       busy <= '0';
       en_er_1octet <= '0';
       ss <= '1';
-      attentes <= (15, 3, 5);
     
     -- horloge montante
     elsif (rising_edge(clk)) then
@@ -99,9 +98,11 @@ begin
         
         when ATTENTE_ER =>
           -- on attend que le composant er_1octet ait fini de travailler
-          if (busy_er_1octet = '0') then
+          en_er_1octet <= '0';
+          -- on ajoute la condition sur en_er_1octet sinon
+          -- on tombe au meme moment que le basculement de busy_er_1octet et on saute tout
+          if (busy_er_1octet = '0' and en_er_1octet = '0') then
             octets_recus(cpt_octet) <= octet_recu;
-            en_er_1octet <= '0';
             if (cpt_octet > 0) then
               -- il reste des octets a envoyer
               cpt_octet := cpt_octet - 1;
@@ -111,7 +112,7 @@ begin
               -- on a envoyé tous les octets
               val_nand <= octets_recus(2);
               val_nor <= octets_recus(1);
-              val_xor <= octets_recus(0);
+              val_xor <= octet_recu;
               ss <= '1';
               busy <= '0';
               etat <= REPOS;

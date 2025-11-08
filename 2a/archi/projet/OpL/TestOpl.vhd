@@ -104,7 +104,7 @@ begin
     v1 <= (others => 'U');
     v2 <= (others => 'U');
 
-    wait for 500*clk_period;
+    wait for 100*clk_period;
 
     v1 <= "10010100";
     v2 <= "01101001";
@@ -117,7 +117,7 @@ begin
     v1 <= (others => 'U');
     v2 <= (others => 'U');
 
-    wait for 500*clk_period;
+    wait for 100*clk_period;
 
     v1 <= "00000000";
     v2 <= "00000000";
