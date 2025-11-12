@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Problème des philosophes</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Problème des philosophes</h1>
+</header>
+<h2 id="énoncé">Énoncé</h2>
+<p>N philosophes sont autour d’une table. Il y a une assiette par
+philosophe, et <em>une</em> fourchette entre chaque assiette. Pour
+manger, un philosophe doit utiliser les deux fourchettes adjacentes à
+son assiette (et celles-là seulement).</p>
+<p>Un philosophe peut être dans l’état :</p>
+<ul>
+<li>penseur : il n’utilise pas de fourchettes ;</li>
+<li>mangeur : il utilise les deux fourchettes adjacentes ; aucun de ses
+voisins ne peut manger ;</li>
+<li>demandeur : il souhaite manger mais ne dispose pas des deux
+fourchettes.</li>
+</ul>
+<p>Visuellement les états mangeur/demandeur/penseur sont représentés par
+un rond noir (ou rouge en cas de possible problème) / un rond blanc /
+rien.</p>
+<h2 id="code-fourni">Code fourni</h2>
+<ul>
+<li><code>StrategiePhilo.java</code> : interface de la synchronisation
+entre philosophes.</li>
+<li><code>PhiloCondition.java</code> et <code>PhiloFork.java</code> :
+deux squelettes incomplet de cette interface.</li>
+<li><code>ProcessusPhilosophe.java</code> : code d’un philosophe.</li>
+<li><code>Main.java</code> : programme principal. Définit aussi
+<code>philoDroite(i)</code>, <code>philoGauche(i)</code>,
+<code>fourchetteGauche(i)</code>, <code>fourchetteDroite(i)</code>.</li>
+<li><code>EtatFourchette.java</code> : définition des constantes pour
+fourchette placée sur la table, l’assiette gauche, l’assiette
+droite.</li>
+<li><code>EtatPhilosophe.java</code> : définition des constantes pour
+philosophe penseur, demandeur ou mangeur.</li>
+<li><code>IHM*.java</code> : interface utilisateur.</li>
+<li><code>Synchro/Simulateur.java</code> : le simulateur de temps.</li>
+</ul>
+<h2 id="compilation-et-exécution">Compilation et exécution</h2>
+<pre><code>make compile
+make run</code></pre>
+<hr />
+<h2 id="à-faire">À Faire</h2>
+<h3 id="approche-par-condition">Approche par condition</h3>
+<p>Implanter dans <code>PhiloCondition.java</code> une solution
+construite par l’approche par condition.</p>
+<p>Dans l’approche par condition, un philosophe peut envoyer deux
+requêtes distinctes : une pour demander à manger, une pour indiquer
+qu’il a fini. Les conditions d’acceptation ne sont pas les mêmes, chaque
+philosophe écrit donc sur deux canaux distincts <code>entrer</code> et
+<code>sortir</code>. La condition d’acceptation pour <code>entrer</code>
+est qu’aucun des voisins ne mangent, le scheduler doit donc garder trace
+de l’état des philosophes. Il n’y a pas de condition d’acceptation pour
+<code>sortir</code>. Le scheduler construit une alternative avec
+2*nbphilosophes GuardedChannels.</p>
+<h3 id="approche-ad-hoc">Approche ad-hoc</h3>
+<p>Implanter dans <code>PhiloFork.java</code> une solution construite
+par une approche ad-hoc.</p>
+<p>Dans cette approche ad-hoc, chaque fourchette est une activité qui
+peut recevoir, en boucle, deux messages consécutifs : une prise puis une
+libération. Un philosophe envoie un message de prise à chacune des
+fourchettes qui l’intéressent. Quand les deux sont passés, il mange,
+puis il envoie un message de libération à chacune des fourchettes qu’il
+possède.</p>
+<p>Observer qu’il n’y a pas besoin de <code>select</code> et donc les id
+de channels sont inutiles.</p>
+<ol type="1">
+<li>Faites la version naïve où tous les philosophes prennent gauche puis
+droite (code fourni). Montrer qu’il y a un risque d’interblocage.</li>
+<li>Proposer une solution sans interblocage.</li>
+</ol>
+</body>
+</html>
