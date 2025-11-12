@@ -56,13 +56,24 @@ public class PhiloCondition implements StrategiePhilo {
 
     class Scheduler implements Runnable {
         EtatPhilosophe etat[] = new EtatPhilosophe[nbPhilosophes];
+
         public void run() {
             /* Il faut construire un tableau de 2*nbphilo GuardedChannels, avec les canaux de demande d'entrée et leur condition (aucun des voisins ne mange), et les canaux de demande de sortie (condition = Predicate::True). */
             @SuppressWarnings("unchecked")
             GuardedChannel<ChannelId> gchan[] = new GuardedChannel[2 * nbPhilosophes];
-            /* XXXX TODO: initialiser gchan. */
-            /* XXXX TODO: construire l'alternative. */
-            /* XXXX TODO: boucle avec select et traitement selon l'id du canal où une lecture est possible. */
+            for (int i=0 ; i<nbPhilosophes ; i++) {
+                EtatPhilosophe etatPhilosopheGauche = etat[Main.philoGauche(i)];
+                EtatPhilosophe etatPhilosopheDroit = etat[Main.philoDroite(i)];
+                gchan[i] = new GuardedChannel<ChannelId>(entrer[i], () -> (etatPhilosopheGauche!=EtatPhilosophe.Mange && etatPhilosopheDroit!=EtatPhilosophe.Mange));
+                gchan[nbPhilosophes+i] = new GuardedChannel<>(sortir[i], Predicate::True);
+            }
+
+            var alt = new Alternative<>(gchan);
+
+            while (true) {
+                ChannelId id = alt.select();
+                // TODO
+            }
         }
     } // class Scheduler
 
