@@ -71,10 +71,8 @@ public class VoieUniqueAutomate implements VoieUnique {
                 } else if (etat == Etat.OccupeNS) {
                     switch (altNS.select()) {
                         case EntrerNS:
-                            if (nb < 3) {
-                                entrerNS.read();
-                                nb++;
-                            }
+                            entrerNS.read();
+                            nb++;
                             break;
                         case Sortir:
                             sortir.read();
@@ -87,10 +85,8 @@ public class VoieUniqueAutomate implements VoieUnique {
                 } else if (etat == Etat.OccupeSN) {
                     switch (altSN.select()) {
                         case EntrerSN:
-                            if (nb < 3) {
-                                entrerSN.read();
-                                nb++;
-                            }
+                            entrerSN.read();
+                            nb++;
                             break;
                         case Sortir:
                             sortir.read();
