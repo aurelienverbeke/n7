@@ -40,7 +40,7 @@ architecture behavior of MasterOpl is
   signal etat : t_etat;
   signal octets_a_envoyer : t_buffer;
   signal octets_recus : t_buffer;
-  signal attentes : t_attentes := (15, 3, 5);
+  signal attentes : t_attentes := (14, 1, 3);
 
   signal en_er_1octet : std_logic;
   signal busy_er_1octet : std_logic;

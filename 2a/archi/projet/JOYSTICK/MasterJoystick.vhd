@@ -76,7 +76,7 @@ begin
     elsif (rising_edge(clk)) then
       case etat is
         when REPOS =>
-          octets_a_envoyer(4)(7 downto 2) <= "000000";
+          octets_a_envoyer(4)(7 downto 2) <= "100000";
           octets_a_envoyer(4)(1) <= ledJoystick1;
           octets_a_envoyer(4)(0) <= ledJoystick2;
           octets_a_envoyer(3) <= (others => '0');
