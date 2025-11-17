@@ -1,0 +1,17 @@
+#!/bin/bash
+ip link set dev eth0 up
+ip link set dev eth1 up
+ip link set dev eth2 up
+ip addr add 201.201.201.66/27 dev eth0
+ip addr add 201.201.201.162/27 dev eth1
+ip addr add 201.201.201.129/27 dev eth2
+echo 1 > /proc/sys/net/ipv4/ip_forward
+#ip route add 201.201.201.0/27 via 201.201.201.65
+#ip route add 201.201.201.32/27 via 201.201.201.65
+#ip route add 201.201.201.96/27 via 201.201.201.130
+#ip route add 201.201.201.192/27 via 201.201.201.130
+service quagga start
+iptables -t filter -A FORWARD -d 201.201.201.161 -p tcp --dport 53 -j ACCEPT
+iptables -t filter -A FORWARD -d 201.201.201.161 -p udp --dport 53 -j ACCEPT
+iptables -t filter -A FORWARD -d 201.201.201.161 -p icmp -j ACCEPT
+iptables -t filter -A FORWARD -d 201.201.201.161 -j REJECT

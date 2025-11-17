@@ -1,0 +1,6 @@
+#!/bin/bash
+ip link set dev eth0 up
+ip addr add 201.201.201.193/27 dev eth0
+echo 0 > /proc/sys/net/ipv4/ip_forward
+ip route add default via 201.201.201.194
+service apache2 start
