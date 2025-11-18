@@ -1,0 +1,12 @@
+#!/bin/bash
+ip link set dev eth0 up
+ip link set dev eth1 up
+ip link set dev eth2 up
+ip addr add 201.201.201.98/27 dev eth0
+ip addr add 201.201.201.194/27 dev eth1
+ip addr add 201.201.201.130/27 dev eth2
+echo 1 > /proc/sys/net/ipv4/ip_forward
+ip route add 201.201.201.0/27 via 201.201.201.97
+ip route add 201.201.201.32/27 via 201.201.201.97
+ip route add 201.201.201.64/27 via 201.201.201.129
+ip route add 201.201.201.160/27 via 201.201.201.129

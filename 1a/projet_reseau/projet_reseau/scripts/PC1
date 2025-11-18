@@ -1,0 +1,4 @@
+#!/bin/bash
+ip link set dev eth0 up
+echo 0 > /proc/sys/net/ipv4/ip_forward
+dhclient eth0

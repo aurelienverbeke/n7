@@ -1,0 +1,11 @@
+#!/bin/bash
+ip link set dev eth0 up
+ip link set dev eth1 up
+ip addr add 192.168.20.100/25 dev eth0
+ip addr add 201.201.201.2/27 dev eth1
+echo 1 > /proc/sys/net/ipv4/ip_forward
+ip route add default via 201.201.201.3
+service isc-dhcp-server start
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.20.1
+iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+

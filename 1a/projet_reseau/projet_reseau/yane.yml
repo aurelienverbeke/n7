@@ -1,0 +1,83 @@
+network:
+  name: projet_reseau
+  version: 0.1
+  hosts:
+    - PC1
+      mode : netns
+      init : ./scripts/PC1
+ 
+    - Box1
+      mode : docker
+      image : dhcp_n7:latest
+      files : ./files/Box1/etc:/
+ 
+    - PC2
+      mode : netns
+      init : ./scripts/PC2
+ 
+    - PrivateWWW
+      mode : docker
+      image : apache_n7:latest
+      files : ./files/PrivateWWW/var:/
+ 
+ 
+    - Box2
+      mode : docker
+      image : dhcp_n7:latest
+      files : ./files/Box2/etc:/
+ 
+ 
+    - FaiR
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/FaiR/etc:/
+ 
+ 
+    - R1
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/R1/etc:/
+ 
+    - R2
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/R2/etc:/
+ 
+    - DnsR
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/DnsR/etc:/
+ 
+    - WwwR
+      mode : docker
+      image : quagga_n7:latest
+      files : ./files/WwwR/etc:/
+ 
+    - DNSServ
+      mode : docker
+      image : dns_n7:latest
+      files : ./files/DNSServ/etc:/
+ 
+    - PublicWWW
+      mode : docker
+      image : apache_n7:latest
+      files : ./files/PublicWWW/var:/
+ 
+  links :
+    - PC1:eth0!Box1:eth0
+    - R1:eth1!DnsR:eth0
+    - R2:eth1!WwwR:eth0
+    - DnsR:eth2!WwwR:eth2
+    - DNSServ:eth0!DnsR:eth1
+    - PublicWWW:eth0!WwwR:eth1
+ 
+  bridges:
+    - Switch0
+      interfaces: Box2:eth0!PC2:eth0!PrivateWWW:eth0!
+    - Switch1
+      interfaces: FaiR:eth0!Box1:eth1!Box2:eth1!
+    - Switch2
+      interfaces: R1:eth0!R2:eth0!FaiR:eth1!
+ 
+  consoles :
+    - all
