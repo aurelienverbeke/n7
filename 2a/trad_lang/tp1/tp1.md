@@ -2,7 +2,9 @@
 
 - Interfaces : `(['a'-'z''A'-'Z']*['0'-'9']*)+`
 - Adresses IP : 
->[!NOTE] Définition de macros
+>[!NOTE]
+>**Définition de macros**
+>
 >`let nb = ['0'-'9']|['1'-'9']['0'-'9']|'1'['0'-'9']['0'-'9']|'2'['0'-'4']['0'-'9']|'2''5'['0'-'5']`
 >`let ip = nb'.'nb'.'nb'.'nb`
 
@@ -47,7 +49,9 @@ iface maison inet static
 	netmask 255.255.255.0
 	gateway 192.168.254
 ```
->[!NOTE] Erreurs remarquées
+>[!NOTE]
+>**Erreurs remarquées**
+>
 >On voit que l'analyse lexicale plante sur la première adresse IP fausse et non le `lopback`. En effet cette suite de caractères n'est plus associée au token `LOOPBACK` mais à un token `INTERFACE` , car il suit son expression régulière.
 >On remarque également que l'erreur sur l'analyseur lexical indique un caractère `.` inattendu. En effet, comme la suite de caractères `092.168.0.1` ne suit pas l'expression régulière d'un token `IP` , il est considéré comme étant un token `INTERFACE`. Hors l'expression regulière d'une interface n'accepte pas les `.`, ce qui fait planter l'analyse lexicale.
 
@@ -77,7 +81,9 @@ t :
 | DHCP {()}
 | STATIC ADDRESS IP NETMASK IP GATEWAY IP {()}
 ```
-> [!NOTE] Tests
+> [!NOTE]
+> **Tests**
+> 
 > En faisant nos tests avec le fichier précédent, on remarque que le token de `lopback` est reconnu comme étant un `INTERFACE`. Cependant la règle de grammaire spécifie que le token suivant un token `INET` doit être un `t`, qui ne peut pas être un `INTERFACE`.
 
 # Analyse sémantique
