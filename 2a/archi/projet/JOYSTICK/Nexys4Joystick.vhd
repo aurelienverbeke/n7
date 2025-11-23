@@ -5,18 +5,15 @@ use IEEE.std_logic_unsigned.all;
 
 entity Nexys4Joystick is
   port (
-    -- les 16 switchs
-    swt : in std_logic_vector (15 downto 0);
-
-    -- les 5 boutons noirs
-    btnC, btnU, btnL, btnR, btnD : in std_logic;
+    -- les 3 boutons noirs
+    btnC, btnU, btnD : in std_logic;
 
     -- horloge
     -- 100 MHz
     mclk : in std_logic;
 
-    -- les 16 leds
-    led : out std_logic_vector (15 downto 0);
+    -- les 3 leds les plus à droite
+    led : out std_logic_vector (2 downto 0);
 
     -- les anodes pour sélectionner les afficheurs 7 segments à utiliser
     an : out std_logic_vector (7 downto 0);
