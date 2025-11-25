@@ -22,7 +22,12 @@ let rec analyse_tds_expression tds e =
       | None ->
           (* Identifiant absent de la table des symboles *)
           raise (IdentifiantNonDeclare identifiant)
-      | Some info -> AstTds.AppelFonction(info, List.map (analyse_tds_expression tds) es) (* Identifiant présent dans la table des symboles *)
+      | Some info -> 
+        begin
+          match info_ast_to_info info with
+          | InfoFun _ -> AstTds.AppelFonction(info, List.map (analyse_tds_expression tds) es) (* Identifiant présent dans la table des symboles *)
+          | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
+        end
     end
   | AstSyntax.Ident identifiant ->
     begin
@@ -36,7 +41,7 @@ let rec analyse_tds_expression tds e =
           match info_ast_to_info info with
           | InfoConst (_, valeur) -> AstTds.Entier(valeur) (* Identifiant présent dans la table des symboles et c'est une constante, on remplace par sa valeur *)
           | InfoVar _ -> AstTds.Ident(info) (* Identifiant présent dans la table des symboles et c'est une variable *)
-          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant "L'expression est une fonction.") (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
+          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
         end
     end
   | AstSyntax.Booleen booleen -> AstTds.Booleen(booleen)
@@ -64,7 +69,7 @@ let rec analyse_tds_instruction tds oia i =
             (* Vérification de la bonne utilisation des identifiants dans l'expression *)
             (* et obtention de l'expression transformée *)
             let ne = analyse_tds_expression tds e in
-            (* Création de l'information associée à l'identfiant *)
+            (* Création de l'information associée à l'identifiant *)
             let info = InfoVar (n,Undefined, 0, "") in
             (* Création du pointeur sur l'information *)
             let ia = info_to_info_ast info in
@@ -176,9 +181,38 @@ and analyse_tds_bloc tds oia li =
 (* Vérifie la bonne utilisation des identifiants et tranforme la fonction
 en une fonction de type AstTds.fonction *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li))  =
-  match chercherGlobalement n tds with
+let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li)) =
+  match chercherGlobalement maintds n with
   | None ->
+      (* info_ast associé à la fonction *)  
+      let info_fun = info_to_info_ast (InfoFun (n, t, List.map fst lp)) in
+      (* On ajoute l'info_ast dans la tds principale *)
+      ajouter maintds n info_fun;
+      (* On crée la tds fille qui servira aux paramètres de la fonction *)
+      let tds = creerTDSFille maintds in
+      (* tuples (type, nom, info_ast) pour chacun des paramètres *)
+      let infos_p = List.map (fun (tp, np) -> (tp, np, info_to_info_ast (InfoVar (np, tp, 0, "")))) lp in
+      (* On ajoute les info_ast des paramètres dans la tds fille *)
+      (* Attention les yeux *)
+      List.iter
+        (
+          (* On n'ajoute le paramètre que si il n'a pas déjà été ajouté, sinon on crie *)
+          fun (_, np, info_p) ->
+            let info_ast_param_a_ajouter = chercherLocalement tds np in
+            begin
+              match info_ast_param_a_ajouter with
+              | None -> ajouter tds np info_p
+              | Some _ -> raise (DoubleDeclaration np) (* On crie aaaaaaaaaaaaaaaargf *)
+            end
+        )
+        infos_p;
+      (* On crée une tds fille pour le bloc de la fonction *)
+      let tds_bloc = creerTDSFille tds in
+      (* On analyse le bloc de la fonction pour en tirer un AstTds.Bloc *)
+      let bloc = analyse_tds_bloc tds_bloc (Some info_fun) li in
+      (* On retourne finalement un AstTds.Fonction *)
+      AstTds.Fonction(t, info_fun, List.map (fun (tp, _, info_p) -> (tp, info_p)) infos_p, bloc)
+  | Some _ -> raise (DoubleDeclaration n)
 
 
 (* analyser : AstSyntax.programme -> AstTds.programme *)
