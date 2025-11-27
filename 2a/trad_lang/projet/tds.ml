@@ -347,3 +347,12 @@ let%test _ =
   | _ -> false
     
    
+(* Récupère le type d'une info_ast de type variable *)
+let get_type_variable info = match info_ast_to_info info with
+  | InfoVar (_, t, _, _) -> t
+  | _ -> failwith "L'info ne correspond pas a une variable."
+
+(* Récupère les types de retour et des paramètres d'une info_ast de type fonction *)
+let get_types_fonction info = match info_ast_to_info info with
+  | InfoFun (_, tr, tp) -> (tr, tp)
+  | _ -> failwith "L'info ne correspond pas a une fonction."

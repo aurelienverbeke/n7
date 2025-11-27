@@ -31,18 +31,18 @@ let rec analyse_type_instruction i =
   match i with
   | AstTds.Declaration (t, info, e) -> 
   | AstTds.Affectation (info, e) -> 
-  | AstTds.Constante (info, v) -> 
   | AstTds.Affichage e -> 
   | AstTds.Conditionnelle (c, t, e) -> 
   | AstTds.TantQue (c, b) -> 
   | AstTds.Retour (e, info) -> 
+  | AstTds.Empty ->
 
 
 (* analyse_type_bloc : AstTds.bloc -> AstType.bloc *)
 (* Paramètre li : liste d'instructions à analyser *)
 (* Vérifie la bonne utilisation des types et tranforme le bloc en un bloc de type AstType.bloc *)
 (* Erreur si mauvaise utilisation des types *)
-and analyse_type_bloc li = List.map analyse_type_instruction li
+and analyse_type_bloc li = 
 
 
 (* analyse_type_fonction : AstTds.fonction -> AstType.fonction *)
@@ -50,7 +50,7 @@ and analyse_type_bloc li = List.map analyse_type_instruction li
 (* Vérifie la bonne utilisation des types et tranforme la fonction
 en une fonction de type AstType.fonction *)
 (* Erreur si mauvaise utilisation des types *)
-let analyse_tds_fonction (AstTds.Fonction(t, info, lp, li)) = 
+let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) = 
 
 
 (* analyse_type_fonction : AstTds.fonction -> AstType.fonction *)
@@ -58,7 +58,7 @@ let analyse_tds_fonction (AstTds.Fonction(t, info, lp, li)) =
 (* Vérifie la bonne utilisation des types et tranforme la fonction
 en une fonction de type AstType.fonction *)
 (* Erreur si mauvaise utilisation des types *)
-let analyse_tds_fonctions lf = List.map analyse_tds_fonction lf
+let analyse_type_fonctions lf = 
 
 
 (* analyser : AstTds.programme -> AstType.programme *)
