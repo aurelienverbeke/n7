@@ -24,13 +24,13 @@ let rec analyse_type_expression e =
         (* Il faut que l'identifiant corresponde à une fonction *)
         | InfoFun (_, tr, tp) ->
           begin
-            (* Pour chaque paramètre, on compare les types réel et attendu *)
-            let comparaisons = List.map2 (=) nte tp in
-            match List.find_index (fun a -> a=false) comparaisons with
-            (* Aucune différence trouvée entre types réels et attendus *)
-            | None -> (AstType.AppelFonction(info, nle), tr)
-            (* Différence trouvée entre types réels et attendus à l'indice i *)
-            | Some i -> raise (TypeInattendu (List.nth nte i, List.nth tp i))
+            (* On compare les types réels et attendus *)
+            if (List.equal (=) nte tp)=true then
+              (* Aucune différence trouvée entre types réels et attendus *)
+              (AstType.AppelFonction(info, nle), tr)
+            else
+              (* Différence trouvée entre types réels et attendus à l'indice i *)
+              raise (TypesParametresInattendus (nte, tp))
           end
         | _ -> failwith "Erreur interne"
       end
@@ -141,7 +141,20 @@ and analyse_type_bloc li = List.map analyse_type_instruction li
 (* Vérifie la bonne utilisation des types et tranforme la fonction
 en une fonction de type AstType.fonction *)
 (* Erreur si mauvaise utilisation des types *)
-let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) = failwith "Feur"
+let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) =
+  modifier_type_fonction t (List.map fst lp) info;
+  AstType.Fonction(
+    info,
+    ( List.map
+      (fun (tp, info_ast_p) ->
+          let info_p = info_ast_to_info info_ast_p in
+          match info_p with
+            | InfoVar(n, _, d, r) -> info_to_info_ast (InfoVar(n, tp, d, r))
+            | _ -> failwith "Erreur interne"
+      )
+      lp
+    ),
+    analyse_type_bloc li)
 
 
 (* analyse_type_fonction : AstTds.fonction -> AstType.fonction *)
