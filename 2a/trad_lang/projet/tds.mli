@@ -67,3 +67,6 @@ val get_type_variable : info_ast -> typ
 
 (* Récupère les types de retour et des paramètres d'une info_ast de type fonction *)
 val get_types_fonction : info_ast -> typ * typ list
+
+(* Récupère le nom d'une fonction *)
+val get_nom_fonction : info_ast -> string

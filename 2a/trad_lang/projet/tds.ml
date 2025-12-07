@@ -356,3 +356,8 @@ let get_type_variable info = match info_ast_to_info info with
 let get_types_fonction info = match info_ast_to_info info with
   | InfoFun (_, tr, tp) -> (tr, tp)
   | _ -> failwith "L'info ne correspond pas a une fonction."
+
+(* Récupère le nom d'une fonction *)
+let get_nom_fonction info = match info_ast_to_info info with
+  | InfoFun (n, _, _) -> n
+  | _ -> failwith "L'info ne correspond pas a une fonction."
