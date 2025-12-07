@@ -147,9 +147,10 @@ let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) =
     info,
     ( List.map
       (fun (tp, info_ast_p) ->
-          let info_p = info_ast_to_info info_ast_p in
-          match info_p with
-            | InfoVar(n, _, d, r) -> info_to_info_ast (InfoVar(n, tp, d, r))
+          match info_ast_to_info info_ast_p with
+            | InfoVar(_, _, _, _) ->
+                modifier_type_variable tp info_ast_p;
+                info_ast_p
             | _ -> failwith "Erreur interne"
       )
       lp
