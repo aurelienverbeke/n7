@@ -20,7 +20,9 @@ let rec analyse_placement_instruction i depl reg =
   | AstType.Declaration (info, e) -> 
       begin
         match info_ast_to_info info with
+        (* Il faut toujours qu'une déclaration soit sur une variable *)
         | InfoVar (_, t, _, _) ->
+            (* On s'occupera de depl dans analyser_placement_bloc *)
             modifier_adresse_variable depl reg info;
             (AstPlacement.Declaration(info, e), getTaille t)
         | _ -> failwith "Erreur interne"
@@ -52,6 +54,7 @@ let rec analyse_placement_instruction i depl reg =
 (* Calcule la position des variables et tranforme le bloc en un bloc de type AstPlacement.bloc *)
 (* Erreur si mauvaise utilisation des types *)
 and analyse_placement_bloc li depl reg =
+  (* On analyse les instructions une par une en incrémentant le déplacement à chaque fois *)
   match li with
   | [] -> ([], 0)
   | i::q -> let (ni, ti) = analyse_placement_instruction i depl reg in
@@ -65,14 +68,18 @@ and analyse_placement_bloc li depl reg =
 en une fonction de type AstPlacement.fonction *)
 (* Erreur si mauvaise utilisation des types *)
 let analyse_placement_fonction (AstType.Fonction(info, lp, li)) =
+  (* On parcourt les paramètres que l'on place à partir de 0[LB] en décrémentant *)
   let (nlp, _) = List.fold_right
     (
-      fun info_ast_p (acc_p, acc_tailles) ->
-        let position = acc_tailles-(getTaille (get_type_variable info_ast_p)) in
+      (* Accumulateur : (paramètre, position) *)
+      fun info_ast_p (acc_p, acc_position) ->
+        (* Nouvelle position = ancienne position - taille du type du paramètre *)
+        let position = acc_position-(getTaille (get_type_variable info_ast_p)) in
         modifier_adresse_variable position "LB" info_ast_p;
         (info_ast_p::acc_p, position)
     )
     lp ([], 0) in
+  (* On place les variables locales de la fonction à partir de 3[LB] *)
   let nli = analyse_placement_bloc li 3 "LB"
   in AstPlacement.Fonction(info, nlp, nli)
 
@@ -91,6 +98,8 @@ let analyse_placement_fonctions lf = List.map analyse_placement_fonction lf
 en un programme de type AstPlacement.programme *)
 (* Erreur si mauvaise utilisation des types *)
 let analyser (AstType.Programme (fonctions, prog)) =
+  (* On analyse les fonctions... *)
   let n_fonctions = List.map analyse_placement_fonction fonctions in
+  (* ...puis le programme principal *)
   let n_prog = analyse_placement_bloc prog 0 "SB" in
   AstPlacement.Programme (n_fonctions, n_prog)
