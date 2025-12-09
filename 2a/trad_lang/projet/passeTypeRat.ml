@@ -7,7 +7,18 @@ open Ast
 type t1 = Ast.AstTds.programme
 type t2 = Ast.AstType.programme
 
-(* analyse_type_expression : AstTds.expression -> AstType.expression *)
+
+(* analyse_type_affectable : AstTds.affectable -> AstTds.affectable * typ *)
+(* Paramètre : affectable à analyser *)
+(* Renvoie le type de l'affectable
+ *)
+(* Erreur si mauvaise utilisation des types *)
+let analyse_type_affectable a =
+  match a with
+  | AstTds.Ident(info) -> get_type_variable info
+
+  
+(* analyse_type_expression : AstTds.expression -> AstType.expression * typ *)
 (* Paramètre e : l'expression à analyser *)
 (* Vérifie la bonne utilisation des types et tranforme l'expression
 en une expression de type AstType.expression *)
@@ -34,7 +45,7 @@ let rec analyse_type_expression e =
           end
         | _ -> failwith "Erreur interne"
       end
-  | AstTds.Ident info -> (AstType.Ident info, get_type_variable info)
+  | AstTds.Affectable a -> (AstType.Affectable a, analyse_type_affectable a)
   | AstTds.Booleen booleen -> (AstType.Booleen booleen, Bool)
   | AstTds.Entier entier -> (AstType.Entier entier, Int)
   | AstTds.Unaire (unaire, e) ->
@@ -82,11 +93,14 @@ let rec analyse_type_instruction i =
           AstType.Declaration(info, ne)
         end
       else raise (TypeInattendu (te, t))
-  | AstTds.Affectation (info, e) -> let (ne, te) = analyse_type_expression e in
-      let t = get_type_variable info in
+  | AstTds.Affectation (a, e) ->
+      (* Analyse du type de l'expression *)
+      let (ne, te) = analyse_type_expression e in
+      (* Analyse du type de l'affectable cible *)
+      let t = analyse_type_affectable a in
       (* On vérifie si le type de la variable correspond au type de l'expression *)
       if (t=te) then
-        AstType.Affectation(info, ne)
+        AstType.Affectation(a, ne)
       else raise (TypeInattendu (te, t))
   | AstTds.Affichage e -> let (ne, te) = analyse_type_expression e in
       begin

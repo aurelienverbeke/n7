@@ -10,6 +10,20 @@ type t1 = Ast.AstPlacement.programme
 type t2 = string
 
 
+(* analyse_type_affectable : AstPlacement.affectable -> string *)
+(* Paramètre a : l'affectable à convertir *)
+(* Transforme l'affectable en commandes TAM *)
+(* Erreur si mauvaise utilisation des types *)
+let rec analyse_code_affectable a =
+  match a with
+  | AstType.Ident info ->
+    begin
+      match info_ast_to_info info with
+      | InfoVar (_, t, depl, reg) -> load (getTaille t) depl reg
+      | _ -> failwith "Erreur interne"
+    end
+
+
 (* analyse_type_expression : AstPlacement.expression -> string *)
 (* Paramètre e : l'expression à convertir *)
 (* Transforme l'expression en commandes TAM *)
@@ -19,12 +33,8 @@ let rec analyse_code_expression e =
   | AstType.AppelFonction (info, le) ->
       let cle = List.fold_right (fun e acc -> (analyse_code_expression e)^acc) le "" in
       cle^(call "SB" (get_nom_fonction info))
-  | AstType.Ident info ->
-    begin
-      match info_ast_to_info info with
-      | InfoVar (_, t, depl, reg) -> load (getTaille t) depl reg
-      | _ -> failwith "Erreur interne"
-    end
+  | AstType.Affectable a -> analyse_code_affectable a
+  | Null -> (* TODO *)
   | AstType.Booleen booleen -> if booleen then loadl_int 1 else loadl_int 0
   | AstType.Entier entier -> loadl_int entier
   | AstType.Unaire (unaire, e) ->
@@ -64,7 +74,7 @@ let rec analyse_code_instruction i =
           (push taille_t)^(analyse_code_expression e)^(store taille_t depl reg)
       | _ -> failwith "Erreur interne"
     end
-  | AstPlacement.Affectation (info, e) ->
+  | AstPlacement.Affectation (a, e) ->
     begin
       match info_ast_to_info info with
       | InfoVar (_, t, depl, reg) -> (analyse_code_expression e)^(store (getTaille t) depl reg)
