@@ -26,10 +26,8 @@ type binaire = Fraction | Plus | Mult | Equ | Inf
 type expression =
   (* Appel de fonction représenté par le nom de la fonction et la liste des paramètres réels *)
   | AppelFonction of string * expression list
-  (* Affectable *)
-  | Affectable of affectable
-  (* Pointeur null *)
-  | Null
+  (* Accès à un identifiant représenté par son nom *)
+  | Ident of string
   (* Booléen *)
   | Booleen of bool
   (* Entier *)
@@ -44,8 +42,8 @@ type bloc = instruction list
 and instruction =
   (* Déclaration de variable représentée par son type, son nom et l'expression d'initialisation *)
   | Declaration of typ * string * expression
-  (* Affectation d'une variable représentée par un affectable et la nouvelle valeur affectée *)
-  | Affectation of affectable * expression
+  (* Affectation d'une variable représentée par son nom et la nouvelle valeur affectée *)
+  | Affectation of string * expression
   (* Déclaration d'une constante représentée par son nom et sa valeur (entier) *)
   | Constante of string * int
   (* Affichage d'une expression *)
@@ -65,11 +63,6 @@ type fonction = Fonction of typ * string * (typ * string) list * bloc
 (* liste de fonction - programme principal *)
 type programme = Programme of fonction list * bloc
 
-(* Affectables : variables, pointeurs... *)
-type affectable =
-  (* Accès à un identifiant représenté par son nom *)
-  | Ident of string
-
 end
 
 
@@ -84,8 +77,7 @@ struct
   remplacés par les informations associées aux identificateurs *)
   type expression =
     | AppelFonction of Tds.info_ast * expression list
-    | Affectable of affectable
-    | Null
+    | Ident of Tds.info_ast (* le nom de l'identifiant est remplacé par ses informations *)
     | Booleen of bool
     | Entier of int
     | Unaire of AstSyntax.unaire * expression
@@ -98,7 +90,7 @@ struct
   type bloc = instruction list
   and instruction =
     | Declaration of typ * Tds.info_ast * expression (* le nom de l'identifiant est remplacé par ses informations *)
-    | Affectation of  Tds.info_ast * expression (* l'affectable est remplacé par ses informations *)
+    | Affectation of  Tds.info_ast * expression (* le nom de l'identifiant est remplacé par ses informations *)
     | Affichage of expression
     | Conditionnelle of expression * bloc * bloc
     | TantQue of expression * bloc
@@ -112,11 +104,6 @@ struct
 
   (* Structure d'un programme dans notre langage *)
   type programme = Programme of fonction list * bloc
-
-  (* Affectables : variables, pointeurs... *)
-  type affectable =
-    (* On remplace le nom par l'info ast *)
-    | Ident of Tds.info_ast
 
 end
 
@@ -137,8 +124,7 @@ type binaire = Fraction | PlusInt | PlusRat | MultInt | MultRat | EquInt | EquBo
 (* = expression de AstTds *)
 type expression =
   | AppelFonction of Tds.info_ast * expression list
-  | Affectable of affectable
-  | Null
+  | Ident of Tds.info_ast
   | Booleen of bool
   | Entier of int
   | Unaire of unaire * expression
@@ -164,10 +150,6 @@ type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
 
 (* Structure d'un programme dans notre langage *)
 type programme = Programme of fonction list * bloc
-
-(* Affectables : variables, pointeurs... *)
-(* Même qu'à la passe de gestion des identifiants *)
-type affectable = AstTds.affectable
 
 end
 
@@ -200,9 +182,5 @@ type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
 
 (* Structure d'un programme dans notre langage *)
 type programme = Programme of fonction list * bloc
-
-(* Affectables : variables, pointeurs... *)
-(* Même qu'à la passe de gestion des identifiants *)
-type affectable = AstTds.affectable
 
 end

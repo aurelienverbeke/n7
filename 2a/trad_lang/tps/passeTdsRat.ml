@@ -7,8 +7,6 @@ open Ast
 type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
 
-type acces = AccesLecture | AccesEcriture
-
 (* analyse_tds_expression : tds -> AstSyntax.expression -> AstTds.expression *)
 (* Paramètre tds : la table des symboles courante *)
 (* Paramètre e : l'expression à analyser *)
@@ -31,7 +29,21 @@ let rec analyse_tds_expression tds e =
           | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
         end
     end
-  | AstSyntax.Affectable affectable -> analyse_tds_affectable AccesLecture tds affectable
+  | AstSyntax.Ident identifiant ->
+    begin
+      (* On regarde si l'identifiant est dans la table des symboles *)
+      match chercherGlobalement tds identifiant with
+      | None ->
+          (* Identifiant absent de la table des symboles *)
+          raise (IdentifiantNonDeclare identifiant)
+      | Some info ->
+        begin
+          match info_ast_to_info info with
+          | InfoConst (_, valeur) -> AstTds.Entier(valeur) (* Identifiant présent dans la table des symboles et c'est une constante, on remplace par sa valeur *)
+          | InfoVar _ -> AstTds.Ident(info) (* Identifiant présent dans la table des symboles et c'est une variable *)
+          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
+        end
+    end
   | AstSyntax.Booleen booleen -> AstTds.Booleen(booleen)
   | AstSyntax.Entier entier -> AstTds.Entier(entier)
   | AstSyntax.Unaire (unaire, e) -> AstTds.Unaire(unaire, analyse_tds_expression tds e)
@@ -71,15 +83,29 @@ let rec analyse_tds_instruction tds oia i =
             il a donc déjà été déclaré dans le bloc courant *)
             raise (DoubleDeclaration n)
       end
-  | AstSyntax.Affectation (a,e) ->
-      (* Vérification de l'utilisation de l'affectable *)
-      let na = analyse_tds_affectable AccesEcriture tds a in
-      (* Vérification de la bonne utilisation des identifiants dans l'expression *)
-      (* et obtention de l'expression transformée *)
-      let ne = analyse_tds_expression tds e in
-      (* Renvoie de la nouvelle affectation où l'affectable a été remplacé par l'information
-          et l'expression remplacée par l'expression issue de l'analyse *)
-      AstTds.Affectation (na, ne)
+  | AstSyntax.Affectation (n,e) ->
+      begin
+        match chercherGlobalement tds n with
+        | None ->
+          (* L'identifiant n'est pas trouvé dans la tds globale. *)
+          raise (IdentifiantNonDeclare n)
+        | Some info ->
+          (* L'identifiant est trouvé dans la tds globale,
+          il a donc déjà été déclaré. L'information associée est récupérée. *)
+          begin
+            match info_ast_to_info info with
+            | InfoVar _ ->
+              (* Vérification de la bonne utilisation des identifiants dans l'expression *)
+              (* et obtention de l'expression transformée *)
+              let ne = analyse_tds_expression tds e in
+              (* Renvoie de la nouvelle affectation où le nom a été remplacé par l'information
+                 et l'expression remplacée par l'expression issue de l'analyse *)
+              AstTds.Affectation (info, ne)
+            |  _ ->
+              (* Modification d'une constante ou d'une fonction *)
+              raise (MauvaiseUtilisationIdentifiant n)
+          end
+      end
   | AstSyntax.Constante (n,v) ->
       begin
         match chercherLocalement tds n with
@@ -187,35 +213,6 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li)) =
       (* On retourne finalement un AstTds.Fonction *)
       AstTds.Fonction(t, info_fun, List.map (fun (tp, _, info_p) -> (tp, info_p)) infos_p, bloc)
   | Some _ -> raise (DoubleDeclaration n)
-
-
-(* analyse_tds_affectable : tds -> AstSyntax.affectable -> AstTds.affectable *)
-(* Paramètre acces : si l'affectable est utilisé en lecture ou en écriture *)
-(* Paramètre tds : la table des symboles courante *)
-(* Paramètre affectable : l'affectable à analyser *)
-(* Vérifie la bonne utilisation des identifiants et tranforme l'affectable
-en un affectable de type AstTds.affectable *)
-(* Erreur si mauvaise utilisation des identifiants *)
-let analyse_tds_affectable domaine maintds affectable =
-  match affectable with
-  | AstSyntax.Ident identifiant ->
-    begin
-      (* On regarde si l'identifiant est dans la table des symboles *)
-      match chercherGlobalement tds identifiant with
-      | None ->
-          (* Identifiant absent de la table des symboles *)
-          raise (IdentifiantNonDeclare identifiant)
-      | Some info ->
-        begin
-          match info_ast_to_info info with
-          | InfoConst (_, valeur) ->
-              match domaine with
-              | AccesLecture -> AstTds.Entier(valeur) (* Identifiant présent dans la table des symboles et c'est une constante, on remplace par sa valeur *)
-              | AccesEcriture -> raise (MauvaiseUtilisationIdentifiant identifiant) (* On ne peut pas affecter une valeur à une constante hors définition *)
-          | InfoVar _ -> AstTds.Ident(info) (* Identifiant présent dans la table des symboles et c'est une variable *)
-          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
-        end
-    end
 
 
 (* analyser : AstSyntax.programme -> AstTds.programme *)
