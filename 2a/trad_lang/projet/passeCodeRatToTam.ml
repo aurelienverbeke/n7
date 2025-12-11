@@ -10,18 +10,26 @@ type t1 = Ast.AstPlacement.programme
 type t2 = string
 
 
-(* analyse_type_affectable : AstPlacement.affectable -> string *)
+(* analyse_type_affectable : AstPlacement.affectable -> string * string *)
+(* Paramètre mode_acces : l'affectable est-il accédé en lecture ou en écriture ? *)
 (* Paramètre a : l'affectable à convertir *)
 (* Transforme l'affectable en commandes TAM *)
+(* Renvoie deux catégories de commandes dans le cas où d'autres (par exemple une expression) devrait s'intercaler entre les deux *)
 (* Erreur si mauvaise utilisation des types *)
-let rec analyse_code_affectable a =
+let analyse_code_affectable mode_acces a =
   match a with
-  | AstType.Ident info ->
+  | AstTds.Ident info ->
     begin
       match info_ast_to_info info with
-      | InfoVar (_, t, depl, reg) -> load (getTaille t) depl reg
+      | InfoVar (_, t, depl, reg) ->
+          let taille_t = getTaille t in
+          if mode_acces = AccesLecture then
+            (load taille_t depl reg, "")
+          else
+            (push taille_t, store taille_t depl reg)
       | _ -> failwith "Erreur interne"
     end
+    
 
 
 (* analyse_type_expression : AstPlacement.expression -> string *)
@@ -33,8 +41,9 @@ let rec analyse_code_expression e =
   | AstType.AppelFonction (info, le) ->
       let cle = List.fold_right (fun e acc -> (analyse_code_expression e)^acc) le "" in
       cle^(call "SB" (get_nom_fonction info))
-  | AstType.Affectable a -> analyse_code_affectable a
-  | Null -> (* TODO *)
+  | AstType.Affectable a ->
+      let (avant, _) = analyse_code_affectable AccesLecture a in avant
+  | Null -> ""
   | AstType.Booleen booleen -> if booleen then loadl_int 1 else loadl_int 0
   | AstType.Entier entier -> loadl_int entier
   | AstType.Unaire (unaire, e) ->
@@ -75,11 +84,8 @@ let rec analyse_code_instruction i =
       | _ -> failwith "Erreur interne"
     end
   | AstPlacement.Affectation (a, e) ->
-    begin
-      match info_ast_to_info info with
-      | InfoVar (_, t, depl, reg) -> (analyse_code_expression e)^(store (getTaille t) depl reg)
-      | _ -> failwith "Erreur interne"
-    end
+      let (avant, apres) = analyse_code_affectable AccesEcriture a
+      in avant^(analyse_code_expression e)^apres
   | AstPlacement.AffichageInt e -> (analyse_code_expression e)^(subr "IOut")
   | AstPlacement.AffichageRat e -> (analyse_code_expression e)^(call "SB" "ROut")
   | AstPlacement.AffichageBool e -> (analyse_code_expression e)^(subr "BOut")

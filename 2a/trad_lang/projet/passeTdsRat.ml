@@ -3,11 +3,10 @@
 open Tds
 open Exceptions
 open Ast
+open Type
 
 type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
-
-type acces = AccesLecture | AccesEcriture
 
 
 (* analyse_tds_affectable : tds -> AstSyntax.affectable -> AstTds.affectable *)

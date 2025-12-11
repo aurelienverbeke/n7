@@ -26,6 +26,8 @@ type binaire = Fraction | Plus | Mult | Equ | Inf
 type affectable =
   (* Accès à un identifiant représenté par son nom *)
   | Ident of string
+  (* Déréférencement de pointeur *)
+  | Deref of string
 
 (* Expressions de Rat *)
 type expression =
@@ -33,6 +35,10 @@ type expression =
   | AppelFonction of string * expression list
   (* Affectable *)
   | Affectable of affectable
+  (* Adresse de variable *)
+  | Adresse of string
+  (* Allocation mémoire *)
+  | New of typ
   (* Pointeur null *)
   | Null
   (* Booléen *)
@@ -83,6 +89,8 @@ struct
   type affectable =
     (* On remplace le nom par l'info ast *)
     | Ident of Tds.info_ast
+    (* On remplace le nom par l'info ast *)
+    | Deref of string
 
   (* Expressions existantes dans notre langage *)
   (* ~ expression de l'AST syntaxique où les noms des identifiants ont été
@@ -90,6 +98,8 @@ struct
   type expression =
     | AppelFonction of Tds.info_ast * expression list
     | Affectable of affectable
+    | Adresse of Tds.info_ast
+    | New of typ
     | Null
     | Booleen of bool
     | Entier of int
@@ -140,6 +150,8 @@ type binaire = Fraction | PlusInt | PlusRat | MultInt | MultRat | EquInt | EquBo
 type expression =
   | AppelFonction of Tds.info_ast * expression list
   | Affectable of AstTds.affectable
+  | Adresse of Tds.info_ast
+  | New of typ
   | Null
   | Booleen of bool
   | Entier of int

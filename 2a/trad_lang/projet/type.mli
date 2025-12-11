@@ -1,5 +1,8 @@
 (* Types manipulés dans Rat *)
-type typ = Bool | Int | Rat | Undefined
+type typ = Bool | Int | Rat | Undefined | Pointeur of typ
+
+(* Permet de séparer accès en lecture et accès en écriture pour les affectables *)
+type acces = AccesLecture | AccesEcriture
 
 (* string_of_type :  typ -> string *)
 (* transforme un typ en chaîne de caractère *)
