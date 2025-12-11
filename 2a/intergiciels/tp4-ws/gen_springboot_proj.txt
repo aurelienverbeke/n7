@@ -1,0 +1,19 @@
+1. Go to this URL: https://start.spring.io/
+
+2. Select following settings:
+    Project: Maven
+    Language: Java
+    Spring Boot: 3.5.7 (latest version at the time of writing)
+    Project Metadata:
+      (the package in our .java files is "n7.students_server" so pick accordingly)
+      Group: n7
+      Artifact: students_server
+      Name: students_server
+      Description: Demo server for n7 students (put anything you like)
+      Package name: n7.students_server (should be set automatically if group and artifact are correct)
+      Packaging: Jar (Jar are for standalone apps, War need an existing compatible server)
+      Java: 17 (We don't really care about the java version)
+
+3. Add "Spring Web" dependency
+
+4. Generate
