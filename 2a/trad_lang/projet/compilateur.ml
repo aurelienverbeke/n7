@@ -46,7 +46,7 @@ module CompilateurRat = Compilateur (PasseTdsNop) (PasseTypeNop) (PassePlacement
 
 (* + passe de résolution des identifiants *)
 (*
-module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeNop) (PassePlacementNop) (PasseCodeNop) 
+module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeNop) (PassePlacementNop) (PasseCodeNop)
 *)
 
 (* + passe de typage *)
@@ -92,6 +92,25 @@ let compiler ratfile =
   try
     let ast = Parser.main Lexer.token filebuf in
     "; " ^ ratfile ^ "\n" ^ (CompilateurRat.analyser ast)
+  with
+  | Lexer.Error _ as e ->
+      report_error ratfile filebuf "lexical error (unexpected character).";
+      raise e
+  | Parser.Error as e->
+      report_error ratfile filebuf "syntax error.";
+      raise e
+
+(* afficher_ast_syntax : string -> string *)
+(* Compilter un code rat en un ast syntaxique *)
+(* Paramètre ratfile : le nom du fichier rat à compiler *)
+(* Erreur si soucis lors de l'analyse lexicale, l'analyse syntaxique,
+ mauvaise utilisation des identifiants ou soucis de typage *)
+let afficher_ast_syntax ratfile =
+  let input = open_in ratfile in
+  let filebuf = Lexing.from_channel input in
+  try
+    let ast = Parser.main Lexer.token filebuf in
+    PrinterAst.PrinterAstSyntax.print_programme ast
   with
   | Lexer.Error _ as e ->
       report_error ratfile filebuf "lexical error (unexpected character).";
