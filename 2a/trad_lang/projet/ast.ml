@@ -27,7 +27,7 @@ type affectable =
   (* Accès à un identifiant représenté par son nom *)
   | Ident of string
   (* Déréférencement de pointeur *)
-  | Deref of string
+  | Deref of affectable
 
 (* Expressions de Rat *)
 type expression =
@@ -38,7 +38,7 @@ type expression =
   (* Adresse de variable *)
   | Adresse of string
   (* Allocation mémoire *)
-  | New of typ
+  | Nouveau of typ
   (* Pointeur null *)
   | Null
   (* Booléen *)
@@ -90,7 +90,7 @@ struct
     (* On remplace le nom par l'info ast *)
     | Ident of Tds.info_ast
     (* On remplace le nom par l'info ast *)
-    | Deref of string
+    | Deref of affectable
 
   (* Expressions existantes dans notre langage *)
   (* ~ expression de l'AST syntaxique où les noms des identifiants ont été
@@ -99,7 +99,7 @@ struct
     | AppelFonction of Tds.info_ast * expression list
     | Affectable of affectable
     | Adresse of Tds.info_ast
-    | New of typ
+    | Nouveau of typ
     | Null
     | Booleen of bool
     | Entier of int
@@ -151,7 +151,7 @@ type expression =
   | AppelFonction of Tds.info_ast * expression list
   | Affectable of AstTds.affectable
   | Adresse of Tds.info_ast
-  | New of typ
+  | Nouveau of typ
   | Null
   | Booleen of bool
   | Entier of int

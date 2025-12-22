@@ -51,9 +51,10 @@ struct
     | Inf -> "< "
   
   (* Conversion des affectables *)
-  let string_of_affectable a =
+  let rec string_of_affectable a =
     match a with
     | Ident n -> n^" "
+    | Deref a1 -> "*("^(string_of_affectable a1)^") "
 
   (* Conversion des expressions *)
   let rec string_of_expression e =
@@ -61,6 +62,8 @@ struct
     | AppelFonction (n,le) -> "call "^n^"("^((List.fold_right (fun i tq -> (string_of_expression i)^tq) le ""))^") "
     | Affectable a -> string_of_affectable a
     | Null -> "Null "
+    | Adresse n -> "&"^n^" "
+    | Nouveau t -> "(new "^(string_of_type t)^") "
     | Booleen b -> if b then "true " else "false "
     | Entier i -> (string_of_int i)^" "
     | Unaire (op,e1) -> (string_of_unaire op) ^ (string_of_expression e1)^" "

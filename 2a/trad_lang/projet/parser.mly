@@ -95,10 +95,10 @@ e :
 | PO e1=e INF e2=e PF     {Binaire (Inf,e1,e2)}
 | PO exp=e PF             {exp}
 | NULL                    {Null}
-| PO NEW t=typ PF         {New t}
+| PO NEW t=typ PF         {Nouveau t}
 | AMP n=ID                {Adresse n}
 
 
 aff :
 | n=ID                    {Ident n}
-| PO MULT n=ID PF         {Deref n}
+| PO MULT a=aff PF         {Deref a}
