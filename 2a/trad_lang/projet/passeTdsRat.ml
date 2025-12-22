@@ -16,7 +16,7 @@ type t2 = Ast.AstTds.programme
 (* Vérifie la bonne utilisation des identifiants et tranforme l'affectable
 en un affectable de type AstTds.affectable *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyse_tds_affectable domaine tds affectable =
+let rec analyse_tds_affectable domaine tds affectable =
   match affectable with
   | AstSyntax.Ident identifiant ->
     begin
@@ -38,6 +38,7 @@ let analyse_tds_affectable domaine tds affectable =
           | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
         end
     end
+  | AstSyntax.Deref a -> analyse_tds_affectable domaine tds a
 
 
 (* analyse_tds_expression : tds -> AstSyntax.expression -> AstTds.expression *)
@@ -69,6 +70,21 @@ let rec analyse_tds_expression tds e =
         | SchrodingerAffectable affectable -> AstTds.Affectable affectable
       end
   | AstSyntax.Null -> AstTds.Null
+  | AstSyntax.Adresse identifiant -> 
+      begin
+        (* On regarde si l'identifiant est dans la table des symboles *)
+        match chercherGlobalement tds identifiant with
+        | None ->
+            (* Identifiant absent de la table des symboles *)
+            raise (IdentifiantNonDeclare identifiant)
+        | Some info -> 
+          begin
+            match info_ast_to_info info with
+            | InfoVar _ -> AstTds.Adresse(info) (* Identifiant présent dans la table des symboles et c'est une variable *)
+            | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
+          end
+      end
+  | AstSyntax.Nouveau typ -> AstTds.Nouveau(typ)
   | AstSyntax.Booleen booleen -> AstTds.Booleen(booleen)
   | AstSyntax.Entier entier -> AstTds.Entier(entier)
   | AstSyntax.Unaire (unaire, e) -> AstTds.Unaire(unaire, analyse_tds_expression tds e)

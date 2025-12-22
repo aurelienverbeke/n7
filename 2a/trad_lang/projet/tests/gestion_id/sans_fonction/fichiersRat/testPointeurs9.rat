@@ -1,0 +1,9 @@
+main {
+        int * x = null;
+
+        if ((*x) = 3) {
+                int x = 6;
+        } else {
+                
+        }
+}

@@ -189,6 +189,45 @@ let%test_unit "testRetourFonction"=
   with
   | RetourDansMain -> ()
 
+let%test_unit "testPointeurs1" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs1.rat") in ()
+
+let%test_unit "testPointeurs2" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs2.rat") in ()
+
+let%test_unit "testPointeurs3" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs3.rat") in ()
+
+let%test_unit "testPointeurs4" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs4.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("a") -> ()
+
+let%test_unit "testPointeurs5" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs5.rat") in ()
+
+let%test_unit "testPointeurs6" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs6.rat") in ()
+
+let%test_unit "testPointeurs7" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs7.rat") in ()
+
+let%test_unit "testPointeurs8" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs8.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("b") -> ()
+
+let%test_unit "testPointeurs9" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs9.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("x") -> ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

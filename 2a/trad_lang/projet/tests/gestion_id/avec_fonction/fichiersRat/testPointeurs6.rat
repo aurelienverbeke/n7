@@ -1,0 +1,9 @@
+bool* fonction (int* a) {
+  bool b = true;
+  rat* rationnel = (new rat);
+}
+
+main {
+  int *b = (new int);
+  bool* r = fonction(b);
+}

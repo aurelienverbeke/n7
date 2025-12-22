@@ -1,0 +1,9 @@
+rat* fonction () {
+  const x = 51;
+
+  (*x) = 6; 
+}
+
+main {
+
+}

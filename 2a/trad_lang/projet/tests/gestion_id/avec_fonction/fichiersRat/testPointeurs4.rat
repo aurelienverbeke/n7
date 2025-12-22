@@ -1,0 +1,7 @@
+int* fonction (int* a, int* a) {
+  
+}
+
+main {
+  
+}

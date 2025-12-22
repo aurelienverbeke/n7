@@ -1,0 +1,5 @@
+main {
+        rat x = [3/5];
+        
+        bool * x = true;
+}
