@@ -1,5 +1,8 @@
 %%%%% TP2_exo_1.m %%%%%
 
+clear all;
+close all;
+
 addpath('matlab_bgl');      %load graph libraries
 addpath('matlab_tpgraphe'); %load tp ressources
 
@@ -21,14 +24,18 @@ viz_spt(G,spt_,pos,cities);
 
 %1)Compute MST by PRIM 
 %changer les valeurs initiales pour obtenir deux arbres differents entre PRIM et KRUSKAL
-mst_=prim_mst(G,struct('root',XXX a faire));
+%on se débrouille pour avoir des longueurs égales
+G_new = G;
+G_new(3, 22) = G_new(3, 4);
+G_new(22, 3) = G_new(3, 4);
+mst_=prim_mst(G_new,struct('root', 14));
 %2)Vizualize
-viz_mst(G,mst_,pos,cities);
+viz_mst(G_new,mst_,pos,cities);
 
 %1)Compute MST by KRUSKAL
-mst_=kruskal_mst(G);
+mst_=kruskal_mst(G_new);
 %2)Vizualize
-viz_mst(G,mst_,pos,cities);
+viz_mst(G_new,mst_,pos,cities);
 
 %%%%%%%%%%%%%%%%%%%%%% EXO FLOW/CUT %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -50,11 +57,11 @@ bw(n+2,dsts)=virtual_capacity;
 bw(dsts,n+2)=virtual_capacity; 
 
 %bandwidth is invertly proportinal to distance
-bw(1:n,1:n)=XXX a faire;
+bw(1:n,1:n)=10000./D;
 %Inf is on the diagonal, so change it to 0
 bw(bw==Inf)=0;
 %links with too less bw are not interesting for operators
-XXX Filtrage des liens non exploitable a faire;%for europe
+bw(bw<11) = 0;%for europe
 
 %2)Compute Max flow bw virtual src & dst nodes
 Gbw=sparse(bw);
@@ -62,5 +69,3 @@ Gbw=sparse(bw);
 
 %3)Vizualize
 viz_cut(Gbw,cut_,pos,cities,srcs,dsts)
-
-
