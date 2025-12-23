@@ -1,0 +1,9 @@
+void procedure (int a, rat* b) {
+        return;
+}
+
+main {
+        int x = 3;
+        rat* b = null;
+        procedure(a, b);
+}

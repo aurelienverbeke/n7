@@ -1,0 +1,7 @@
+void procedure (int a) {
+        return;
+}
+
+main {
+        procedure(13);
+}

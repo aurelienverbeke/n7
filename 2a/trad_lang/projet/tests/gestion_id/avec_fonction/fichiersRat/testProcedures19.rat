@@ -1,0 +1,11 @@
+void procedure() {
+        return;
+}
+
+void procedure(int a) {
+        
+}
+
+main {
+        
+}

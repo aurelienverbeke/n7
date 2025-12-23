@@ -228,6 +228,107 @@ let%test_unit "testPointeurs9" =
   with
   | MauvaiseUtilisationIdentifiant("x") -> ()
 
+let%test_unit "testProcedures1" = 
+  let _ = compiler (pathFichiersRat^"testProcedures1.rat") in ()
+
+let%test_unit "testProcedures2" = 
+  let _ = compiler (pathFichiersRat^"testProcedures2.rat") in ()
+
+let%test_unit "testProcedures3" = 
+  let _ = compiler (pathFichiersRat^"testProcedures3.rat") in ()
+
+let%test_unit "testProcedures4" = 
+  let _ = compiler (pathFichiersRat^"testProcedures4.rat") in ()
+
+let%test_unit "testProcedures5" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures5.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("procedure") -> ()
+
+let%test_unit "testProcedures6" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures6.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("procedure") -> ()
+
+let%test_unit "testProcedures7" = 
+  let _ = compiler (pathFichiersRat^"testProcedures7.rat") in ()
+
+let%test_unit "testProcedures8" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures8.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaisRetour -> ()
+
+let%test_unit "testProcedures9" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures9.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaisRetour -> ()
+
+let%test_unit "testProcedures10" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures10.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("procedure") -> ()
+
+let%test_unit "testProcedures11" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures11.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("procedureInexistante") -> ()
+
+let%test_unit "testProcedures12" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures12.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("procedure") -> ()
+
+let%test_unit "testProcedures13" = 
+  let _ = compiler (pathFichiersRat^"testProcedures13.rat") in ()
+
+let%test_unit "testProcedures14" = 
+  let _ = compiler (pathFichiersRat^"testProcedures14.rat") in ()
+
+let%test_unit "testProcedures15" = 
+  let _ = compiler (pathFichiersRat^"testProcedures15.rat") in ()
+
+let%test_unit "testProcedures16" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures16.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("b") -> ()
+
+let%test_unit "testProcedures17" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures17.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("procedure") -> ()
+
+let%test_unit "testProcedures18" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures18.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("procedure") -> ()
+
+let%test_unit "testProcedures19" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures19.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("procedure") -> ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

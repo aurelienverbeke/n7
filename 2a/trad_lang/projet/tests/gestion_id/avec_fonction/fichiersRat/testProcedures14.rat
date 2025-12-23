@@ -1,0 +1,10 @@
+void compteARebours(int n) {
+  if (n > 0) {
+    print(n);
+    compteARebours(n - 1);
+  }
+}
+
+main {
+        compteARebours(3);
+}

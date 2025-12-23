@@ -1,0 +1,11 @@
+void a() {
+        b();
+}
+
+void b() {
+        return;
+}
+
+main {
+        
+}

@@ -13,3 +13,6 @@ exception TypeBinaireInattendu of binaire * typ * typ      (* les types réels n
 
 (* Utilisation illégale de return dans le programme principal *)
 exception RetourDansMain
+
+(* Utilisation d'un mauvais return entre procédures et fonctions *)
+exception MauvaisRetour

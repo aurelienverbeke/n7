@@ -1,0 +1,8 @@
+void procedure () {
+        print(3 = 3);
+        return;
+}
+
+main {
+        
+}
