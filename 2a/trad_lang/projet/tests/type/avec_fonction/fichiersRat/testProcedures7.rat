@@ -1,0 +1,7 @@
+void procedure (int a, rat b) {
+
+}
+
+main {
+        procedure([2/6], 5);
+}

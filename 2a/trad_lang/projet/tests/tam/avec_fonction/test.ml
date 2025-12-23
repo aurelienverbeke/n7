@@ -65,4 +65,14 @@ let%expect_test "factrec" =
   runtam (pathFichiersRat^"factrec.rat");
   [%expect{| 120 |}]
 
+let%expect_test "print1" =
+  runtam (pathFichiersRat^"testProcedures1.rat");
+  [%expect{| 1 |}]
 
+let%expect_test "printint" =
+  runtam (pathFichiersRat^"testProcedures2.rat");
+  [%expect{| 3 |}]
+
+let%expect_test "printsommerat" =
+  runtam (pathFichiersRat^"testProcedures3.rat");
+  [%expect{| 8 |}]

@@ -329,6 +329,9 @@ let%test_unit "testProcedures19" =
   with
   | DoubleDeclaration("procedure") -> ()
 
+let%test_unit "testProcedures20" = 
+  let _ = compiler (pathFichiersRat^"testProcedures20.rat") in ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

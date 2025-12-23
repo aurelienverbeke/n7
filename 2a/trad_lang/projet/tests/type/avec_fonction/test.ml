@@ -118,6 +118,47 @@ let%test_unit "test"=
 let%test_unit "code_factrec" = 
 let _ = compiler   (pathFichiersRat^"factrec.rat") in ()
 
+let%test_unit "testProcedures1"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures1.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypeVoidHorsTypeProcedure -> ()
+
+let%test_unit "testProcedures2"= 
+  let _ = compiler (pathFichiersRat^"testProcedures2.rat") in ()
+
+let%test_unit "testProcedures3"= 
+  let _ = compiler (pathFichiersRat^"testProcedures3.rat") in ()
+
+let%test_unit "testProcedures4"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures4.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypesParametresInattendus _ -> ()
+
+let%test_unit "testProcedures5"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures5.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypesParametresInattendus _ -> ()
+
+let%test_unit "testProcedures6"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures6.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypesParametresInattendus _ -> ()
+
+let%test_unit "testProcedures7"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures7.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypesParametresInattendus _ -> ()
+
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix

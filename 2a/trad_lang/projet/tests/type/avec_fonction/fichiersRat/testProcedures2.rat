@@ -1,0 +1,16 @@
+void procedure (int a) {
+
+}
+
+void procedure2 (rat a) {
+
+}
+void procedure3 (bool a) {
+
+}
+
+main {
+        procedure(2);
+        procedure2([3/5]);
+        procedure3(true);
+}

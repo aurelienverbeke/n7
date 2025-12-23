@@ -1,0 +1,7 @@
+void printsommerat (rat* a) {
+        print (numerateur (*a) + denominateur (*a));
+}
+
+main {
+        printsommerat([5/3]);
+}

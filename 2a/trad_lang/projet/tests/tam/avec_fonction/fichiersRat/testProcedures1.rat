@@ -1,0 +1,7 @@
+void print1 () {
+        print 1;
+}
+
+main {
+        print1();
+}

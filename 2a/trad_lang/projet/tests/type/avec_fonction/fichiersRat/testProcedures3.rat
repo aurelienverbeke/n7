@@ -1,0 +1,11 @@
+void procedure (int a, bool* b, rat** c) {
+
+}
+
+main {
+        int a = 3;
+        bool * b = (new bool);
+        rat** c = null;
+        
+        procedure(a, b, c);
+}

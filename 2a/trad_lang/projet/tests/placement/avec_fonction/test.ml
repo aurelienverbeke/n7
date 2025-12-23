@@ -124,5 +124,93 @@ let%test "test12_f_r" =
     
 let%test "test12_f_i" = 
   test (pathFichiersRat^"test12.rat")  "f" ("i",1)  (-1, "LB")
-  
 
+let%test "testProcedures1_a" = 
+  test (pathFichiersRat^"testProcedures1.rat")  "procedure" ("a",1)  (-4, "LB")
+
+let%test "testProcedures1_b" = 
+  test (pathFichiersRat^"testProcedures1.rat")  "procedure" ("b",1)  (-2, "LB")
+
+let%test "testProcedures1_c" = 
+  test (pathFichiersRat^"testProcedures1.rat")  "procedure" ("c",1)  (-1, "LB")
+
+let%test "testProcedures2_a" = 
+  test (pathFichiersRat^"testProcedures2.rat")  "procedure" ("a",1)  (3, "LB")
+
+let%test "testProcedures2_b" = 
+  test (pathFichiersRat^"testProcedures2.rat")  "procedure" ("b",1)  (4, "LB")
+
+let%test "testProcedures3_x" = 
+  test (pathFichiersRat^"testProcedures3.rat")  "procedure" ("x",1)  (-1, "LB")
+
+let%test "testProcedures3_a" = 
+  test (pathFichiersRat^"testProcedures3.rat")  "procedure" ("a",1)  (3, "LB")
+
+let%test "testProcedures3_b" = 
+  test (pathFichiersRat^"testProcedures3.rat")  "procedure" ("b",1)  (5, "LB")
+  
+let%test "testProcedures4_x_1" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("x",1)  (0, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("x",1)  (0, "LB")
+   
+let%test "testProcedures4_y_1" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("y",1)  (1, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("y",1)  (1, "LB")
+   
+let%test "testProcedures4_z_1" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("z",1)  (3, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("z",1)  (3, "LB")
+ 
+let%test "testProcedures4_x_2" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("x",2)  (4, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("x",2)  (4, "LB")
+   
+let%test "testProcedures4_y_2" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("y",2)  (5, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("y",2)  (5, "LB")
+   
+let%test "testProcedures4_z_2" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("z",2)  (7, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("z",2)  (7, "LB")
+ 
+let%test "testProcedures4_x1" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("x1",1)  (4, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("x1",1)  (4, "LB")
+   
+let%test "testProcedures4_y1" = 
+  test (pathFichiersRat^"testProcedures4.rat")  "main" ("y1",1)  (5, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat")  "main" ("y1",1)  (5, "LB")
+   
+let%test "testProcedures4_z1" = 
+  test (pathFichiersRat^"testProcedures4.rat" ) "main" ("z1",1)  (7, "SB")
+|| test (pathFichiersRat^"testProcedures4.rat" ) "main" ("z1",1)  (7, "LB")
+
+let%test "testProcedures4_f_x_1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("x",1)  (3, "LB")
+   
+let%test "testProcedures4_f_y_1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("y",1)  (4, "LB")
+   
+let%test "testProcedures4_f_z_1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("z",1)  (6, "LB")
+ 
+let%test "testProcedures4_f_x_2" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("x",2)  (7, "LB")
+   
+let%test "testProcedures4_f_y_2" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("y",2)  (8, "LB")
+   
+let%test "testProcedures4_f_z_2" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("z",2)  (10, "LB")
+ 
+let%test "testProcedures4_f_x1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("x1",1)  (7, "LB")
+   
+let%test "testProcedures4_f_y1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("y1",1)  (8, "LB")
+   
+let%test "testProcedures4_f_z1" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("z1",1)  (10, "LB")
+   
+let%test "testProcedures4_f_a" = 
+ test (pathFichiersRat^"testProcedures4.rat")  "f" ("a",1)  (-1, "LB")

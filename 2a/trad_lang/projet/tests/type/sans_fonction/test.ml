@@ -382,6 +382,13 @@ let%test_unit "testOperation11"=
 let%test_unit "testOperation12"= 
   let _ = compiler (pathFichiersRat^"testOperation12.rat") in ()
 
+let%test_unit "testProcedures1"= 
+  try 
+    let _ = compiler (pathFichiersRat^"testProcedures1.rat")
+    in raise ErreurNonDetectee
+  with
+  | TypeVoidHorsTypeProcedure -> ()
+
 
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)

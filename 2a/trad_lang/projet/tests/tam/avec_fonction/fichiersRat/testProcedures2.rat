@@ -1,0 +1,7 @@
+void printint (int a) {
+        print a;
+}
+
+main {
+        printint(12);
+}
