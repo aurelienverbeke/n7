@@ -1,5 +1,5 @@
 int* fonction (rat* b, int a) {
-
+        return null;
 }
 
 main {

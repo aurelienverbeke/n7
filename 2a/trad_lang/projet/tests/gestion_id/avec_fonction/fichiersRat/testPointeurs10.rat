@@ -1,0 +1,7 @@
+rat fonction (int* pointeur) {
+        return [3/5];
+}
+
+main {
+
+}

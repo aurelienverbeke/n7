@@ -1,0 +1,8 @@
+int fonction () {
+        rat * pointeurInterne = null;
+        return 12;
+}
+
+main {
+        pointeurInterne = null;
+}

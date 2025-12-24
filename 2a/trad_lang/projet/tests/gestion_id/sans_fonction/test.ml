@@ -174,6 +174,32 @@ let%test_unit "testPointeurs8" =
 let%test_unit "testPointeurs9" = 
   let _ = compiler (pathFichiersRat^"testPointeurs9.rat") in ()
 
+let%test_unit "testPointeurs10" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs10.rat") in ()
+
+let%test_unit "testPointeurs11" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs11.rat") in ()
+
+let%test_unit "testPointeurs12" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs12.rat") in ()
+
+let%test_unit "testPointeurs13" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs13.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("b") -> ()
+
+let%test_unit "testPointeurs14" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs14.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("x") -> ()
+
+let%test_unit "testPointeurs15" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs15.rat") in ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

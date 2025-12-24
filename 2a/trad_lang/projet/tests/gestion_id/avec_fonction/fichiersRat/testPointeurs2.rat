@@ -1,5 +1,6 @@
 int* fonction () {
-  int* a = 2;
+  int* a = (new int);
+  return a;
 }
 
 main {

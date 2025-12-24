@@ -1,5 +1,5 @@
 int* fonction () {
-
+        return null;
 }
 
 main {

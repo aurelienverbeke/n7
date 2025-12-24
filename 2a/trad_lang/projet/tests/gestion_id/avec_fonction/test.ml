@@ -228,6 +228,23 @@ let%test_unit "testPointeurs9" =
   with
   | MauvaiseUtilisationIdentifiant("x") -> ()
 
+let%test_unit "testPointeurs10" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs10.rat") in ()
+
+let%test_unit "testPointeurs11" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs11.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("pointeurInterne") -> ()
+
+let%test_unit "testPointeurs12" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs12.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("b") -> ()
+
 let%test_unit "testProcedures1" = 
   let _ = compiler (pathFichiersRat^"testProcedures1.rat") in ()
 

@@ -1,5 +1,6 @@
 rat* fonction () {
   int r = (*b);
+  return null;
 }
 
 main {
