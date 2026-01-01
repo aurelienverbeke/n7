@@ -1,4 +1,4 @@
-type typ = Bool | Int | Rat | Undefined | Pointeur of typ
+type typ = Bool | Int | Rat | Undefined | Pointeur of typ | Void
 
 type acces = AccesLecture | AccesEcriture
 
@@ -9,6 +9,7 @@ let rec string_of_type t =
   | Rat  ->  "Rat"
   | Undefined -> "Undefined"
   | Pointeur t -> "Pointeur de " ^ (string_of_type t)
+  | Void -> "Void"
 
 
 let rec est_compatible t1 t2 =
@@ -71,6 +72,7 @@ let getTaille t =
   | Rat -> 2
   | Undefined -> 0
   | Pointeur _ -> 1
+  | Void -> 0
   
 let%test _ = getTaille Int = 1
 let%test _ = getTaille Bool = 1

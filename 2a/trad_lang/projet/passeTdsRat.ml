@@ -9,7 +9,7 @@ type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
 
 
-(* analyse_tds_affectable : tds -> AstSyntax.affectable -> AstTds.affectable *)
+(* analyse_tds_affectable : acces -> tds -> AstSyntax.affectable -> AstTds.affectable *)
 (* Paramètre acces : si l'affectable est utilisé en lecture ou en écriture *)
 (* Paramètre tds : la table des symboles courante *)
 (* Paramètre affectable : l'affectable à analyser *)
@@ -61,19 +61,8 @@ en une expression de type AstTds.expression *)
 let rec analyse_tds_expression tds e =
   match e with
   | AstSyntax.AppelFonction (identifiant, es) ->
-    begin
-      (* On regarde si la fonction est dans la table des symboles *)
-      match chercherGlobalement tds identifiant with
-      | None ->
-          (* Identifiant absent de la table des symboles *)
-          raise (IdentifiantNonDeclare identifiant)
-      | Some info -> 
-        begin
-          match info_ast_to_info info with
-          | InfoFun _ -> AstTds.AppelFonction(info, List.map (analyse_tds_expression tds) es) (* Identifiant présent dans la table des symboles *)
-          | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
-        end
-    end
+      let info, nes = analyse_tds_appel_fonction_procedure tds identifiant es
+      in AstTds.AppelFonction (info, nes)
   | AstSyntax.Affectable affectable ->
       begin
         match analyse_tds_affectable AccesLecture tds affectable with
@@ -100,6 +89,28 @@ let rec analyse_tds_expression tds e =
   | AstSyntax.Entier entier -> AstTds.Entier(entier)
   | AstSyntax.Unaire (unaire, e) -> AstTds.Unaire(unaire, analyse_tds_expression tds e)
   | AstSyntax.Binaire (binaire, e1, e2) -> AstTds.Binaire(binaire, analyse_tds_expression tds e1, analyse_tds_expression tds e2)
+
+
+(* analyse_tds_appel_fonction_procedure : tds -> string -> AstSyntax.expression list -> ( info_ast * AstTds.expression list ) *)
+(* Paramètre tds : la table des symboles courante *)
+(* Paramètre identifiant : l'identifiant de la fonction *)
+(* Paramètre es : les expressions des paramètres à analyser *)
+(* Vérifie la bonne utilisation des identifiants et tranforme l'expression en :
+   - l'info de la fonction / procédure appelée
+   - les AstTds.expression des paramètres *)
+(* Erreur si mauvaise utilisation des identifiants *)
+and analyse_tds_appel_fonction_procedure tds identifiant es =
+  (* On regarde si la fonction est dans la table des symboles *)
+  match chercherGlobalement tds identifiant with
+  | None ->
+      (* Identifiant absent de la table des symboles *)
+      raise (IdentifiantNonDeclare identifiant)
+  | Some info -> 
+    begin
+      match info_ast_to_info info with
+      | InfoFun _ -> (info, List.map (analyse_tds_expression tds) es) (* Identifiant présent dans la table des symboles *)
+      | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
+    end
 
 
 (* analyse_tds_instruction : tds -> info_ast option -> AstSyntax.instruction -> AstTds.instruction *)
@@ -135,6 +146,9 @@ let rec analyse_tds_instruction tds oia i =
             il a donc déjà été déclaré dans le bloc courant *)
             raise (DoubleDeclaration n)
       end
+  | AstSyntax.AppelProcedure (identifiant, es) ->
+      let info, nes = analyse_tds_appel_fonction_procedure tds identifiant es
+      in AstTds.AppelProcedure (info, nes)
   | AstSyntax.Affectation (a,e) ->
       (* Vérification de l'utilisation de l'affectable *)
       let nschrodinger = analyse_tds_affectable AccesEcriture tds a in
@@ -196,6 +210,16 @@ let rec analyse_tds_instruction tds oia i =
         (* Analyse de l'expression *)
         let ne = analyse_tds_expression tds e in
         AstTds.Retour (ne,ia)
+      end
+  | AstSyntax.RetourVoid ->
+      begin
+      (* On récupère l'information associée à la fonction à laquelle le return est associée *)
+      match oia with
+        (* Il n'y a pas d'information -> l'instruction est dans le bloc principal : erreur *)
+      | None -> raise RetourDansMain
+        (* Il y a une information -> l'instruction est dans une fonction *)
+      | Some ia ->
+        AstTds.RetourVoid (ia)
       end
 
 

@@ -39,6 +39,7 @@ open Ast.AstSyntax
 %token AMP
 %token NULL
 %token NEW
+%token VOID
 
 (* Type de l'attribut synthétisé des non-terminaux *)
 %type <programme> prog
@@ -68,16 +69,19 @@ bloc : AO li=i* AF      {li}
 i :
 | t=typ n=ID EQUAL e1=e PV          {Declaration (t,n,e1)}
 | a=aff EQUAL e1=e PV               {Affectation (a,e1)}
+| n=ID PO lp=separated_list(VIRG,e) PF PV {AppelProcedure (n, lp)}
 | CONST n=ID EQUAL e=ENTIER PV      {Constante (n,e)}
 | PRINT e1=e PV                     {Affichage (e1)}
 | IF exp=e li1=bloc ELSE li2=bloc   {Conditionnelle (exp,li1,li2)}
 | WHILE exp=e li=bloc               {TantQue (exp,li)}
+| RETURN PV                         {RetourVoid}
 | RETURN exp=e PV                   {Retour (exp)}
 
 typ :
 | BOOL    {Bool}
 | INT     {Int}
 | RAT     {Rat}
+| VOID    {Void}
 | t=typ MULT {Pointeur t}
 
 e : 
@@ -101,4 +105,4 @@ e :
 
 aff :
 | n=ID                    {Ident n}
-| PO MULT a=aff PF         {Deref a}
+| PO MULT a=aff PF        {Deref a}

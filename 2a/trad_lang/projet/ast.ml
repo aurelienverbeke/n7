@@ -57,6 +57,8 @@ and instruction =
   | Declaration of typ * string * expression
   (* Affectation d'une variable représentée par un affectable et la nouvelle valeur affectée *)
   | Affectation of affectable * expression
+  (* Appel de procédure représenté par le nom de la fonction et la liste des paramètres réels *)
+  | AppelProcedure of string * expression list
   (* Déclaration d'une constante représentée par son nom et sa valeur (entier) *)
   | Constante of string * int
   (* Affichage d'une expression *)
@@ -67,6 +69,8 @@ and instruction =
   | TantQue of expression * bloc
   (* return d'une fonction *)
   | Retour of expression
+  (* return d'une procédure *)
+  | RetourVoid
 
 (* Structure des fonctions de Rat *)
 (* type de retour - nom - liste des paramètres (association type et nom) - corps de la fonction *)
@@ -113,11 +117,13 @@ struct
   type bloc = instruction list
   and instruction =
     | Declaration of typ * Tds.info_ast * expression (* le nom de l'identifiant est remplacé par ses informations *)
+    | AppelProcedure of Tds.info_ast * expression list
     | Affectation of affectable * expression (* l'affectable est remplacé par ses informations *)
     | Affichage of expression
     | Conditionnelle of expression * bloc * bloc
     | TantQue of expression * bloc
-    | Retour of expression * Tds.info_ast  (* les informations sur la fonction à laquelle est associé le retour *)
+    | Retour of expression * Tds.info_ast (* les informations sur la fonction à laquelle est associé le retour *)
+    | RetourVoid of Tds.info_ast (* les informations sur la fonction à laquelle est associé le retour *)
     | Empty (* les nœuds ayant disparus: Const *)
 
 
@@ -165,6 +171,7 @@ type expression =
 type bloc = instruction list
  and instruction =
   | Declaration of Tds.info_ast * expression
+  | AppelProcedure of Tds.info_ast * expression list
   | Affectation of AstTds.affectable * expression
   | AffichageInt of expression
   | AffichageRat of expression
@@ -172,6 +179,7 @@ type bloc = instruction list
   | Conditionnelle of expression * bloc * bloc
   | TantQue of expression * bloc
   | Retour of expression * Tds.info_ast
+  | RetourVoid of Tds.info_ast
   | Empty (* les nœuds ayant disparus: Const *)
 
 (* informations associées à l'identificateur (dont son nom), liste des paramètres, corps *)
@@ -196,6 +204,7 @@ type expression = AstType.expression
 type bloc = instruction list * int (* taille du bloc *)
  and instruction =
  | Declaration of Tds.info_ast * expression
+ | AppelProcedure of Tds.info_ast * expression list
  | Affectation of AstTds.affectable * expression
  | AffichageInt of expression
  | AffichageRat of expression
@@ -203,6 +212,7 @@ type bloc = instruction list * int (* taille du bloc *)
  | Conditionnelle of expression * bloc * bloc
  | TantQue of expression * bloc
  | Retour of expression * int * int (* taille du retour et taille des paramètres *)
+ | RetourVoid
  | Empty (* les nœuds ayant disparus: Const *)
 
 (* informations associées à l'identificateur (dont son nom), liste de paramètres, corps, expression de retour *)
