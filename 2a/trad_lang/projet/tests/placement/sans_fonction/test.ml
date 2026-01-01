@@ -180,3 +180,63 @@ let%test "test7_y1" =
 let%test "test7_z1" = 
    test (pathFichiersRat^"test7.rat")  "main" ("z1",1)  (7, "SB")
 || test (pathFichiersRat^"test7.rat")  "main" ("z1",1)  (7, "LB")
+
+let%test "testPointeurs1_pointeur" = 
+   test (pathFichiersRat^"testPointeurs1.rat")  "main" ("pointeur",1)  (0, "SB")
+|| test (pathFichiersRat^"testPointeurs1.rat")  "main" ("pointeur",1)  (0, "LB")
+
+let%test "testPointeurs1_booleen" = 
+   test (pathFichiersRat^"testPointeurs1.rat")  "main" ("booleen",1)  (1, "SB")
+|| test (pathFichiersRat^"testPointeurs1.rat")  "main" ("booleen",1)  (1, "LB")
+
+let%test "testPointeurs2_pointeur" = 
+   test (pathFichiersRat^"testPointeurs2.rat")  "main" ("pointeur",1)  (0, "SB")
+|| test (pathFichiersRat^"testPointeurs2.rat")  "main" ("pointeur",1)  (0, "LB")
+
+let%test "testPointeurs2_booleen" = 
+   test (pathFichiersRat^"testPointeurs2.rat")  "main" ("booleen",1)  (1, "SB")
+|| test (pathFichiersRat^"testPointeurs2.rat")  "main" ("booleen",1)  (1, "LB")
+
+let%test "testPointeurs3_pointeur" = 
+   test (pathFichiersRat^"testPointeurs3.rat")  "main" ("pointeur",1)  (0, "SB")
+|| test (pathFichiersRat^"testPointeurs3.rat")  "main" ("pointeur",1)  (0, "LB")
+
+let%test "testPointeurs3_booleen" = 
+   test (pathFichiersRat^"testPointeurs3.rat")  "main" ("booleen",1)  (1, "SB")
+|| test (pathFichiersRat^"testPointeurs3.rat")  "main" ("booleen",1)  (1, "LB")
+
+let%test "testPointeurs4_x_1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x",1)  (0, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x",1)  (0, "LB")
+    
+let%test "testPointeurs4_y_1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y",1)  (1, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y",1)  (1, "LB")
+    
+let%test "testPointeurs4_z_1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z",1)  (3, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z",1)  (3, "LB")
+  
+let%test "testPointeurs4_x_2" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x",2)  (4, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x",2)  (4, "LB")
+    
+let%test "testPointeurs4_y_2" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y",2)  (5, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y",2)  (5, "LB")
+    
+let%test "testPointeurs4_z_2" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z",2)  (6, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z",2)  (6, "LB")
+  
+let%test "testPointeurs4_x1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x1",1)  (4, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("x1",1)  (4, "LB")
+    
+let%test "testPointeurs4_y1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y1",1)  (5, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("y1",1)  (5, "LB")
+    
+let%test "testPointeurs4_z1" = 
+   test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z1",1)  (7, "SB")
+|| test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z1",1)  (7, "LB")

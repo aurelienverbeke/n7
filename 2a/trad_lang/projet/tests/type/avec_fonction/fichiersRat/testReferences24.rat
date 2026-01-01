@@ -1,0 +1,7 @@
+void procedure (ref int a) {
+        int * x = &a;
+}
+
+main {
+        
+}

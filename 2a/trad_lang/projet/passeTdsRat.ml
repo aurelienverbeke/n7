@@ -19,6 +19,7 @@ en un affectable de type AstTds.affectable *)
 let rec analyse_tds_affectable domaine tds affectable =
   match affectable with
   | AstSyntax.Ident identifiant ->
+    (* L'affectable est un identifiant *)
     begin
       (* On regarde si l'identifiant est dans la table des symboles *)
       match chercherGlobalement tds identifiant with
@@ -31,14 +32,24 @@ let rec analyse_tds_affectable domaine tds affectable =
           | InfoConst (_, valeur) ->
               begin
                 match domaine with
-                | AccesLecture -> AstTds.SchrodingerEntier(valeur) (* Identifiant présent dans la table des symboles et c'est une constante, on remplace par sa valeur *)
+                (* Identifiant présent dans la table des symboles et c'est une constante, on remplace par sa valeur
+                   On donne aussi son nom dans le cas où l'indentifiant serait dans un référencement et où il
+                   faudrait lever une exception *)
+                | AccesLecture -> AstTds.SchrodingerEntier(identifiant, valeur)
                 | AccesEcriture -> raise (MauvaiseUtilisationIdentifiant identifiant) (* On ne peut pas affecter une valeur à une constante hors définition *)
               end
           | InfoVar _ -> AstTds.SchrodingerAffectable(AstTds.Ident(info)) (* Identifiant présent dans la table des symboles et c'est une variable *)
           | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
         end
     end
-  | AstSyntax.Deref a -> analyse_tds_affectable domaine tds a
+  | AstSyntax.Deref a ->
+    (* L'affectable est un déréférencement d'affectable *)
+    begin
+      (* On vérifie qu'on déréférence bien une variable *)
+      match analyse_tds_affectable domaine tds a with
+      | AstTds.SchrodingerAffectable na -> AstTds.SchrodingerAffectable(AstTds.Deref(na))
+      | AstTds.SchrodingerEntier (identifiant, _) -> raise (MauvaiseUtilisationIdentifiant identifiant)
+    end
 
 
 (* analyse_tds_expression : tds -> AstSyntax.expression -> AstTds.expression *)
@@ -66,7 +77,7 @@ let rec analyse_tds_expression tds e =
   | AstSyntax.Affectable affectable ->
       begin
         match analyse_tds_affectable AccesLecture tds affectable with
-        | SchrodingerEntier entier -> AstTds.Entier entier
+        | SchrodingerEntier (_,entier) -> AstTds.Entier entier
         | SchrodingerAffectable affectable -> AstTds.Affectable affectable
       end
   | AstSyntax.Null -> AstTds.Null

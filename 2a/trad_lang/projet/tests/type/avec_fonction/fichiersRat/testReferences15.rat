@@ -1,0 +1,11 @@
+int fonction (ref bool a) {
+        if (true) {
+                a = false;
+        } else {
+
+        }
+}
+
+main {
+        
+}

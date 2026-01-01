@@ -1,0 +1,7 @@
+bool * f1 (rat x) {
+    return (&x);
+}
+
+test {
+    rat x = [1/4];
+}

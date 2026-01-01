@@ -1,0 +1,11 @@
+void procedure (ref bool * a) {
+        if (true) {
+                a = false;
+        } else {
+
+        }
+}
+
+main {
+        
+}

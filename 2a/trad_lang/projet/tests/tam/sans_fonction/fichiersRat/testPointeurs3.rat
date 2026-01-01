@@ -1,0 +1,5 @@
+main {
+        int a = 6;
+        int * pa = &a;
+        print (*pa);
+}

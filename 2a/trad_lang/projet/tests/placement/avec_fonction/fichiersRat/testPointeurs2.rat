@@ -1,0 +1,7 @@
+int fonction (rat * a) {
+        return 3;
+}
+
+main {
+
+}

@@ -128,7 +128,8 @@ struct
   (* Structure d'un programme dans notre langage *)
   type programme = Programme of fonction list * bloc
 
-  type schrodinger = SchrodingerEntier of int | SchrodingerAffectable of affectable
+  (* Pour le traitement des affectables qui peuvent être soit des constantes entières soit des variables *)
+  type schrodinger = SchrodingerEntier of string * int | SchrodingerAffectable of affectable
 
 end
 

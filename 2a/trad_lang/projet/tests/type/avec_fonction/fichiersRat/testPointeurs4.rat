@@ -1,0 +1,16 @@
+int f1 (int * pa, rat * pb, bool * pc) {
+    int a = (*pa);
+    rat b = (*pb);
+    bool c = (*pc);
+    return (a);
+}
+
+test {
+    rat * py = (new rat);
+    bool * pz = (new bool);
+    rat y = [1/3];
+    bool z = true;
+    py = &y;
+    pz = &z;
+    int res = f1(pz, py, pz);
+}

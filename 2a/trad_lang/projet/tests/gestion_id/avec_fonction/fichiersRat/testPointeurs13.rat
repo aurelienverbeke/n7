@@ -1,0 +1,8 @@
+rat* fonction () {
+
+  return null;
+}
+
+main {
+  int a = (*fonction);
+}

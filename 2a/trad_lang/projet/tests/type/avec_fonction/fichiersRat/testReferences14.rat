@@ -1,0 +1,7 @@
+void procedure (ref int a) {
+        a = [3/73];
+}
+
+main {
+        
+}

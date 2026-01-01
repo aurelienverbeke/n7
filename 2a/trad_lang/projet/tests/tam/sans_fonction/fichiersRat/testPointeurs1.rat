@@ -1,0 +1,6 @@
+main {
+        int * a = null;
+        a = (new int);
+        (*a) = 6;
+        print (*a);
+}

@@ -1,0 +1,13 @@
+int fonction (ref int x) {
+        if (true) {
+                int a = x;
+        } else {
+
+        }
+}
+
+main {
+        int a = 3;
+        
+        int a = fonction(ref a);
+}

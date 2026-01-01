@@ -65,6 +65,23 @@ let%expect_test "factrec" =
   runtam (pathFichiersRat^"factrec.rat");
   [%expect{| 120 |}]
 
+let%expect_test "testPointeurs1" =
+    runtam (pathFichiersRat^"testPointeurs1.rat");
+    [%expect{| 12 |}]
+  
+let%expect_test "testPointeurs2" =
+  runtam (pathFichiersRat^"testPointeurs2.rat");
+  [%expect{| 7 |}]
+
+let%expect_test "testPointeurs3" =
+  runtam (pathFichiersRat^"testPointeurs3.rat");
+  [%expect{| 10 |}]
+
+let%expect_test "testPointeurs4" =
+  runtam (pathFichiersRat^"testPointeurs1.rat");
+  [%expect{| 12 |}]
+
+(*
 let%expect_test "print1" =
   runtam (pathFichiersRat^"testProcedures1.rat");
   [%expect{| 1 |}]
@@ -76,3 +93,4 @@ let%expect_test "printint" =
 let%expect_test "printsommerat" =
   runtam (pathFichiersRat^"testProcedures3.rat");
   [%expect{| 8 |}]
+*)

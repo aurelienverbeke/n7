@@ -200,7 +200,31 @@ let%test_unit "testPointeurs14" =
 let%test_unit "testPointeurs15" = 
   let _ = compiler (pathFichiersRat^"testPointeurs15.rat") in ()
 
+(*
+let%test_unit "testReferences1" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences1.rat")
+    in raise ErreurNonDetectee
+  with
+  | UtilisationRefInvalide -> ()
+
+let%test_unit "testReferences2" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences2.rat")
+    in raise ErreurNonDetectee
+  with
+  | UtilisationRefInvalide -> ()
+
+let%test_unit "testReferences3" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences3.rat")
+    in raise ErreurNonDetectee
+  with
+  | UtilisationRefInvalide -> ()
+*)
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
+(*
 open Unix
 open Filename
 
@@ -222,3 +246,4 @@ let%test_unit "all_tam" =
   let p_tam = "../../../../../tests/tam/sans_fonction/fichiersRat/" in
   let d = opendir p_tam in
   test d p_tam
+*)

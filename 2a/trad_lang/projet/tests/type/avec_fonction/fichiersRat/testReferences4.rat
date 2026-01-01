@@ -1,0 +1,8 @@
+void procedure (ref int a, ref rat b) {
+        int x = a;
+        rat y = b;
+}
+
+main {
+        
+}

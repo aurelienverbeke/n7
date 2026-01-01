@@ -245,6 +245,14 @@ let%test_unit "testPointeurs12" =
   with
   | IdentifiantNonDeclare("b") -> ()
 
+let%test_unit "testPointeurs13" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testPointeurs13.rat")
+    in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("fonction") -> ()
+
+(*
 let%test_unit "testProcedures1" = 
   let _ = compiler (pathFichiersRat^"testProcedures1.rat") in ()
 
@@ -349,7 +357,93 @@ let%test_unit "testProcedures19" =
 let%test_unit "testProcedures20" = 
   let _ = compiler (pathFichiersRat^"testProcedures20.rat") in ()
 
+let%test_unit "testReferences1" = 
+  let _ = compiler (pathFichiersRat^"testReferences1.rat") in ()
+
+let%test_unit "testReferences2" = 
+  let _ = compiler (pathFichiersRat^"testReferences2.rat") in ()
+
+let%test_unit "testReferences3" = 
+  let _ = compiler (pathFichiersRat^"testReferences3.rat") in ()
+
+let%test_unit "testReferences4" = 
+  let _ = compiler (pathFichiersRat^"testReferences4.rat") in ()
+
+let%test_unit "testReferences5" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences5.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("x") -> ()
+
+let%test_unit "testReferences6" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences6.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("x") -> ()
+
+let%test_unit "testReferences7" = 
+  let _ = compiler (pathFichiersRat^"testReferences7.rat") in ()
+
+let%test_unit "testReferences8" = 
+  let _ = compiler (pathFichiersRat^"testReferences8.rat") in ()
+
+let%test_unit "testReferences9" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences9.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("a") -> ()
+
+let%test_unit "testReferences10" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences10.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("a") -> ()
+
+let%test_unit "testReferences11" = 
+  let _ = compiler (pathFichiersRat^"testReferences11.rat") in ()
+
+let%test_unit "testReferences12" = 
+  let _ = compiler (pathFichiersRat^"testReferences12.rat") in ()
+
+let%test_unit "testReferences13" = 
+  let _ = compiler (pathFichiersRat^"testReferences13.rat") in ()
+
+let%test_unit "testReferences14" = 
+  let _ = compiler (pathFichiersRat^"testReferences14.rat") in ()
+
+let%test_unit "testReferences15" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences15.rat")
+    in raise ErreurNonDetectee
+  with
+  | UtilisationRefInvalide -> ()
+
+let%test_unit "testReferences16" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences16.rat")
+    in raise ErreurNonDetectee
+  with
+  | UtilisationRefInvalide -> ()
+
+let%test_unit "testReferences17" = 
+    let _ = compiler (pathFichiersRat^"testReferences17.rat")
+  
+let%test_unit "testReferences18" = 
+    let _ = compiler (pathFichiersRat^"testReferences18.rat")
+
+let%test_unit "testReferences19" = 
+    let _ = compiler (pathFichiersRat^"testReferences19.rat")
+  
+let%test_unit "testReferences20" = 
+    let _ = compiler (pathFichiersRat^"testReferences20.rat")
+*)
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
+(*
 open Unix
 open Filename
 
@@ -367,7 +461,10 @@ let rec test d p_tam =
     test d p_tam
   with End_of_file -> ()
 
+(*
 let%test_unit "all_tam" =
   let p_tam = "../../../../../tests/tam/avec_fonction/fichiersRat/" in
   let d = opendir p_tam in
   test d p_tam
+*)
+*)

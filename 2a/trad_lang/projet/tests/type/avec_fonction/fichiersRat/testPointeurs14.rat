@@ -1,0 +1,7 @@
+rat * f1 (int x) {
+    return (&x);
+}
+
+test {
+    int x = 4;
+}

@@ -1,0 +1,8 @@
+int fonction (ref int a, ref rat b) {
+        int x = a;
+        rat y = b;
+}
+
+main {
+        
+}

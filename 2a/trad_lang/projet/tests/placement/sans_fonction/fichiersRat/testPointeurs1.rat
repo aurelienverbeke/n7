@@ -1,0 +1,4 @@
+main {
+        int * pointeur = null;
+        bool booleen = false;
+}

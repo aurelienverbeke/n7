@@ -89,3 +89,22 @@ let%expect_test "complique" =
   runtam (pathFichiersRat^"complique.rat");
   [%expect{| [9/4][27/14][27/16][3/2] |}]
 
+let%expect_test "testPointeurs1" =
+  runtam (pathFichiersRat^"testPointeurs1.rat");
+  [%expect{| 6 |}]
+
+let%expect_test "testPointeurs2" =
+  runtam (pathFichiersRat^"testPointeurs2.rat");
+  [%expect{| [3/6] |}]
+
+let%expect_test "testPointeurs3" =
+  runtam (pathFichiersRat^"testPointeurs3.rat");
+  [%expect{| 6 |}]
+
+let%expect_test "testPointeurs4" =
+  runtam (pathFichiersRat^"testPointeurs4.rat");
+  [%expect{| 3 |}]
+
+let%expect_test "testPointeurs5" =
+  runtam (pathFichiersRat^"testPointeurs5.rat");
+  [%expect{| 10 |}]

@@ -1,0 +1,10 @@
+void procedure (ref int x, ref rat y) {
+
+}
+
+main {
+        int a = 3;
+        rat b = [5/4];
+
+        procedure(ref a, ref b);
+}

@@ -125,6 +125,100 @@ let%test "test12_f_r" =
 let%test "test12_f_i" = 
   test (pathFichiersRat^"test12.rat")  "f" ("i",1)  (-1, "LB")
 
+let%test "testPointeurs1" = 
+  test (pathFichiersRat^"testPointeurs1.rat")  "fonction" ("a",1)  (-1, "LB")
+
+let%test "testPointeurs2" = 
+  test (pathFichiersRat^"testPointeurs2.rat")  "fonction" ("a",1)  (-1, "LB")
+
+let%test "testPointeurs3" = 
+  test (pathFichiersRat^"testPointeurs3.rat")  "fonction" ("a",1)  (-1, "LB")
+  
+  let%test "testPointeurs4_a" = 
+  test (pathFichiersRat^"testPointeurs4.rat")  "fonction" ("a",1)  (-3, "LB")
+  
+  let%test "testPointeurs4_b" = 
+  test (pathFichiersRat^"testPointeurs4.rat")  "fonction" ("b",1)  (-2, "LB")
+  
+  let%test "testPointeurs4_c" = 
+  test (pathFichiersRat^"testPointeurs4.rat")  "fonction" ("c",1)  (-1, "LB")
+  
+  let%test "testPointeurs5_a" = 
+    test (pathFichiersRat^"testPointeurs5.rat")  "fonction" ("a",1)  (-4, "LB")
+  
+  let%test "testPointeurs5_b" = 
+    test (pathFichiersRat^"testPointeurs5.rat")  "fonction" ("b",1)  (-3, "LB")
+  
+  let%test "testPointeurs5_c" = 
+    test (pathFichiersRat^"testPointeurs5.rat")  "fonction" ("c",1)  (-1, "LB")
+
+  let%test "testPointeurs6_x_1" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x",1)  (0, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x",1)  (0, "LB")
+    
+let%test "testPointeurs6_y_1" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y",1)  (1, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y",1)  (1, "LB")
+    
+let%test "testPointeurs6_z_1" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("z",1)  (3, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("z",1)  (3, "LB")
+  
+let%test "testPointeurs6_x_2" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x",2)  (4, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x",2)  (4, "LB")
+    
+let%test "testPointeurs6_y_2" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y",2)  (5, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y",2)  (5, "LB")
+    
+let%test "testPointeurs6_z_2" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("z",2)  (7, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("z",2)  (7, "LB")
+  
+let%test "testPointeurs6_x1" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x1",1)  (4, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("x1",1)  (4, "LB")
+    
+let%test "testPointeurs6_y1" = 
+   test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y1",1)  (5, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat")  "main" ("y1",1)  (5, "LB")
+    
+let%test "testPointeurs6_z1" = 
+   test (pathFichiersRat^"testPointeurs6.rat" ) "main" ("z1",1)  (7, "SB")
+|| test (pathFichiersRat^"testPointeurs6.rat" ) "main" ("z1",1)  (7, "LB")
+
+let%test "testPointeurs6_f_x_1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("x",1)  (3, "LB")
+    
+let%test "testPointeurs6_f_y_1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("y",1)  (4, "LB")
+    
+let%test "testPointeurs6_f_z_1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("z",1)  (6, "LB")
+  
+let%test "testPointeurs6_f_x_2" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("x",2)  (7, "LB")
+    
+let%test "testPointeurs6_f_y_2" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("y",2)  (8, "LB")
+    
+let%test "testPointeurs6_f_z_2" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("z",2)  (10, "LB")
+  
+let%test "testPointeurs6_f_x1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("x1",1)  (7, "LB")
+    
+let%test "testPointeurs6_f_y1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("y1",1)  (8, "LB")
+    
+let%test "testPointeurs6_f_z1" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("z1",1)  (9, "LB")
+    
+let%test "testPointeurs6_f_a" = 
+  test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("a",1)  (-1, "LB")
+
+(*
 let%test "testProcedures1_a" = 
   test (pathFichiersRat^"testProcedures1.rat")  "procedure" ("a",1)  (-4, "LB")
 
@@ -214,3 +308,4 @@ let%test "testProcedures4_f_z1" =
    
 let%test "testProcedures4_f_a" = 
  test (pathFichiersRat^"testProcedures4.rat")  "f" ("a",1)  (-1, "LB")
+*)

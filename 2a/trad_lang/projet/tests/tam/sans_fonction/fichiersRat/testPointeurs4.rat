@@ -1,0 +1,5 @@
+main {
+        rat a = [3/6];
+        rat * pa = &a;
+        print (num (*pa));
+}

@@ -3,19 +3,29 @@
 open Tds
 open Exceptions
 open Ast
+open Type
 
 type t1 = Ast.AstTds.programme
 type t2 = Ast.AstType.programme
 
 
-(* analyse_type_affectable : AstTds.affectable -> AstTds.affectable * typ *)
+(* analyse_type_affectable : AstTds.affectable -> typ *)
 (* Paramètre : affectable à analyser *)
 (* Renvoie le type de l'affectable
  *)
 (* Erreur si mauvaise utilisation des types *)
-let analyse_type_affectable a =
+let rec analyse_type_affectable a =
   match a with
+  (* Pour un identifiant, on récupère simplement le type de la vairable associée *)
   | AstTds.Ident(info) -> get_type_variable info
+  (* Pour un déréférencement, on récupère le type de l'objet pointé et on enlève un pointeur *)
+  | AstTds.Deref(affectable_a_dereferencer) ->
+    begin
+      match analyse_type_affectable affectable_a_dereferencer with
+      | Pointeur type_pointe -> type_pointe
+      | Undefined -> failwith "Erreur interne"
+      | _ -> raise DereferencementImpossible (* On cherche à déréférencer un non-pointeur *)
+    end
 
   
 (* analyse_type_expression : AstTds.expression -> AstType.expression * typ *)
@@ -36,7 +46,7 @@ let rec analyse_type_expression e =
         | InfoFun (_, tr, tp) ->
           begin
             (* On compare les types réels et attendus *)
-            if (List.equal (=) nte tp)=true then
+            if (est_compatible_list nte tp)=true then
               (* Aucune différence trouvée entre types réels et attendus *)
               (AstType.AppelFonction(info, nle), tr)
             else
@@ -46,6 +56,16 @@ let rec analyse_type_expression e =
         | _ -> failwith "Erreur interne"
       end
   | AstTds.Affectable a -> (AstType.Affectable a, analyse_type_affectable a)
+  | AstTds.Adresse info ->
+      (* On demande l'adresse d'une variable
+         Son type est un pointeur sur le type de la variable *)
+      begin
+        match info_ast_to_info info with
+        | InfoVar (_, t, _, _) -> (AstType.Adresse info, Pointeur t)
+        | _ -> failwith "Erreur interne"
+      end
+  | AstTds.Null -> (AstType.Null, Pointeur Undefined)
+  | AstTds.Nouveau t -> (AstType.Nouveau t, Pointeur t)
   | AstTds.Booleen booleen -> (AstType.Booleen booleen, Bool)
   | AstTds.Entier entier -> (AstType.Entier entier, Int)
   | AstTds.Unaire (unaire, e) ->
@@ -86,7 +106,7 @@ let rec analyse_type_instruction i =
   match i with
   | AstTds.Declaration (t, info, e) -> let (ne, te) = analyse_type_expression e in
       (* On vérifie si le type de la variable correspond au type de l'expression *)
-      if (te=t) then
+      if (est_compatible t te) then
         begin
           (* On ajoute le type à l'info *)
           modifier_type_variable t info;
@@ -99,7 +119,7 @@ let rec analyse_type_instruction i =
       (* Analyse du type de l'affectable cible *)
       let t = analyse_type_affectable a in
       (* On vérifie si le type de la variable correspond au type de l'expression *)
-      if (t=te) then
+      if (est_compatible t te) then
         AstType.Affectation(a, ne)
       else raise (TypeInattendu (te, t))
   | AstTds.Affichage e -> let (ne, te) = analyse_type_expression e in
@@ -109,7 +129,7 @@ let rec analyse_type_instruction i =
         | Type.Int -> AstType.AffichageInt ne
         | Type.Bool -> AstType.AffichageBool ne
         | Type.Rat -> AstType.AffichageRat ne
-        | Type.Undefined -> failwith "Erreur interne"
+        | _ -> raise AffichageNonSupporte
       end
   | AstTds.Conditionnelle (c, t, e) ->
       (* Analyse de la condition *)
@@ -137,7 +157,7 @@ let rec analyse_type_instruction i =
       (* On récupère le type de retour de la fonction *)
       let (tr, _) = get_types_fonction info in
       (* On vérifie que le type de l'expression de retour correspond bien à celui de la fonction *)
-      if (tr=te) then
+      if (est_compatible tr te) then
         AstType.Retour (ne, info)
       else raise (TypeInattendu (te, tr)) 
   | AstTds.Empty -> AstType.Empty

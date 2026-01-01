@@ -1,0 +1,13 @@
+void procedure (ref int x) {
+        if (true) {
+                int a = x;
+        } else {
+                
+        }
+}
+
+main {
+        int a = 3;
+        
+        procedure(ref a);
+}

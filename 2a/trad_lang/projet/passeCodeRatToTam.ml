@@ -14,9 +14,10 @@ type t2 = string
 (* Paramètre mode_acces : l'affectable est-il accédé en lecture ou en écriture ? *)
 (* Paramètre a : l'affectable à convertir *)
 (* Transforme l'affectable en commandes TAM *)
-(* Renvoie deux catégories de commandes dans le cas où d'autres (par exemple une expression) devrait s'intercaler entre les deux *)
+(* Renvoie deux catégories de commandes dans le cas où d'autres (par exemple une expression) devrait s'intercaler entre les deux,
+   et le type de l'affectable concerné, nécessaire pour le déréférencement *)
 (* Erreur si mauvaise utilisation des types *)
-let analyse_code_affectable mode_acces a =
+let rec analyse_code_affectable mode_acces a =
   match a with
   | AstTds.Ident info ->
     begin
@@ -24,11 +25,30 @@ let analyse_code_affectable mode_acces a =
       | InfoVar (_, t, depl, reg) ->
           let taille_t = getTaille t in
           if mode_acces = AccesLecture then
-            (load taille_t depl reg, "")
+            (load taille_t depl reg, "", t)
           else
-            (push taille_t, store taille_t depl reg)
+            ("", store taille_t depl reg, t)
       | _ -> failwith "Erreur interne"
     end
+  | AstTds.Deref aff ->
+    begin
+      (* On récupère l'adresse pointée en forçant l'accès en lecture pour tous les niveaux hors celui initial *)
+      let (instructions, _, t) = analyse_code_affectable AccesLecture aff
+      in
+        match t with
+        | Pointeur type_pointe ->
+            let taille_type_pointe = getTaille type_pointe
+            in
+            if mode_acces = AccesLecture then
+              (* On charge depuis la mémoire la variable réelle en utilisant la taille du type pointé *)
+              (instructions^(loadi taille_type_pointe), "", type_pointe)
+            else
+              (* On range vers la mémoire en utilisant la taille du type pointé *)
+              ("", instructions^(storei taille_type_pointe), type_pointe)
+        | _ -> failwith "Erreur interne" (* Ce qu'on cherche à déréférencer doit être un pointeur *)
+    end
+
+
     
 
 
@@ -42,8 +62,15 @@ let rec analyse_code_expression e =
       let cle = List.fold_right (fun e acc -> (analyse_code_expression e)^acc) le "" in
       cle^(call "SB" (get_nom_fonction info))
   | AstType.Affectable a ->
-      let (avant, _) = analyse_code_affectable AccesLecture a in avant
-  | Null -> ""
+      let (avant, _, _) = analyse_code_affectable AccesLecture a in avant
+  | AstType.Null -> subr "MVoid"
+  | AstType.Adresse info ->
+      begin
+        match info_ast_to_info info with
+        | InfoVar (_, _, depl, reg) -> loada depl reg
+        | _ -> failwith "Erreur interne"
+      end
+  | AstType.Nouveau t -> (loadl_int (getTaille t))^(subr "MAlloc")
   | AstType.Booleen booleen -> if booleen then loadl_int 1 else loadl_int 0
   | AstType.Entier entier -> loadl_int entier
   | AstType.Unaire (unaire, e) ->
@@ -84,7 +111,7 @@ let rec analyse_code_instruction i =
       | _ -> failwith "Erreur interne"
     end
   | AstPlacement.Affectation (a, e) ->
-      let (avant, apres) = analyse_code_affectable AccesEcriture a
+      let (avant, apres, _) = analyse_code_affectable AccesEcriture a
       in avant^(analyse_code_expression e)^apres
   | AstPlacement.AffichageInt e -> (analyse_code_expression e)^(subr "IOut")
   | AstPlacement.AffichageRat e -> (analyse_code_expression e)^(call "SB" "ROut")

@@ -1,0 +1,6 @@
+main {
+        rat * a = null;
+        a = (new rat);
+        (*a) = [3/6];
+        print (*a);
+}

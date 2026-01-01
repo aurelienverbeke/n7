@@ -1,0 +1,6 @@
+test {
+    rat * px = (new rat);
+    rat x = [1/4];
+    px = &x;
+    int y = (*px);
+}

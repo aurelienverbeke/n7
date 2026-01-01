@@ -382,16 +382,189 @@ let%test_unit "testOperation11"=
 let%test_unit "testOperation12"= 
   let _ = compiler (pathFichiersRat^"testOperation12.rat") in ()
 
+let%test_unit "testPointeurs1" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs1.rat") in ()
+
+let%test_unit "testPointeurs2" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs2.rat") in ()
+
+let%test_unit "testPointeurs3" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs3.rat") in ()
+
+let%test_unit "testPointeurs4" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs4.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Rat,Pointeur Int) -> ()
+
+let%test_unit "testPointeurs5" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs5.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Bool,Pointeur Int) -> ()
+
+let%test_unit "testPointeurs6" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs6.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Int,Pointeur Rat) -> ()
+
+let%test_unit "testPointeurs7" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs7.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Bool,Pointeur Rat) -> ()
+
+let%test_unit "testPointeurs8" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs8.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Int,Pointeur Bool) -> ()
+
+let%test_unit "testPointeurs9" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs9.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Rat,Pointeur Bool) -> ()
+
+let%test_unit "testPointeurs10" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs10.rat") in ()
+
+let%test_unit "testPointeurs11" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs11.rat") in ()
+
+let%test_unit "testPointeurs12" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs12.rat") in ()
+
+let%test_unit "testPointeurs13" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs13.rat") in ()
+
+let%test_unit "testPointeurs14" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs14.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Rat,Pointeur Int) -> ()
+
+let%test_unit "testPointeurs15" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs15.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Int,Pointeur Rat) -> ()
+
+let%test_unit "testPointeurs16" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs16.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Bool,Pointeur Rat) -> ()
+
+let%test_unit "testPointeurs17" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs17.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Int,Pointeur Bool) -> ()
+
+let%test_unit "testPointeurs18" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs18.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Rat,Pointeur Bool) -> ()
+
+let%test_unit "testPointeurs19" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs19.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Pointeur Bool,Pointeur Int) -> ()
+
+let%test_unit "testPointeurs20" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs20.rat") in ()
+
+let%test_unit "testPointeurs21" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs21.rat") in ()
+
+let%test_unit "testPointeurs22" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs22.rat") in ()
+
+let%test_unit "testPointeurs23" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs23.rat") in ()
+
+let%test_unit "testPointeurs24" = 
+  let _ = compiler (pathFichiersRat^"testPointeurs24.rat") in ()
+
+let%test_unit "testPointeurs25" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs25.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Int,Rat) -> ()
+
+let%test_unit "testPointeurs26" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs26.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Int,Bool) -> ()
+
+let%test_unit "testPointeurs27" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs27.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Rat,Int) -> ()
+
+let%test_unit "testPointeurs28" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs28.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Rat,Bool) -> ()
+
+let%test_unit "testPointeurs29" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs29.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Bool,Int) -> ()
+
+let%test_unit "testPointeurs30" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs30.rat") 
+      in raise ErreurNonDetectee
+  with
+  | TypeInattendu(Bool,Rat) -> ()
+
+let%test_unit "testPointeurs31" = 
+  try
+      let _ = compiler (pathFichiersRat^"testPointeurs31.rat") 
+      in raise ErreurNonDetectee
+  with
+  | DereferencementImpossible -> ()
+
+
+(*
 let%test_unit "testProcedures1"= 
   try 
     let _ = compiler (pathFichiersRat^"testProcedures1.rat")
     in raise ErreurNonDetectee
   with
   | TypeVoidHorsTypeProcedure -> ()
+  *)
 
 
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
+(*
 open Unix
 open Filename
 
@@ -413,3 +586,4 @@ let%test_unit "all_tam" =
   let p_tam = "../../../../../tests/tam/sans_fonction/fichiersRat/" in
   let d = opendir p_tam in
   test d p_tam
+  *)

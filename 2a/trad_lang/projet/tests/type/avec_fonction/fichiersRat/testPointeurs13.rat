@@ -1,0 +1,7 @@
+int * f1 (bool x) {
+    return (&x);
+}
+
+test {
+    bool x = true;
+}

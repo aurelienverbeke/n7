@@ -1,0 +1,9 @@
+void procedure (ref int x) {
+
+}
+
+main {
+        int a = 3;
+
+        procedure(ref a);
+}

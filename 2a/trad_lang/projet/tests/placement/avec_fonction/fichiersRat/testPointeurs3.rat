@@ -1,0 +1,7 @@
+int fonction (bool * a) {
+        return 3;
+}
+
+main {
+
+}

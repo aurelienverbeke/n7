@@ -1,0 +1,5 @@
+test {
+    bool * px = (new bool);
+    int x = 5;
+    px = &x;
+}

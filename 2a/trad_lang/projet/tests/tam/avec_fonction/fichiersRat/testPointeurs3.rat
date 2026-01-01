@@ -1,0 +1,16 @@
+int * f (int * a) {
+        if ((*a)<10) {
+                (*a) = ((*a) + 1);
+                int * b = f(a);
+        } else {
+                
+        }
+        return null;
+}
+
+main {
+        int * a = (new int);
+        (*a) = 0;
+        int * b = f(a);
+        print (*a);
+}

@@ -1,0 +1,10 @@
+int f (int * a) {
+        (*a) = 12;
+        return 0;
+}
+
+main {
+        int * a = (new int);
+        int b = f(a);
+        print (*a);
+}

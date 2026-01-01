@@ -1,0 +1,9 @@
+int fonction (ref int x) {
+        x = 12;
+}
+
+main {
+        int a = 3;
+
+        int a = fonction(ref a);
+}

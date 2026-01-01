@@ -1,0 +1,29 @@
+bool * fonction (int a) {
+    bool x = true;
+    rat y = [0/1];
+    int * z = null;
+    while x {
+       bool * x = null;
+       rat y = [0/1];
+       int z = 0;
+    } 
+    bool x1 = true;
+    rat * y1 = null;
+    int z1 = 0;
+    return (new bool);
+}
+
+
+main {
+    bool * x = (new bool);
+    rat y = [0/1];
+    int z = 0;
+    while (*x) {
+       bool x = true;
+       rat y = [0/1];
+       int * z = (new int);
+    } 
+    bool * x1 = (new bool);
+    rat y1 = [0/1];
+    int z1 = 0;
+}

@@ -1,0 +1,7 @@
+void procedure (ref bool * a) {
+        bool * x = a;
+}
+
+main {
+        
+}
