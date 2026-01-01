@@ -1,7 +1,9 @@
 void compteARebours(int n) {
-  if (n > 0) {
+  if (0 < n) {
     print(n);
-    compteARebours(n - 1);
+    compteARebours((n + (-1)));
+  } else {
+    
   }
 }
 

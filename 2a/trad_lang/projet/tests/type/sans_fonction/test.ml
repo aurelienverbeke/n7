@@ -551,15 +551,12 @@ let%test_unit "testPointeurs31" =
   with
   | DereferencementImpossible -> ()
 
-
-(*
 let%test_unit "testProcedures1"= 
   try 
     let _ = compiler (pathFichiersRat^"testProcedures1.rat")
     in raise ErreurNonDetectee
   with
   | TypeVoidHorsTypeProcedure -> ()
-  *)
 
 
 

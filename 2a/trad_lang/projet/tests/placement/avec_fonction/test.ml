@@ -218,7 +218,6 @@ let%test "testPointeurs6_f_z1" =
 let%test "testPointeurs6_f_a" = 
   test (pathFichiersRat^"testPointeurs6.rat")  "fonction" ("a",1)  (-1, "LB")
 
-(*
 let%test "testProcedures1_a" = 
   test (pathFichiersRat^"testProcedures1.rat")  "procedure" ("a",1)  (-4, "LB")
 
@@ -308,4 +307,3 @@ let%test "testProcedures4_f_z1" =
    
 let%test "testProcedures4_f_a" = 
  test (pathFichiersRat^"testProcedures4.rat")  "f" ("a",1)  (-1, "LB")
-*)

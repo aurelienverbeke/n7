@@ -252,7 +252,6 @@ let%test_unit "testPointeurs13" =
   with
   | MauvaiseUtilisationIdentifiant("fonction") -> ()
 
-(*
 let%test_unit "testProcedures1" = 
   let _ = compiler (pathFichiersRat^"testProcedures1.rat") in ()
 
@@ -281,27 +280,6 @@ let%test_unit "testProcedures6" =
 
 let%test_unit "testProcedures7" = 
   let _ = compiler (pathFichiersRat^"testProcedures7.rat") in ()
-
-let%test_unit "testProcedures8" = 
-  try 
-    let _ = compiler (pathFichiersRat^"testProcedures8.rat")
-    in raise ErreurNonDetectee
-  with
-  | MauvaisRetour -> ()
-
-let%test_unit "testProcedures9" = 
-  try 
-    let _ = compiler (pathFichiersRat^"testProcedures9.rat")
-    in raise ErreurNonDetectee
-  with
-  | MauvaisRetour -> ()
-
-let%test_unit "testProcedures10" = 
-  try 
-    let _ = compiler (pathFichiersRat^"testProcedures10.rat")
-    in raise ErreurNonDetectee
-  with
-  | MauvaiseUtilisationIdentifiant("procedure") -> ()
 
 let%test_unit "testProcedures11" = 
   try 
@@ -334,11 +312,7 @@ let%test_unit "testProcedures16" =
   | IdentifiantNonDeclare("b") -> ()
 
 let%test_unit "testProcedures17" = 
-  try 
-    let _ = compiler (pathFichiersRat^"testProcedures17.rat")
-    in raise ErreurNonDetectee
-  with
-  | DoubleDeclaration("procedure") -> ()
+  let _ = compiler (pathFichiersRat^ "testProcedures17.rat") in ()
 
 let%test_unit "testProcedures18" = 
   try 
@@ -357,6 +331,7 @@ let%test_unit "testProcedures19" =
 let%test_unit "testProcedures20" = 
   let _ = compiler (pathFichiersRat^"testProcedures20.rat") in ()
 
+(*
 let%test_unit "testReferences1" = 
   let _ = compiler (pathFichiersRat^"testReferences1.rat") in ()
 

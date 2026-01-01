@@ -81,7 +81,6 @@ let%expect_test "testPointeurs4" =
   runtam (pathFichiersRat^"testPointeurs1.rat");
   [%expect{| 12 |}]
 
-(*
 let%expect_test "print1" =
   runtam (pathFichiersRat^"testProcedures1.rat");
   [%expect{| 1 |}]
@@ -93,4 +92,3 @@ let%expect_test "printint" =
 let%expect_test "printsommerat" =
   runtam (pathFichiersRat^"testProcedures3.rat");
   [%expect{| 8 |}]
-*)

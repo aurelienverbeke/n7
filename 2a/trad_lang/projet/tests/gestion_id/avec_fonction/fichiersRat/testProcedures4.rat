@@ -3,7 +3,7 @@ void procedure (int a, rat* b) {
 }
 
 main {
-        int x = 3;
+        int a = 3;
         rat* b = null;
         procedure(a, b);
 }
