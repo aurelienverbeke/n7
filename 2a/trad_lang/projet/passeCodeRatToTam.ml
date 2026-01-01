@@ -110,6 +110,9 @@ let rec analyse_code_instruction i =
           (push taille_t)^(analyse_code_expression e)^(store taille_t depl reg)
       | _ -> failwith "Erreur interne"
     end
+  | AstPlacement.AppelProcedure (info, le) ->
+      let cle = List.fold_right (fun e acc -> (analyse_code_expression e)^acc) le "" in
+      cle^(call "SB" (get_nom_fonction info))
   | AstPlacement.Affectation (a, e) ->
       let (avant, apres, _) = analyse_code_affectable AccesEcriture a
       in avant^(analyse_code_expression e)^apres
@@ -136,6 +139,7 @@ let rec analyse_code_instruction i =
       ^(jump etiquetteTq)
       ^(label etiquetteEnd)
   | AstPlacement.Retour (e, tr, tp) -> (analyse_code_expression e)^(return tr tp)
+  | AstPlacement.RetourVoid (tp) -> return 0 tp
   | AstPlacement.Empty -> ""
 
 

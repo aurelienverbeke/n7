@@ -36,25 +36,16 @@ en une expression de type AstType.expression *)
 let rec analyse_type_expression e =
   match e with
   | AstTds.AppelFonction (info, es) ->
-      begin
-        (* On analyse le type de chacune des expressions des paramètres *)
-        let l = List.map analyse_type_expression es in
-        (* On sépare en une liste d'expressions et une liste de types *)
-        let (nle, nte) = List.split l in
-        match info_ast_to_info info with
-        (* Il faut que l'identifiant corresponde à une fonction *)
-        | InfoFun (_, tr, tp) ->
-          begin
-            (* On compare les types réels et attendus *)
-            if (est_compatible_list nte tp)=true then
-              (* Aucune différence trouvée entre types réels et attendus *)
-              (AstType.AppelFonction(info, nle), tr)
-            else
-              (* Différence trouvée entre types réels et attendus à l'indice i *)
-              raise (TypesParametresInattendus (nte, tp))
-          end
-        | _ -> failwith "Erreur interne"
-      end
+    begin  
+      (* On analyse le type de retour et les paramètres fournis *)
+      let (nes, t) = analyse_type_appel_fonction_procedure info es
+      in match t with
+        (* On n'accepte que si le type de retour n'est pas void,
+           et que c'est donc bien une fonction et non une procédure *)
+        | Void -> raise (MauvaiseUtilisationIdentifiant (get_nom_fonction info))
+        | Undefined -> failwith "Erreur interne"
+        | _ -> (AstType.AppelFonction(info, nes), t)
+    end
   | AstTds.Affectable a -> (AstType.Affectable a, analyse_type_affectable a)
   | AstTds.Adresse info ->
       (* On demande l'adresse d'une variable
@@ -97,6 +88,32 @@ let rec analyse_type_expression e =
       end
 
 
+(* analyse_tds_appel_fonction_procedure : info_ast -> AstTds.expression list -> ( AstType.expression list * typ ) *)
+(* Paramètre info : l'info de la fonction / procédure appelée *)
+(* Paramètre es : les expressions des paramètres à analyser *)
+(* Vérifie la bonne utilisation des types et tranforme l'expression en :
+   - les AstType.expression des paramètres
+   - le type de retour *)
+(* Erreur si mauvaise utilisation des types *)
+and analyse_type_appel_fonction_procedure info es =
+  (* On analyse le type de chacune des expressions des paramètres *)
+  let l = List.map analyse_type_expression es in
+  (* On sépare en une liste d'expressions et une liste de types *)
+  let (nle, nte) = List.split l in
+  match info_ast_to_info info with
+  (* Il faut que l'identifiant corresponde à une fonction *)
+  | InfoFun (_, tr, tp) ->
+    begin
+      (* On compare les types réels et attendus *)
+      if (est_compatible_list nte tp)=true then
+        (* Aucune différence trouvée entre types réels et attendus *)
+        (nle, tr)
+      else
+        (* Différence trouvée entre types réels et attendus à l'indice i *)
+        raise (TypesParametresInattendus (nte, tp))
+    end
+  | _ -> failwith "Erreur interne"
+
 (* analyse_type_instruction : AstTds.instruction -> AstType.instruction *)
 (* Paramètre i : l'instruction à analyser *)
 (* Vérifie la bonne utilisation des types et tranforme l'instruction
@@ -105,14 +122,31 @@ en une instruction de type AstType.instruction *)
 let rec analyse_type_instruction i =
   match i with
   | AstTds.Declaration (t, info, e) -> let (ne, te) = analyse_type_expression e in
-      (* On vérifie si le type de la variable correspond au type de l'expression *)
-      if (est_compatible t te) then
-        begin
-          (* On ajoute le type à l'info *)
-          modifier_type_variable t info;
-          AstType.Declaration(info, ne)
-        end
-      else raise (TypeInattendu (te, t))
+    begin
+      match t with
+      | Void -> raise TypeVoidHorsTypeProcedure (* Le type void dans les paramètres n'est pas autorisé *)
+      | Undefined -> failwith "Erreur interne"
+      | _ ->
+        (* On vérifie si le type de la variable correspond au type de l'expression *)
+        if (est_compatible t te) then
+          begin
+            (* On ajoute le type à l'info *)
+            modifier_type_variable t info;
+            AstType.Declaration(info, ne)
+          end
+        else raise (TypeInattendu (te, t))
+    end
+  | AstTds.AppelProcedure (info, es) ->
+    begin
+      (* On analyse le type de retour et les paramètres fournis *)
+      let (nes, t) = analyse_type_appel_fonction_procedure info es
+      in match t with
+        (* On n'accepte que si le type de retour est void,
+           et que c'est donc bien une procédure et non une fonction *)
+        | Void -> AstType.AppelProcedure(info, nes)
+        | Undefined -> failwith "Erreur interne"
+        | _ -> raise (MauvaiseUtilisationIdentifiant (get_nom_fonction info))
+    end
   | AstTds.Affectation (a, e) ->
       (* Analyse du type de l'expression *)
       let (ne, te) = analyse_type_expression e in
@@ -152,14 +186,32 @@ let rec analyse_type_instruction i =
         AstType.TantQue(nc, nb)
       else raise (TypeInattendu (tc, Bool))
   | AstTds.Retour (e, info) ->
+    begin
       (* Analyse de l'expression du retour *)
       let (ne, te) = analyse_type_expression e in
       (* On récupère le type de retour de la fonction *)
-      let (tr, _) = get_types_fonction info in
-      (* On vérifie que le type de l'expression de retour correspond bien à celui de la fonction *)
-      if (est_compatible tr te) then
-        AstType.Retour (ne, info)
-      else raise (TypeInattendu (te, tr)) 
+      let (tr, _) = get_types_fonction info
+      in
+        match tr with
+        | Void -> raise MauvaisRetour (* On a fait un return; dans une fonction *)
+        | Undefined -> failwith "Erreur interne"
+        | _ ->
+          (* On vérifie que le type de l'expression de retour correspond bien à celui de la fonction *)
+          if (est_compatible tr te) then
+            AstType.Retour (ne, info)
+          else
+            raise (TypeInattendu (te, tr))
+    end
+  | AstTds.RetourVoid (info) ->
+    begin
+      (* On récupère le type de retour de la fonction *)
+      let (tr, _) = get_types_fonction info
+      in
+        match tr with
+        | Void -> AstType.RetourVoid (info)
+        | Undefined -> failwith "Erreur interne"
+        | _ -> raise MauvaisRetour (* On a fait un return exp; dans une procédure *)
+    end
   | AstTds.Empty -> AstType.Empty
 
 
@@ -181,11 +233,19 @@ let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) =
     info,
     ( List.map
       (fun (tp, info_ast_p) ->
-          match info_ast_to_info info_ast_p with
-            | InfoVar(_, _, _, _) ->
-                modifier_type_variable tp info_ast_p;
-                info_ast_p
-            | _ -> failwith "Erreur interne"
+          match tp with
+          | Void -> raise TypeVoidHorsTypeProcedure (* Le type void dans les paramètres n'est pas autorisé *)
+          | Undefined -> failwith "Erreur interne"
+          | _ ->
+            begin
+              match info_ast_to_info info_ast_p with
+                | InfoVar(_, _, _, _) ->
+                    begin
+                      modifier_type_variable tp info_ast_p;
+                      info_ast_p
+                    end
+                | _ -> failwith "Erreur interne"
+            end
       )
       lp
     ),

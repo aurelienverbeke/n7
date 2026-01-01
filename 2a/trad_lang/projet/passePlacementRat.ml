@@ -27,6 +27,7 @@ let rec analyse_placement_instruction i depl reg =
             (AstPlacement.Declaration(info, e), getTaille t)
         | _ -> failwith "Erreur interne"
       end
+  | AstType.AppelProcedure (info, es) -> (AstPlacement.AppelProcedure (info, es), 0)
   | AstType.Affectation (a, e) -> (AstPlacement.Affectation(a, e), 0)
   | AstType.AffichageInt e -> (AstPlacement.AffichageInt e, 0)
   | AstType.AffichageRat e -> (AstPlacement.AffichageRat e, 0)
@@ -44,6 +45,12 @@ let rec analyse_placement_instruction i depl reg =
         | InfoFun (_, tr, tp) -> (AstPlacement.Retour(e, getTaille tr, List.fold_right (fun t tq -> tq + (getTaille t)) tp 0), 0)
         | _ -> failwith "Erreur interne"
       end
+  | AstType.RetourVoid (info) ->
+    begin
+      match info_ast_to_info info with
+      | InfoFun (_, _, tp) -> (AstPlacement.RetourVoid(List.fold_right (fun t tq -> tq + (getTaille t)) tp 0), 0)
+      | _ -> failwith "Erreur interne"
+    end
   | AstType.Empty -> (AstPlacement.Empty, 0)
 
 

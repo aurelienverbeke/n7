@@ -87,7 +87,7 @@ let%expect_test "print1" =
 
 let%expect_test "printint" =
   runtam (pathFichiersRat^"testProcedures2.rat");
-  [%expect{| 3 |}]
+  [%expect{| 12 |}]
 
 let%expect_test "printsommerat" =
   runtam (pathFichiersRat^"testProcedures3.rat");

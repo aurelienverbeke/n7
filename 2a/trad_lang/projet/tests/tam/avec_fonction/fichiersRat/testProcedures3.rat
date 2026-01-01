@@ -1,7 +1,8 @@
 void printsommerat (rat* a) {
-        print (numerateur (*a) + denominateur (*a));
+        print (num (*a) + denom (*a));
 }
 
 main {
-        printsommerat([5/3]);
+        rat a = [5/3];
+        printsommerat(&a);
 }
