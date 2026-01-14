@@ -42,13 +42,13 @@ let rec analyse_placement_instruction i depl reg =
   | AstType.Retour (e, info) ->
       begin
         match info_ast_to_info info with
-        | InfoFun (_, tr, tp) -> (AstPlacement.Retour(e, getTaille tr, List.fold_right (fun t tq -> tq + (getTaille t)) tp 0), 0)
+        | InfoFun (_, tr, tp) -> (AstPlacement.Retour(e, getTaille tr, List.fold_right (fun (r, t) tq -> tq + (if r then 1 else (getTaille t))) tp 0), 0)
         | _ -> failwith "Erreur interne"
       end
   | AstType.RetourVoid (info) ->
     begin
       match info_ast_to_info info with
-      | InfoFun (_, _, tp) -> (AstPlacement.RetourVoid(List.fold_right (fun t tq -> tq + (getTaille t)) tp 0), 0)
+      | InfoFun (_, _, tp) -> (AstPlacement.RetourVoid(List.fold_right (fun (r, t) tq -> tq + (if r then 1 else (getTaille t))) tp 0), 0)
       | _ -> failwith "Erreur interne"
     end
   | AstType.Empty -> (AstPlacement.Empty, 0)
@@ -79,11 +79,11 @@ let analyse_placement_fonction (AstType.Fonction(info, lp, li)) =
   let (nlp, _) = List.fold_right
     (
       (* Accumulateur : (paramètre, position) *)
-      fun info_ast_p (acc_p, acc_position) ->
+      fun (refp, info_ast_p) (acc_p, acc_position) ->
         (* Nouvelle position = ancienne position - taille du type du paramètre *)
-        let position = acc_position-(getTaille (get_type_variable info_ast_p)) in
+        let position = acc_position-(if refp then 1 else (getTaille (get_type_variable info_ast_p))) in
         modifier_adresse_variable position "LB" info_ast_p;
-        (info_ast_p::acc_p, position)
+        ((refp, info_ast_p)::acc_p, position)
     )
     lp ([], 0) in
   (* On place les variables locales de la fonction à partir de 3[LB] *)

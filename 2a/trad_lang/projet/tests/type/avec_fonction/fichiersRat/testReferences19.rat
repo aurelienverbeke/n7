@@ -3,7 +3,7 @@ int fonction (ref int a) {
 }
 
 main {
-        rat x = 3;
+        rat x = [45/46];
         
         int a = fonction(x);
 }

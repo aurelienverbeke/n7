@@ -1,0 +1,7 @@
+int fonction (ref rat x) {
+
+}
+
+main {
+        int a = fonction([64/18]);
+}

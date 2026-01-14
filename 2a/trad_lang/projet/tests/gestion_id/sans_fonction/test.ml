@@ -200,7 +200,6 @@ let%test_unit "testPointeurs14" =
 let%test_unit "testPointeurs15" = 
   let _ = compiler (pathFichiersRat^"testPointeurs15.rat") in ()
 
-(*
 let%test_unit "testReferences1" = 
   try 
     let _ = compiler (pathFichiersRat^"testReferences1.rat")
@@ -221,7 +220,6 @@ let%test_unit "testReferences3" =
     in raise ErreurNonDetectee
   with
   | UtilisationRefInvalide -> ()
-*)
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 (*

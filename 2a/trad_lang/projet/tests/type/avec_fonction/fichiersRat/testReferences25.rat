@@ -1,0 +1,8 @@
+int fonction (ref bool x) {
+
+}
+
+main {
+        bool a = false;
+        int b = fonction(a);
+}

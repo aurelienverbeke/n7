@@ -1,0 +1,7 @@
+void procedure (rat a, ref int b, bool c) {
+
+}
+
+main {
+
+}

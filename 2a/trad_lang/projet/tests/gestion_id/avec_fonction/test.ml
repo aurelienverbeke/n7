@@ -331,7 +331,6 @@ let%test_unit "testProcedures19" =
 let%test_unit "testProcedures20" = 
   let _ = compiler (pathFichiersRat^"testProcedures20.rat") in ()
 
-(*
 let%test_unit "testReferences1" = 
   let _ = compiler (pathFichiersRat^"testReferences1.rat") in ()
 
@@ -405,17 +404,16 @@ let%test_unit "testReferences16" =
   | UtilisationRefInvalide -> ()
 
 let%test_unit "testReferences17" = 
-    let _ = compiler (pathFichiersRat^"testReferences17.rat")
-  
+  let _ = compiler (pathFichiersRat^"testReferences17.rat") in ()
+
 let%test_unit "testReferences18" = 
-    let _ = compiler (pathFichiersRat^"testReferences18.rat")
+  let _ = compiler (pathFichiersRat^"testReferences18.rat") in ()
 
 let%test_unit "testReferences19" = 
-    let _ = compiler (pathFichiersRat^"testReferences19.rat")
+  let _ = compiler (pathFichiersRat^"testReferences19.rat") in ()
   
 let%test_unit "testReferences20" = 
-    let _ = compiler (pathFichiersRat^"testReferences20.rat")
-*)
+  let _ = compiler (pathFichiersRat^"testReferences20.rat") in ()
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 (*

@@ -279,7 +279,6 @@ let%test_unit "testProcedures10" =
   with
   | MauvaiseUtilisationIdentifiant("procedure") -> ()
 
-(*
 let%test_unit "testReferences1"= 
   let _ = compiler (pathFichiersRat^"testReferences1.rat") in ()
 
@@ -383,7 +382,48 @@ let%test_unit "testReferences23"=
 
 let%test_unit "testReferences24"= 
   let _ = compiler (pathFichiersRat^"testReferences24.rat") in ()
-*)
+
+let%test_unit "testReferences25" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences25.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
+
+let%test_unit "testReferences26" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences26.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
+
+let%test_unit "testReferences27" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences27.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
+
+let%test_unit "testReferences28" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences28.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
+
+let%test_unit "testReferences29" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences29.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
+
+let%test_unit "testReferences30" = 
+  try 
+    let _ = compiler (pathFichiersRat^"testReferences30.rat")
+    in raise ErreurNonDetectee
+  with
+  | RefManquantOuSuperflu -> ()
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 (*

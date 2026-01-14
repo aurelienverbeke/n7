@@ -6,5 +6,5 @@ main {
         int a = 3;
         rat b = [5/4];
 
-        int a = fonction(ref a, ref b);
+        int c = fonction(ref a, ref b);
 }

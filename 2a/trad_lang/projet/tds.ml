@@ -5,7 +5,7 @@ open Type
 type info =
   | InfoConst of string * int
   | InfoVar of string * typ * int * string
-  | InfoFun of string * typ * typ list
+  | InfoFun of string * typ * (bool * typ) list
 
 (* Données stockées dans la tds  et dans les AST : pointeur sur une information *)
 type info_ast = info ref  
@@ -285,8 +285,25 @@ let string_of_info info =
   match info with
   | InfoConst (n,value) -> "Constante "^n^" : "^(string_of_int value)
   | InfoVar (n,t,dep,base) -> "Variable "^n^" : "^(string_of_type t)^" "^(string_of_int dep)^"["^base^"]"
-  | InfoFun (n,t,tp) -> "Fonction "^n^" : "^(List.fold_right (fun elt tq -> if tq = "" then (string_of_type elt) else (string_of_type elt)^" * "^tq) tp "" )^
-                      " -> "^(string_of_type t)
+  | InfoFun (n,t,tp) ->
+      "Fonction "
+      ^n
+      ^" : "
+      ^(List.fold_right
+          (fun (estRef,elt) tq ->
+            let ref = if estRef then "ref " else "" in
+            ref^(
+              if tq = "" then
+                (string_of_type elt)
+              else
+                (string_of_type elt)^" * "^tq
+            )
+          )
+          tp
+          ""
+        )
+      ^" -> "
+      ^(string_of_type t)
 
 (* Affiche la tds locale *)
 let afficher_locale tds =
@@ -327,9 +344,9 @@ let modifier_type_fonction t tp i =
 let%test _ = 
   let info = InfoFun ("f", Undefined, []) in
   let ia = info_to_info_ast info in
-  modifier_type_fonction Rat [Int ; Int] ia;
+  modifier_type_fonction Rat [(false, Int); (false, Int)] ia;
   match info_ast_to_info ia with
-  | InfoFun ("f", Rat, [Int ; Int]) -> true
+  | InfoFun ("f", Rat, [(false, Int); (false, Int)]) -> true
   | _ -> false
  
 (* Modifie l'emplacement (dépl, registre) si c'est une InfoVar, ne fait rien sinon *)

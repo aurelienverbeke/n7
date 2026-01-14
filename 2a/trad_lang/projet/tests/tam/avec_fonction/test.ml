@@ -92,3 +92,15 @@ let%expect_test "printint" =
 let%expect_test "printsommerat" =
   runtam (pathFichiersRat^"testProcedures3.rat");
   [%expect{| 8 |}]
+
+let%expect_test "referencessujet" =
+  runtam (pathFichiersRat^"testReferences1.rat");
+  [%expect{| 5556565758 |}]
+
+let%expect_test "testReferences2" =
+  runtam (pathFichiersRat^"testReferences2.rat");
+  [%expect{| 6 |}]
+
+let%expect_test "testReferences3" =
+  runtam (pathFichiersRat^"testReferences3.rat");
+  [%expect{| 012 |}]

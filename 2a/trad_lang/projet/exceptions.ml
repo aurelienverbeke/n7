@@ -22,4 +22,4 @@ exception MauvaisRetour
 
 (* Exceptions pour la gestion des références *)
 exception UtilisationRefInvalide (* Utilisation illégale d'un ref en dehors d'un appel à une fonction ou de la définition de paramètres *)
-exception VariableAttenduePourRef of string (* Autre chose qu'une variable a été transmis pour la référence, on donne son identifiant *)
+exception RefManquantOuSuperflu (* Il manque un attribut ref dans les paramètres de la fonction ou dans ceux qui lui ont été transmis *)

@@ -1,4 +1,4 @@
 main {
         int a = 3;
-        int b = 1 + ref a;
+        int b = (1 + ref a);
 }

@@ -307,3 +307,51 @@ let%test "testProcedures4_f_z1" =
    
 let%test "testProcedures4_f_a" = 
  test (pathFichiersRat^"testProcedures4.rat")  "f" ("a",1)  (-1, "LB")
+
+let%test "testReferences1_a" = 
+  test (pathFichiersRat^"testReferences1.rat")  "fonction" ("a",1)  (-1, "LB")
+
+let%test "testReferences2_a" = 
+  test (pathFichiersRat^"testReferences2.rat")  "procedure" ("a",1)  (-1, "LB")
+
+let%test "testReferences3_a" =
+  test (pathFichiersRat^"testReferences3.rat")  "fonction" ("a",1)  (-2, "LB")
+
+let%test "testReferences3_b" =
+  test (pathFichiersRat^"testReferences3.rat")  "fonction" ("b",1)  (-1, "LB")
+
+let%test "testReferences4_a" =
+  test (pathFichiersRat^"testReferences4.rat")  "procedure" ("a",1)  (-2, "LB")
+
+let%test "testReferences4_b" =
+  test (pathFichiersRat^"testReferences4.rat")  "procedure" ("b",1)  (-1, "LB")
+
+let%test "testReferences5_a" =
+  test (pathFichiersRat^"testReferences5.rat")  "fonction" ("a",1)  (-2, "LB")
+
+let%test "testReferences5_b" =
+  test (pathFichiersRat^"testReferences5.rat")  "fonction" ("b",1)  (-1, "LB")
+
+let%test "testReferences6_a" =
+  test (pathFichiersRat^"testReferences6.rat")  "procedure" ("a",1)  (-2, "LB")
+
+let%test "testReferences6_b" =
+  test (pathFichiersRat^"testReferences6.rat")  "procedure" ("b",1)  (-1, "LB")
+
+let%test "testReferences7_a" =
+  test (pathFichiersRat^"testReferences7.rat")  "fonction" ("a",1)  (-4, "LB")
+
+let%test "testReferences7_b" =
+  test (pathFichiersRat^"testReferences7.rat")  "fonction" ("b",1)  (-2, "LB")
+
+let%test "testReferences7_c" =
+  test (pathFichiersRat^"testReferences7.rat")  "fonction" ("c",1)  (-1, "LB")
+
+let%test "testReferences8_a" =
+  test (pathFichiersRat^"testReferences8.rat")  "procedure" ("a",1)  (-4, "LB")
+
+let%test "testReferences8_b" =
+  test (pathFichiersRat^"testReferences8.rat")  "procedure" ("b",1)  (-2, "LB")
+
+let%test "testReferences8_c" =
+  test (pathFichiersRat^"testReferences8.rat")  "procedure" ("c",1)  (-1, "LB")

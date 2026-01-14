@@ -1,0 +1,7 @@
+void procedure (ref rat x) {
+
+}
+
+main {
+        int a = procedure([64/18]);
+}

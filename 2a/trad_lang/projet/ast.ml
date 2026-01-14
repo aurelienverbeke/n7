@@ -49,6 +49,8 @@ type expression =
   | Unaire of unaire * expression
   (* Opération binaire représentée par l'opérateur, l'opérande gauche et l'opérande droite *)
   | Binaire of binaire * expression * expression
+  (* Passage par référence *)
+  | Reference of string
 
 (* Instructions de Rat *)
 type bloc = instruction list
@@ -73,8 +75,8 @@ and instruction =
   | RetourVoid
 
 (* Structure des fonctions de Rat *)
-(* type de retour - nom - liste des paramètres (association type et nom) - corps de la fonction *)
-type fonction = Fonction of typ * string * (typ * string) list * bloc
+(* type de retour - nom - liste des paramètres (association présence de référence, type et nom) - corps de la fonction *)
+type fonction = Fonction of typ * string * (bool * typ * string) list * bloc
 
 (* Structure d'un programme Rat *)
 (* liste de fonction - programme principal *)
@@ -109,6 +111,7 @@ struct
     | Entier of int
     | Unaire of AstSyntax.unaire * expression
     | Binaire of AstSyntax.binaire * expression * expression
+    | Reference of Tds.info_ast
 
   (* instructions existantes dans notre langage *)
   (* ~ instruction de l'AST syntaxique où les noms des identifiants ont été
@@ -128,8 +131,8 @@ struct
 
 
   (* Structure des fonctions dans notre langage *)
-  (* type de retour - informations associées à l'identificateur (dont son nom) - liste des paramètres (association type et information sur les paramètres) - corps de la fonction *)
-  type fonction = Fonction of typ * Tds.info_ast * (typ * Tds.info_ast ) list * bloc
+  (* type de retour - informations associées à l'identificateur (dont son nom) - liste des paramètres (association présence de référence, type et information sur les paramètres) - corps de la fonction *)
+  type fonction = Fonction of typ * Tds.info_ast * (bool * typ * Tds.info_ast ) list * bloc
 
   (* Structure d'un programme dans notre langage *)
   type programme = Programme of fonction list * bloc
@@ -164,6 +167,7 @@ type expression =
   | Entier of int
   | Unaire of unaire * expression
   | Binaire of binaire * expression * expression
+  | Reference of Tds.info_ast
 
 (* instructions existantes Rat *)
 (* = instruction de AstTds + informations associées aux identificateurs, mises à jour *)
@@ -182,8 +186,8 @@ type bloc = instruction list
   | RetourVoid of Tds.info_ast
   | Empty (* les nœuds ayant disparus: Const *)
 
-(* informations associées à l'identificateur (dont son nom), liste des paramètres, corps *)
-type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+(* informations associées à l'identificateur (dont son nom), liste des paramètres (avec présence ou non de référence), corps *)
+type fonction = Fonction of Tds.info_ast * (bool * Tds.info_ast) list * bloc
 
 (* Structure d'un programme dans notre langage *)
 type programme = Programme of fonction list * bloc
@@ -215,9 +219,9 @@ type bloc = instruction list * int (* taille du bloc *)
  | RetourVoid of int
  | Empty (* les nœuds ayant disparus: Const *)
 
-(* informations associées à l'identificateur (dont son nom), liste de paramètres, corps, expression de retour *)
+(* informations associées à l'identificateur (dont son nom), liste de paramètres (avec présence ou non de référence), corps, expression de retour *)
 (* Plus besoin de la liste des paramètres mais on la garde pour les tests du placements mémoire *)
-type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+type fonction = Fonction of Tds.info_ast * (bool * Tds.info_ast) list * bloc
 
 (* Structure d'un programme dans notre langage *)
 type programme = Programme of fonction list * bloc

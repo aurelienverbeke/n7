@@ -1,0 +1,8 @@
+void procedure (ref bool x) {
+
+}
+
+main {
+        bool a = false;
+        procedure(a);
+}

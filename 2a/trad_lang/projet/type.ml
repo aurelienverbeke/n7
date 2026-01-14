@@ -49,7 +49,6 @@ let%test _ = not (est_compatible (Pointeur Rat) (Pointeur Bool))
 let%test _ = not (est_compatible (Pointeur (Pointeur Int)) (Pointeur Int))
 let%test _ = not (est_compatible (Pointeur (Pointeur (Pointeur Int))) (Pointeur (Pointeur (Pointeur Rat))))
 
-
 let est_compatible_list lt1 lt2 =
   try
     List.for_all2 est_compatible lt1 lt2

@@ -1,0 +1,10 @@
+void procedure (ref int a) {
+        a = 6;
+        return;
+}
+
+main {
+        int a = 12;
+        procedure(ref a);
+        print(a);
+}

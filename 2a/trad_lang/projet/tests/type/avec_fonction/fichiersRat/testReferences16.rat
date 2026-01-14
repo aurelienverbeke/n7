@@ -1,6 +1,6 @@
 void procedure (ref bool * a) {
         if (true) {
-                a = false;
+                a = (new bool);
         } else {
 
         }

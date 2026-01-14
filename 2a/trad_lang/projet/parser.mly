@@ -40,6 +40,7 @@ open Ast.AstSyntax
 %token NULL
 %token NEW
 %token VOID
+%token REF
 
 (* Type de l'attribut synthétisé des non-terminaux *)
 %type <programme> prog
@@ -47,7 +48,7 @@ open Ast.AstSyntax
 %type <fonction> fonc
 %type <instruction> i
 %type <typ> typ
-%type <typ*string> param
+%type <bool*typ*string> param
 %type <expression> e
 %type <affectable> aff
 
@@ -62,7 +63,9 @@ prog : lf=fonc* ID li=bloc  {Programme (lf,li)}
 
 fonc : t=typ n=ID PO lp=separated_list(VIRG,param) PF li=bloc {Fonction(t,n,lp,li)}
 
-param : t=typ n=ID  {(t,n)}
+param :
+| t=typ n=ID  {(false, t,n)}
+| REF t=typ n=ID  {(true, t,n)}
 
 bloc : AO li=i* AF      {li}
 
@@ -101,6 +104,7 @@ e :
 | NULL                    {Null}
 | PO NEW t=typ PF         {Nouveau t}
 | AMP n=ID                {Adresse n}
+| REF n=ID                {Reference n}
 
 
 aff :

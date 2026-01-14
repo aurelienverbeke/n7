@@ -11,8 +11,7 @@ type t2 = Ast.AstType.programme
 
 (* analyse_type_affectable : AstTds.affectable -> typ *)
 (* Paramètre : affectable à analyser *)
-(* Renvoie le type de l'affectable
- *)
+(* Renvoie le type de l'affectable *)
 (* Erreur si mauvaise utilisation des types *)
 let rec analyse_type_affectable a =
   match a with
@@ -62,7 +61,7 @@ let rec analyse_type_expression e =
   | AstTds.Unaire (unaire, e) ->
       (* Celui là j'ai la flemme de commenter mais c'est trivial *)
       let (ne, te) = analyse_type_expression e in
-      if (te=Rat) then
+      if (est_compatible te Rat) then
         begin
           match unaire with
           | AstSyntax.Numerateur -> (AstType.Unaire(AstType.Numerateur, ne), Int)
@@ -86,6 +85,13 @@ let rec analyse_type_expression e =
         | Inf, Int, Int -> (AstType.Binaire(Inf, n1, n2), Bool)
         | _, _, _ -> raise (TypeBinaireInattendu (binaire, t1,t2))
       end
+  | AstTds.Reference info ->
+      (* On récupère le type de la variable référencée et on en fait une référence *)
+      begin
+        match info_ast_to_info info with
+        | InfoVar (_, t, _, _) -> (AstType.Reference info, t)
+        | _ -> failwith "Erreur interne"
+      end
 
 
 (* analyse_tds_appel_fonction_procedure : info_ast -> AstTds.expression list -> ( AstType.expression list * typ ) *)
@@ -93,7 +99,9 @@ let rec analyse_type_expression e =
 (* Paramètre es : les expressions des paramètres à analyser *)
 (* Vérifie la bonne utilisation des types et tranforme l'expression en :
    - les AstType.expression des paramètres
-   - le type de retour *)
+   - le type de retour
+   - les possibles intructions nécessaires à rajouter avant l'appel à la fonction
+      en cas de présence de transmission par référence *)
 (* Erreur si mauvaise utilisation des types *)
 and analyse_type_appel_fonction_procedure info es =
   (* On analyse le type de chacune des expressions des paramètres *)
@@ -102,14 +110,35 @@ and analyse_type_appel_fonction_procedure info es =
   let (nle, nte) = List.split l in
   match info_ast_to_info info with
   (* Il faut que l'identifiant corresponde à une fonction *)
-  | InfoFun (_, tr, tp) ->
+  | InfoFun (_, tr, p) ->
     begin
+      let (refp, tp) = List.split p in
       (* On compare les types réels et attendus *)
       if (est_compatible_list nte tp)=true then
+        begin
         (* Aucune différence trouvée entre types réels et attendus *)
-        (nle, tr)
+        (* On vérifie que si la variable demandée (resp. fourni) est une référence, la "variable" fournie (resp. demandé) l'est aussi *)
+        if (
+          List.for_all2
+            (fun demande fourni ->
+                match (demande, fourni) with
+                | true, AstTds.Reference _ -> true (* Référence attendue et trouvée, c'est bon *)
+                | false, AstTds.Reference _ -> false (* Référence fournie mais non attendue *)
+                | true, _ -> false (* Référence attendue mais non fournie *)
+                | _ -> true (* Pas de référence demandée ni fournie, c'est bon *)
+            )
+            refp
+            es
+        )
+        then
+          (* Toutes les références sont bonnes *)
+          (nle, tr)
       else
-        (* Différence trouvée entre types réels et attendus à l'indice i *)
+          (* Il y a un problème de compatibilité avec les références *)
+          raise RefManquantOuSuperflu;
+        end
+      else
+        (* Différence trouvée entre types réels et attendus *)
         raise (TypesParametresInattendus (nte, tp))
     end
   | _ -> failwith "Erreur interne"
@@ -173,7 +202,7 @@ let rec analyse_type_instruction i =
       (* Analyse du bloc else *)
       let ne = analyse_type_bloc e in
       (* On vérifie que la condition est bien un booléen *)
-      if (tc=Bool) then
+      if (est_compatible tc Bool) then
         AstType.Conditionnelle(nc, nt, ne)
       else raise (TypeInattendu (tc, Bool))
   | AstTds.TantQue (c, b) ->
@@ -182,7 +211,7 @@ let rec analyse_type_instruction i =
       (* Analyse du bloc *)
       let nb = analyse_type_bloc b in
       (* On vérifie que la condition est bien un booléen *)
-      if (tc=Bool) then
+      if (est_compatible tc Bool) then
         AstType.TantQue(nc, nb)
       else raise (TypeInattendu (tc, Bool))
   | AstTds.Retour (e, info) ->
@@ -228,11 +257,11 @@ and analyse_type_bloc li = List.map analyse_type_instruction li
 en une fonction de type AstType.fonction *)
 (* Erreur si mauvaise utilisation des types *)
 let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) =
-  modifier_type_fonction t (List.map fst lp) info;
+  modifier_type_fonction t (List.map (fun (refp, tp, _) -> (refp, tp)) lp) info;
   AstType.Fonction(
     info,
     ( List.map
-      (fun (tp, info_ast_p) ->
+      (fun (refp, tp, info_ast_p) ->
           match tp with
           | Void -> raise TypeVoidHorsTypeProcedure (* Le type void dans les paramètres n'est pas autorisé *)
           | Undefined -> failwith "Erreur interne"
@@ -242,7 +271,7 @@ let analyse_type_fonction (AstTds.Fonction(t, info, lp, li)) =
                 | InfoVar(_, _, _, _) ->
                     begin
                       modifier_type_variable tp info_ast_p;
-                      info_ast_p
+                      (refp, info_ast_p)
                     end
                 | _ -> failwith "Erreur interne"
             end

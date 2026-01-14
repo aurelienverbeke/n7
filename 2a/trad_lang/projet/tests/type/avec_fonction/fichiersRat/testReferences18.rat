@@ -5,5 +5,5 @@ void procedure (ref int a) {
 main {
         int x = 3;
         
-        procedure(x);
+        procedure(ref x);
 }

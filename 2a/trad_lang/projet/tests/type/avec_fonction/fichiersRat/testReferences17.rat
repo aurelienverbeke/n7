@@ -5,5 +5,5 @@ int fonction (ref int a) {
 main {
         int x = 3;
         
-        int a = fonction(x);
+        int a = fonction(ref x);
 }

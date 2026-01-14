@@ -5,5 +5,5 @@ int fonction (ref int x) {
 main {
         const a = 3;
 
-        int a = fonction(ref a);
+        int c = fonction(ref a);
 }

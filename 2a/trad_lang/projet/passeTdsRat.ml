@@ -8,6 +8,14 @@ open Type
 type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
 
+(* exception_si_reference : AstSyntax.expression -> AstSyntax.expression *)
+(* Paramètre e : expression à analyser *)
+(* Lève une exception si l'expression est une référence *)
+let exception_si_reference e =
+  match e with
+  | AstSyntax.Reference _ -> raise UtilisationRefInvalide
+  | _ -> e
+
 
 (* analyse_tds_affectable : acces -> tds -> AstSyntax.affectable -> AstTds.affectable *)
 (* Paramètre acces : si l'affectable est utilisé en lecture ou en écriture *)
@@ -87,8 +95,17 @@ let rec analyse_tds_expression tds e =
   | AstSyntax.Nouveau typ -> AstTds.Nouveau(typ)
   | AstSyntax.Booleen booleen -> AstTds.Booleen(booleen)
   | AstSyntax.Entier entier -> AstTds.Entier(entier)
-  | AstSyntax.Unaire (unaire, e) -> AstTds.Unaire(unaire, analyse_tds_expression tds e)
-  | AstSyntax.Binaire (binaire, e1, e2) -> AstTds.Binaire(binaire, analyse_tds_expression tds e1, analyse_tds_expression tds e2)
+  | AstSyntax.Unaire (unaire, e) -> AstTds.Unaire(unaire, analyse_tds_expression tds (exception_si_reference e))
+  | AstSyntax.Binaire (binaire, e1, e2) -> AstTds.Binaire(binaire, analyse_tds_expression tds (exception_si_reference e1), analyse_tds_expression tds (exception_si_reference e2))
+  | AstSyntax.Reference n ->
+    begin
+      let affectable_temp = analyse_tds_affectable AccesLecture tds (AstSyntax.Ident n)
+      in
+        match affectable_temp with
+          | AstTds.SchrodingerEntier (_, _) -> raise (UtilisationRefInvalide)
+          | AstTds.SchrodingerAffectable (AstTds.Ident info) -> AstTds.Reference(info)
+          | AstTds.SchrodingerAffectable _ -> failwith "Erreur interne"
+    end
 
 
 (* analyse_tds_appel_fonction_procedure : tds -> string -> AstSyntax.expression list -> ( info_ast * AstTds.expression list ) *)
@@ -131,7 +148,7 @@ let rec analyse_tds_instruction tds oia i =
             il n'a donc pas été déclaré dans le bloc courant *)
             (* Vérification de la bonne utilisation des identifiants dans l'expression *)
             (* et obtention de l'expression transformée *)
-            let ne = analyse_tds_expression tds e in
+            let ne = analyse_tds_expression tds (exception_si_reference e) in
             (* Création de l'information associée à l'identifiant *)
             let info = InfoVar (n,Undefined, 0, "") in
             (* Création du pointeur sur l'information *)
@@ -154,7 +171,7 @@ let rec analyse_tds_instruction tds oia i =
       let nschrodinger = analyse_tds_affectable AccesEcriture tds a in
       (* Vérification de la bonne utilisation des identifiants dans l'expression *)
       (* et obtention de l'expression transformée *)
-      let ne = analyse_tds_expression tds e in
+      let ne = analyse_tds_expression tds (exception_si_reference e) in
       (* Renvoie de la nouvelle affectation où l'affectable a été remplacé par l'information
           et l'expression remplacée par l'expression issue de l'analyse *)
       begin
@@ -180,12 +197,12 @@ let rec analyse_tds_instruction tds oia i =
   | AstSyntax.Affichage e ->
       (* Vérification de la bonne utilisation des identifiants dans l'expression *)
       (* et obtention de l'expression transformée *)
-      let ne = analyse_tds_expression tds e in
+      let ne = analyse_tds_expression tds (exception_si_reference e) in
       (* Renvoie du nouvel affichage où l'expression remplacée par l'expression issue de l'analyse *)
       AstTds.Affichage (ne)
   | AstSyntax.Conditionnelle (c,t,e) ->
       (* Analyse de la condition *)
-      let nc = analyse_tds_expression tds c in
+      let nc = analyse_tds_expression tds (exception_si_reference c) in
       (* Analyse du bloc then *)
       let tast = analyse_tds_bloc tds oia t in
       (* Analyse du bloc else *)
@@ -194,7 +211,7 @@ let rec analyse_tds_instruction tds oia i =
       AstTds.Conditionnelle (nc, tast, east)
   | AstSyntax.TantQue (c,b) ->
       (* Analyse de la condition *)
-      let nc = analyse_tds_expression tds c in
+      let nc = analyse_tds_expression tds (exception_si_reference c) in
       (* Analyse du bloc *)
       let bast = analyse_tds_bloc tds oia b in
       (* Renvoie la nouvelle structure de la boucle *)
@@ -208,7 +225,7 @@ let rec analyse_tds_instruction tds oia i =
         (* Il y a une information -> l'instruction est dans une fonction *)
       | Some ia ->
         (* Analyse de l'expression *)
-        let ne = analyse_tds_expression tds e in
+        let ne = analyse_tds_expression tds (exception_si_reference e) in
         AstTds.Retour (ne,ia)
       end
   | AstSyntax.RetourVoid ->
@@ -251,19 +268,19 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li)) =
   match chercherGlobalement maintds n with
   | None ->
       (* info_ast associé à la fonction *)  
-      let info_fun = info_to_info_ast (InfoFun (n, t, List.map fst lp)) in
+      let info_fun = info_to_info_ast (InfoFun (n, t, List.map (fun (refp, tp, _) -> (refp, tp)) lp)) in
       (* On ajoute l'info_ast dans la tds principale *)
       ajouter maintds n info_fun;
       (* On crée la tds fille qui servira aux paramètres de la fonction *)
       let tds = creerTDSFille maintds in
-      (* tuples (type, nom, info_ast) pour chacun des paramètres *)
-      let infos_p = List.map (fun (tp, np) -> (tp, np, info_to_info_ast (InfoVar (np, tp, 0, "")))) lp in
+      (* tuples (ref, type, nom, info_ast) pour chacun des paramètres *)
+      let infos_p = List.map (fun (refp, tp, np) -> (refp, tp, np, info_to_info_ast (InfoVar (np, tp, 0, "")))) lp in
       (* On ajoute les info_ast des paramètres dans la tds fille *)
       (* Attention les yeux *)
       List.iter
         (
           (* On n'ajoute le paramètre que si il n'a pas déjà été ajouté, sinon on crie *)
-          fun (_, np, info_p) ->
+          fun (_, _, np, info_p) ->
             let info_ast_param_a_ajouter = chercherLocalement tds np in
             begin
               match info_ast_param_a_ajouter with
@@ -277,7 +294,7 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li)) =
       (* On analyse le bloc de la fonction pour en tirer un AstTds.Bloc *)
       let bloc = analyse_tds_bloc tds_bloc (Some info_fun) li in
       (* On retourne finalement un AstTds.Fonction *)
-      AstTds.Fonction(t, info_fun, List.map (fun (tp, _, info_p) -> (tp, info_p)) infos_p, bloc)
+      AstTds.Fonction(t, info_fun, List.map (fun (refp, tp, _, info_p) -> (refp, tp, info_p)) infos_p, bloc)
   | Some _ -> raise (DoubleDeclaration n)
 
 

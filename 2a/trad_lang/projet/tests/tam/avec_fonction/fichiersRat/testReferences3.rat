@@ -1,0 +1,11 @@
+int fonction (ref int * a) {
+        a = (new int);
+        return 0;
+}
+
+main {
+        int * a = null;
+        print(fonction(ref a));
+        (*a) = 12;
+        print (*a);
+}
