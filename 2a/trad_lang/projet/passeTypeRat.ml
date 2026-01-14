@@ -38,7 +38,7 @@ let rec analyse_type_expression e =
     begin  
       (* On analyse le type de retour et les paramètres fournis *)
       let (nes, t) = analyse_type_appel_fonction_procedure info es
-      in match t with
+      in match type_primitif t with
         (* On n'accepte que si le type de retour n'est pas void,
            et que c'est donc bien une fonction et non une procédure *)
         | Void -> raise (MauvaiseUtilisationIdentifiant (get_nom_fonction info))

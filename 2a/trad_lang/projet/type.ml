@@ -80,3 +80,16 @@ let%test _ = getTaille (Pointeur Bool) = 1
 let%test _ = getTaille (Pointeur Int) = 1
 let%test _ = getTaille (Pointeur Rat) = 1
 let%test _ = getTaille (Pointeur (Pointeur (Pointeur Rat))) = 1
+
+let rec type_primitif t =
+  match t with
+  | Pointeur tp -> type_primitif tp
+  | _ -> t
+
+let%test _ = type_primitif Int = Int
+let%test _ = type_primitif Bool = Bool
+let%test _ = type_primitif Rat = Rat
+let%test _ = type_primitif (Pointeur Int) = Int
+let%test _ = type_primitif (Pointeur (Pointeur Bool)) = Bool
+let%test _ = type_primitif (Pointeur (Pointeur (Pointeur Rat))) = Rat
+let%test _ = type_primitif (Pointeur Void) = Void
