@@ -1,16 +1,16 @@
-# A faire
+# Introduction
 
-- Vérifier que définir une variable en void* ou void** ça crashe. Pour ça, on peut définir qqc comme une fonction `type_primitif` qui renvoie le type pointé ou multi-pointé, et on vérifie que ce n'est pas void.
-
-# Pour le rapport : explication des implémentations
+# Choix d'implémentation
 
 ## Pointeurs
 
 $$\sigma \vdash null : \text{Undefined}^*$$
 
-$$\frac{\sigma \vdash x : t^*}{\sigma \vdash (^* t) : t}$$
+$$\frac{\sigma \vdash \text{TYPE} : t}{\sigma \vdash (\text{new TYPE}) : t^*}$$
 
-$$\frac{\sigma \vdash x : t}{\sigma \vdash (\& t) : t^*}$$
+$$\frac{\sigma \vdash x : t^*}{\sigma \vdash (^* x) : t}$$
+
+$$\frac{\sigma \vdash x : t}{\sigma \vdash (\& x) : t^*}$$
 
 ## Procédures
 
@@ -20,11 +20,11 @@ Par contre, on crée un `AppelProcedure` different de `AppelFonction` pour ne pa
 
 Pour le `Retour` : on choisit de créer une expression `RetourVoid` pour les procédures. Ca évitera les `if` à rallonge dans les analyses de `Retour`...
 
+$$\sigma, \text{void} \vdash return : void, []$$
+
 ## Références
 
 $$\frac{\sigma \vdash x : t}{\sigma \vdash \text{ref} \; x : t}$$
-
-$$\frac{\sigma \vdash \text{ref} \; x : t}{\sigma \vdash x : t}$$
 
 Pour l'implémentation on pourrait :
 
@@ -35,6 +35,8 @@ On fait finalement le choix d'ajouter un type pour ne pas avoir de code "sale".
 
 Comment gérer le fait qu'on peut transmettre des variables à des emplacements mémoire différents pour une même fonction qui doit avoir des emplacements mémoires intrinsecs fixes ?<br>
 &rarr; On choisit de transformer toutes les références en pointeurs. On fait cela à la fin de la passe de typage, c'est la dernière qui vérifie les erreurs du programmeur et la passe de placement mémoire devra travailler sur un espace propre.
+
+## Enumérations
 
 # Idées d'améliorations
 
