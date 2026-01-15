@@ -104,3 +104,7 @@ let%expect_test "testReferences2" =
 let%expect_test "testReferences3" =
   runtam (pathFichiersRat^"testReferences3.rat");
   [%expect{| 012 |}]
+
+let%expect_test "testEnumerations1" =
+  runtam (pathFichiersRat^"testEnumerations1.rat");
+  [%expect{| 1 |}]

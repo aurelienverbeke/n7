@@ -1,0 +1,12 @@
+enum Nom {Verbeke, Dubois};
+enum Prenom {Aurelien, Emmanuel};
+
+Prenom fonction(Nom n, Prenom p) {
+    return p;
+}
+
+test {
+    Nom a = Dubois;
+    Prenom b = Emmanuel;
+    Prenom c = fonction(a, b);
+}

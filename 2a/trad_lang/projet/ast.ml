@@ -51,6 +51,8 @@ type expression =
   | Binaire of binaire * expression * expression
   (* Passage par référence *)
   | Reference of string
+  (* Valeur d'un type énuméré *)
+  | Enum of string
 
 (* Instructions de Rat *)
 type bloc = instruction list
@@ -74,13 +76,17 @@ and instruction =
   (* return d'une procédure *)
   | RetourVoid
 
+(* Structures des fonctions de Rat *)
+(* Nom du type énuméré - Liste des valeurs *)
+type enumeration = Enum of string * (string list)
+
 (* Structure des fonctions de Rat *)
 (* type de retour - nom - liste des paramètres (association présence de référence, type et nom) - corps de la fonction *)
 type fonction = Fonction of typ * string * (bool * typ * string) list * bloc
 
 (* Structure d'un programme Rat *)
 (* liste de fonction - programme principal *)
-type programme = Programme of fonction list * bloc
+type programme = Programme of enumeration list * fonction list * bloc
 
 end
 
@@ -112,6 +118,7 @@ struct
     | Unaire of AstSyntax.unaire * expression
     | Binaire of AstSyntax.binaire * expression * expression
     | Reference of Tds.info_ast
+    | Enum of Tds.info_ast
 
   (* instructions existantes dans notre langage *)
   (* ~ instruction de l'AST syntaxique où les noms des identifiants ont été
@@ -168,6 +175,7 @@ type expression =
   | Unaire of unaire * expression
   | Binaire of binaire * expression * expression
   | Reference of Tds.info_ast
+  | Enum of Tds.info_ast
 
 (* instructions existantes Rat *)
 (* = instruction de AstTds + informations associées aux identificateurs, mises à jour *)

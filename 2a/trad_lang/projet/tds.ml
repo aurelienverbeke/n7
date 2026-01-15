@@ -6,6 +6,8 @@ type info =
   | InfoConst of string * int
   | InfoVar of string * typ * int * string
   | InfoFun of string * typ * (bool * typ) list
+  | InfoValEnum of string * string * int
+  | InfoEnum of string * string list
 
 (* Données stockées dans la tds  et dans les AST : pointeur sur une information *)
 type info_ast = info ref  
@@ -304,6 +306,8 @@ let string_of_info info =
         )
       ^" -> "
       ^(string_of_type t)
+  | InfoValEnum (ename,vname,idx) -> "Valeur d'énumération "^vname^" du type énuméré numération "^ename^" : "^(string_of_int idx)
+  | InfoEnum (n,vals) -> "Type énuméré "^n^" : ["^(String.concat ", " vals)^"]"
 
 (* Affiche la tds locale *)
 let afficher_locale tds =

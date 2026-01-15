@@ -1,0 +1,10 @@
+enum Nom {Verbeke, Dubois};
+enum Prenom {Aurelien, Emmanuel};
+
+Nom fonction (Nom a) {
+    return b;
+}
+
+test {
+
+}

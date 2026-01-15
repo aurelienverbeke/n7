@@ -74,6 +74,7 @@ struct
           | _ -> (string_of_expression e1)^(string_of_binaire b)^(string_of_expression e2)^" "
         end
     | Reference n -> "ref " ^ n ^ " "
+    | Enum n -> "Valeur de type énuméré " ^ n ^ " "
 
   (* Conversion des instructions *)
   let rec string_of_instruction i =
@@ -101,9 +102,18 @@ struct
     ^") = \n"
     ^((List.fold_right (fun i tq -> (string_of_instruction i)^tq) li ""))
     ^"\n"
+  
+  (* Conversion des énumérations *)
+  let string_of_enumeration (Enum(n,lv)) =
+    "Type énuméré : "
+    ^n
+    ^" : ("
+    ^(List.fold_right (fun t tq -> t^", "^tq) lv ")")
+    ^"\n"
 
   (* Conversion d'un programme Rat *)
-  let string_of_programme (Programme (fonctions, instruction)) =
+  let string_of_programme (Programme (enumerations, fonctions, instruction)) =
+    (List.fold_right (fun e tq -> (string_of_enumeration e)^tq) enumerations "")^
     (List.fold_right (fun f tq -> (string_of_fonction f)^tq) fonctions "")^
     (List.fold_right (fun i tq -> (string_of_instruction i)^tq) instruction "")
 

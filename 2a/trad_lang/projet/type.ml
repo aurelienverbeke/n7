@@ -1,4 +1,4 @@
-type typ = Bool | Int | Rat | Undefined | Pointeur of typ | Void
+type typ = Bool | Int | Rat | Undefined | Pointeur of typ | Void | Enum of string
 
 type acces = AccesLecture | AccesEcriture
 
@@ -9,6 +9,7 @@ let rec string_of_type t =
   | Rat  ->  "Rat"
   | Undefined -> "Undefined"
   | Pointeur t -> "Pointeur de " ^ (string_of_type t)
+  | Enum n -> "Enumeration nommee " ^ n
   | Void -> "Void"
 
 
@@ -20,6 +21,7 @@ let rec est_compatible t1 t2 =
   | Pointeur _, Pointeur Undefined -> true
   | Pointeur Undefined, Pointeur _ -> true
   | Pointeur tp1, Pointeur tp2 -> est_compatible tp1 tp2
+  | Enum n1, Enum n2 -> String.equal n1 n2
   | _ -> false 
 
 let%test _ = est_compatible Bool Bool
@@ -30,6 +32,7 @@ let%test _ = est_compatible (Pointeur Int) (Pointeur Int)
 let%test _ = est_compatible (Pointeur Rat) (Pointeur Rat)
 let%test _ = est_compatible (Pointeur (Pointeur Int)) (Pointeur (Pointeur Int))
 let%test _ = est_compatible (Pointeur (Pointeur (Pointeur Rat))) (Pointeur (Pointeur (Pointeur Rat)))
+let%test _ = est_compatible (Enum "Test") (Enum "Test")
 let%test _ = not (est_compatible Int Bool)
 let%test _ = not (est_compatible Bool Int)
 let%test _ = not (est_compatible Int Rat)
@@ -48,6 +51,7 @@ let%test _ = not (est_compatible (Pointeur Rat) (Pointeur Int))
 let%test _ = not (est_compatible (Pointeur Rat) (Pointeur Bool))
 let%test _ = not (est_compatible (Pointeur (Pointeur Int)) (Pointeur Int))
 let%test _ = not (est_compatible (Pointeur (Pointeur (Pointeur Int))) (Pointeur (Pointeur (Pointeur Rat))))
+let%test _ = est_compatible (Enum "Test") (Enum "Rate")
 
 let est_compatible_list lt1 lt2 =
   try
@@ -58,11 +62,13 @@ let%test _ = est_compatible_list [] []
 let%test _ = est_compatible_list [Int ; Rat] [Int ; Rat]
 let%test _ = est_compatible_list [Bool ; Rat ; Bool] [Bool ; Rat ; Bool]
 let%test _ = est_compatible_list [Pointeur (Pointeur Int) ; Rat] [Pointeur (Pointeur Int) ; Rat]
+let%test _ = est_compatible_list [Enum "Test" ; Enum "Valide"] [Enum "Test" ; Enum "Valide"]
 let%test _ = not (est_compatible_list [Int] [Int ; Rat])
 let%test _ = not (est_compatible_list [Int] [Rat ; Int])
 let%test _ = not (est_compatible_list [Int ; Rat] [Rat ; Int])
 let%test _ = not (est_compatible_list [Bool ; Rat ; Bool] [Bool ; Rat ; Bool ; Int])
 let%test _ = not (est_compatible_list [Pointeur Int ; Rat] [Int ; Rat])
+let%test _ = not (est_compatible_list [Enum "Test"] [Enum "Rate"])
 
 let getTaille t =
   match t with
@@ -71,6 +77,7 @@ let getTaille t =
   | Rat -> 2
   | Undefined -> 0
   | Pointeur _ -> 1
+  | Enum _ -> 1
   | Void -> 0
   
 let%test _ = getTaille Int = 1
@@ -80,6 +87,7 @@ let%test _ = getTaille (Pointeur Bool) = 1
 let%test _ = getTaille (Pointeur Int) = 1
 let%test _ = getTaille (Pointeur Rat) = 1
 let%test _ = getTaille (Pointeur (Pointeur (Pointeur Rat))) = 1
+let%test _ = getTaille (Enum "Test") = 1
 
 let rec type_primitif t =
   match t with

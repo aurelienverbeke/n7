@@ -240,3 +240,15 @@ let%test "testPointeurs4_y1" =
 let%test "testPointeurs4_z1" = 
    test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z1",1)  (7, "SB")
 || test (pathFichiersRat^"testPointeurs4.rat")  "main" ("z1",1)  (7, "LB")
+
+let%test "testEnumerations1_n" = 
+   test (pathFichiersRat^"testEnumerations1.rat")  "main" ("n",1)  (0, "SB")
+|| test (pathFichiersRat^"testEnumerations1.rat")  "main" ("n",1)  (0, "LB")
+
+let%test "testEnumerations2_n" = 
+   test (pathFichiersRat^"testEnumerations2.rat")  "main" ("n",1)  (0, "SB")
+|| test (pathFichiersRat^"testEnumerations2.rat")  "main" ("n",1)  (0, "LB") 
+
+let%test "testEnumerations2_p" = 
+   test (pathFichiersRat^"testEnumerations2.rat")  "main" ("p",1)  (1, "SB")
+|| test (pathFichiersRat^"testEnumerations2.rat")  "main" ("p",1)  (1, "LB")  

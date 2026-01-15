@@ -15,8 +15,7 @@ type t2 = string
 (* Paramètre a : l'affectable à convertir *)
 (* Paramètre info_ast_refs : info_ast des variables qui sont des références *)
 (* Transforme l'affectable en commandes TAM *)
-(* Renvoie deux catégories de commandes dans le cas où d'autres (par exemple une expression) devrait s'intercaler entre les deux,
-   et le type de l'affectable concerné, nécessaire pour le déréférencement *)
+(* Renvoie les commandes associées et le type de l'affectable concerné (pour le load) *)
 (* Erreur si mauvaise utilisation des types *)
 let rec analyse_code_affectable mode_acces a info_ast_refs =
   match a with
@@ -110,6 +109,12 @@ let rec analyse_code_expression e info_ast_refs=
         | InfoVar (_, _, depl, reg) -> if List.mem info info_ast_refs then load 1 depl reg else loada depl reg
         | _ -> failwith "Erreur interne"
       end
+  | AstType.Enum info ->
+    begin
+      match info_ast_to_info info with
+      | InfoValEnum (_,_,i) -> loadl_int i
+      | _ -> failwith "Erreur interne"
+    end
 
 
 (* analyse_code_instruction : AstPlacement.instruction -> string *)

@@ -1,0 +1,7 @@
+enum Nom {Verbeke, Dubois};
+enum Prenom {Aurelien, Nom};
+
+test {
+    Nom naurel = Verbeke;
+    Prenom paurel = Aurelien;
+}

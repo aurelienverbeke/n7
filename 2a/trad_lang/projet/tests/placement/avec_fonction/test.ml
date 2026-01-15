@@ -355,3 +355,9 @@ let%test "testReferences8_b" =
 
 let%test "testReferences8_c" =
   test (pathFichiersRat^"testReferences8.rat")  "procedure" ("c",1)  (-1, "LB")
+
+let%test "testEnumerations1_n1" = 
+  test (pathFichiersRat^"testEnumerations1.rat")  "fonction" ("n1",1)  (3, "LB")
+
+let%test "testEnumerations2_n_1" =
+  test (pathFichiersRat^"testEnumerations2.rat") "fonction" ("n", 1) (-1, "LB")

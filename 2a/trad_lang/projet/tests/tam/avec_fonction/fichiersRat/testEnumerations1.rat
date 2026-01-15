@@ -1,0 +1,17 @@
+enum Nom {Verbeke, Dubois};
+enum Prenom {Aurelien, Emmanuel};
+
+Nom fonction() {
+    Nom n1 = Dubois;
+    return n1;
+}
+
+test {
+    Nom n = fonction();
+    bool c = (n=Dubois);
+    if (c) {
+        print 1;
+    } else {
+        print 0;
+    }
+}

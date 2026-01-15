@@ -1,0 +1,11 @@
+enum Nom {Verbeke, Dubois};
+
+test {
+    Nom n = Verbeke;
+    bool c = (n=Verbeke);
+    if (c) {
+        print 1;
+    } else {
+        print 0;
+    }
+}

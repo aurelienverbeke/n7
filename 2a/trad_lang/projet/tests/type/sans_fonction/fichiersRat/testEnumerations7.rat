@@ -1,0 +1,5 @@
+enum Nom {Verbeke, Dubois};
+
+test {
+    bool a = Dubois;
+}

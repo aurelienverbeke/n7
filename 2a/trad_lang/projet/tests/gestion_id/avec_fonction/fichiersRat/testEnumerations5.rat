@@ -1,0 +1,9 @@
+enum Prenom {Aurelien, Emmanuel};
+
+Prenom fonction (Prenom a) {
+    return b;
+}
+
+test {
+
+}

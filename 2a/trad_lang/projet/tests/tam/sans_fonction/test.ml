@@ -108,3 +108,7 @@ let%expect_test "testPointeurs4" =
 let%expect_test "testPointeurs5" =
   runtam (pathFichiersRat^"testPointeurs5.rat");
   [%expect{| 10 |}]
+
+let%expect_test "testEnumerations1" =
+  runtam (pathFichiersRat^"testEnumerations1.rat");
+  [%expect{| 1 |}]

@@ -1,5 +1,5 @@
 (* Types manipulés dans Rat *)
-type typ = Bool | Int | Rat | Undefined | Pointeur of typ | Void
+type typ = Bool | Int | Rat | Undefined | Pointeur of typ | Void | Enum of string
 
 (* Permet de séparer accès en lecture et accès en écriture pour les affectables *)
 type acces = AccesLecture | AccesEcriture

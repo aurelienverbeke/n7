@@ -47,7 +47,7 @@ let rec analyse_tds_affectable domaine tds affectable =
                 | AccesEcriture -> raise (MauvaiseUtilisationIdentifiant identifiant) (* On ne peut pas affecter une valeur à une constante hors définition *)
               end
           | InfoVar _ -> AstTds.SchrodingerAffectable(AstTds.Ident(info)) (* Identifiant présent dans la table des symboles et c'est une variable *)
-          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
+          | _ -> raise (MauvaiseUtilisationIdentifiant identifiant) (* Identifiant présent dans la table des symboles et c'est une fonction, ça ne marche pas hehe *)
         end
     end
   | AstSyntax.Deref a ->
@@ -106,6 +106,18 @@ let rec analyse_tds_expression tds e =
           | AstTds.SchrodingerAffectable (AstTds.Ident info) -> AstTds.Reference(info)
           | AstTds.SchrodingerAffectable _ -> failwith "Erreur interne"
     end
+  | AstSyntax.Enum identifiant ->
+    begin
+      match chercherGlobalement tds identifiant with
+      | None ->
+        raise (IdentifiantNonDeclare identifiant)
+      | Some info ->
+        begin
+          match info_ast_to_info info with
+          | InfoValEnum _ -> AstTds.Enum(info)
+          | _ -> raise (MauvaiseUtilisationIdentifiant identifiant)
+        end
+      end
 
 
 (* analyse_tds_appel_fonction_procedure : tds -> string -> AstSyntax.expression list -> ( info_ast * AstTds.expression list ) *)
@@ -298,13 +310,42 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction(t,n,lp,li)) =
   | Some _ -> raise (DoubleDeclaration n)
 
 
+(* analyse_tds_enumeration : tds -> AstSyntax.enumeration -> unit *)
+(* Paramètre maintds : la table des symboles courante *)
+(* Paramètre AstSyntax.Enum(n,lv) : l'énumération à analyser *)
+(* Vérifie la bonne utilisation des identifiants et ajoute les énumérations à la table des symboles *)
+(* Erreur si mauvaise utilisation des identifiants *)
+let analyse_tds_enumeration maintds (AstSyntax.Enum(n,lv)) =
+  match chercherGlobalement maintds n with
+  | None ->
+    (* info_ast associé au type énuméré *)
+    let info_type_enum = info_to_info_ast (InfoEnum(n,lv)) in
+    (* on ajoute cette info_ast dans la tds principale *)
+    ajouter maintds n info_type_enum;
+    (* info_ast associé à chacune des valeurs du type énuméré *)
+    let infos_val = List.mapi (fun id nv -> (nv,info_to_info_ast (InfoValEnum(n,nv,id)))) lv in
+    (* On ajoute les info_ast des valeurs dans la tds fille *)
+    List.iter 
+      (
+        fun (nv, info_val) ->
+          let info_ast_valeur_a_ajouter = chercherGlobalement maintds nv in
+          begin
+            match info_ast_valeur_a_ajouter with
+            | None -> ajouter maintds nv info_val
+            | Some _ -> raise (DoubleDeclaration nv)
+          end
+    )
+    infos_val;
+  | Some _ -> raise (DoubleDeclaration n)
+
 (* analyser : AstSyntax.programme -> AstTds.programme *)
 (* Paramètre : le programme à analyser *)
 (* Vérifie la bonne utilisation des identifiants et tranforme le programme
 en un programme de type AstTds.programme *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyser (AstSyntax.Programme (fonctions,prog)) =
+let analyser (AstSyntax.Programme (bloc_enum,fonctions,prog)) =
   let tds = creerTDSMere () in
+  let _ = List.map(analyse_tds_enumeration tds) bloc_enum in
   let nf = List.map (analyse_tds_fonction tds) fonctions in
   let nb = analyse_tds_bloc tds None prog in
   AstTds.Programme (nf,nb)

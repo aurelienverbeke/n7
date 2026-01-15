@@ -221,6 +221,44 @@ let%test_unit "testReferences3" =
   with
   | UtilisationRefInvalide -> ()
 
+let%test_unit "testEnumerations1" = 
+  let _ = compiler (pathFichiersRat^"testEnumerations1.rat") in ()
+
+let%test_unit "testEnumerations2" =
+  try
+    let _ = compiler (pathFichiersRat^"testEnumerations2.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("Nom") -> ()
+
+let%test_unit "testEnumerations3" =
+  try
+    let _ = compiler (pathFichiersRat^"testEnumerations3.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("Dubois") -> ()
+
+let%test_unit "testEnumerations4" =
+  try
+    let _ = compiler(pathFichiersRat^"testEnumerations4.rat")
+    in raise ErreurNonDetectee
+  with
+  | DoubleDeclaration("Nom") -> ()
+
+let%test_unit "testEnumerations5" =
+  try
+    let _ = compiler(pathFichiersRat^"testEnumerations5.rat")
+    in raise ErreurNonDetectee
+  with
+  | IdentifiantNonDeclare("Dupont") -> ()
+
+let%test_unit "testEnumerations6" =
+  try
+      let _ = compiler(pathFichiersRat^"testEnumerations6.rat")
+      in raise ErreurNonDetectee
+  with
+  | MauvaiseUtilisationIdentifiant("Nom") -> ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 (*
 open Unix

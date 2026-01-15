@@ -38,7 +38,7 @@ let rec analyse_type_expression e =
     begin  
       (* On analyse le type de retour et les paramètres fournis *)
       let (nes, t) = analyse_type_appel_fonction_procedure info es
-      in match type_primitif t with
+      in match t with
         (* On n'accepte que si le type de retour n'est pas void,
            et que c'est donc bien une fonction et non une procédure *)
         | Void -> raise (MauvaiseUtilisationIdentifiant (get_nom_fonction info))
@@ -81,6 +81,7 @@ let rec analyse_type_expression e =
         | Mult, Rat, Rat -> (AstType.Binaire(MultRat, n1, n2), Rat)
         | Equ, Int, Int -> (AstType.Binaire(EquInt, n1, n2), Bool)
         | Equ, Bool, Bool -> (AstType.Binaire(EquBool, n1, n2), Bool)
+        | Equ, Enum _, Enum _ -> (AstType.Binaire(EquInt, n1, n2), Bool)
         | Fraction, Int, Int -> (AstType.Binaire(Fraction, n1, n2), Rat)
         | Inf, Int, Int -> (AstType.Binaire(Inf, n1, n2), Bool)
         | _, _, _ -> raise (TypeBinaireInattendu (binaire, t1,t2))
@@ -92,6 +93,12 @@ let rec analyse_type_expression e =
         | InfoVar (_, t, _, _) -> (AstType.Reference info, t)
         | _ -> failwith "Erreur interne"
       end
+  | AstTds.Enum info ->
+    begin
+      match info_ast_to_info info with
+      | InfoValEnum(t,_,_) -> (AstType.Enum (info), Enum t)
+      | _ -> failwith "Erreur interne"
+    end
 
 
 (* analyse_tds_appel_fonction_procedure : info_ast -> AstTds.expression list -> ( AstType.expression list * typ ) *)
@@ -152,7 +159,7 @@ let rec analyse_type_instruction i =
   match i with
   | AstTds.Declaration (t, info, e) -> let (ne, te) = analyse_type_expression e in
     begin
-      match t with
+      match type_primitif t with
       | Void -> raise TypeVoidHorsTypeProcedure (* Le type void dans les paramètres n'est pas autorisé *)
       | Undefined -> failwith "Erreur interne"
       | _ ->
