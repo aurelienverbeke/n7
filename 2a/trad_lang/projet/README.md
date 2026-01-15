@@ -147,9 +147,9 @@ Afin de pouvoir traiter l'ajout des types énumérés, il est nécessaire de raj
 
 ### Jugements de typage
 
-$$\frac{\sigma \vdash x : Enum t  |  \sigma \vdash TID \in Enum t}{\sigma \vdash x = TID : Enum t}; \text{(Déclaration ou affectation de valeurs de types énumérés)}$$
+$$\frac{\sigma \vdash x : \text{Enum t}  |  \sigma \vdash TID \in \text{Enum t}}{\sigma \vdash x = TID : \text{Enum t}}; \text{(Déclaration ou affectation de valeurs de types énumérés)}$$
 
-$$\frac{\sigma \vdash x : Enum t1  |  \sigma \vdash y : Enum t2  |  \sigma \vdash t1 = t2}{\sigma \vdash x = y : Bool} ; \text{(Egalité de valeurs de types énumérés)}$$
+$$\frac{\sigma \vdash x : \text{Enum t1}  |  \sigma \vdash y : \text{Enum t2}  |  \sigma \vdash t1 = t2}{\sigma \vdash x = y : Bool} ; \text{(Egalité de valeurs de types énumérés)}$$
 
 ### Modification de l'AST, des types et de la table des symboles
 
