@@ -31,9 +31,6 @@ public class Irc {
   public static Vector<String> users = new Vector<String>();
   public static String myName;
 
-  public static String[] messages;
-  public static boolean infosUpToDate = false;
-
   public static ConnectionFactory connectionFactory;
   public static Connection connection;
   public static Session session;
@@ -132,16 +129,10 @@ class connectListener implements ActionListener {
                   String user = stringMsg.substring(10);
                   Irc.users.add(user);
                   Irc.print("--- User " + user + " connected ! ---");
-                  TextMessage message = Irc.session.createTextMessage("#infos\n" + String.join(",", Irc.users) + "\n" + String.join("\n", Irc.messages));
-                  Irc.producer.send(message);
                 } else if (stringMsg.startsWith("#disconnect: ")) {
                   String user = stringMsg.substring(13);
                   Irc.users.remove(user);
                   Irc.print("--- User " + user + " disconnected ! ---");
-                } else if (stringMsg.startsWith("#infos")) {
-                    String[] infos = stringMsg.split("\n");
-                    Collections.addAll(Irc.users, infos[1].split(","));
-                    Irc.infosUpToDate = true;
                 } else {
                   Irc.print(stringMsg);
                 }
@@ -155,12 +146,8 @@ class connectListener implements ActionListener {
       
       Irc.consumer.setMessageListener(listener);
 
-      Irc.infosUpToDate = false;
-
       TextMessage message = Irc.session.createTextMessage("#connect: " + Irc.myName);
       Irc.producer.send(message);
-
-      while (!Irc.infosUpToDate) {}
       
       System.out.println("Connected to "+ Irc.subject);
     } catch (Exception ex) {
@@ -187,6 +174,9 @@ class leaveListener implements ActionListener {
       TextMessage message = Irc.session.createTextMessage("#disconnect: " + Irc.myName);
       Irc.producer.send(message);
 
+      Irc.producer.close();
+      Irc.consumer.close();
+      Irc.session.close();
       Irc.connection.close();
       
       System.out.println("Connection close");
