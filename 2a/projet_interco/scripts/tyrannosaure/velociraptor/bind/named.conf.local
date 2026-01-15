@@ -1,0 +1,9 @@
+zone "tvn7.fr" {
+	type master;
+	file "/etc/bind/zones/db.tvn7.fr";
+};
+
+zone "73.0.120.in-addr.arpa" {
+	type master;
+	file "/etc/bind/zones/73.0.120.in-addr.arpa.zone";
+};

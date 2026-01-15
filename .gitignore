@@ -2,3 +2,5 @@
 *.o
 *.class
 _build/
+**/.Xil/
+*.cf

@@ -1,0 +1,17 @@
+$TTL 604800
+@	IN	SOA	velociraptor.tvn7.fr admin.tvn7.fr. (
+				2	; Serial
+				604800	; Refresh
+				86400	; Retry
+				2419200	; Expire
+				604800)	; Minimum
+
+@	IN	NS	velociraptor.tvn7.fr.
+ 
+tvn7osaure   	IN	A	120.0.73.1
+styracosaure	IN	A	120.0.73.249
+diplodocus  	IN	A	120.0.73.250
+triceratops 	IN	A	120.0.73.251
+dilophosaure	IN	A	120.0.73.252
+pteranodon	    IN	A	120.0.73.253
+velociraptor    IN	A	120.0.73.254

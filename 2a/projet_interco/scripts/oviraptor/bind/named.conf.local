@@ -1,0 +1,9 @@
+zone "tour.radio" {
+	type master;
+	file "/etc/bind/zones/db.tour.radio";
+};
+
+zone "72.0.120.in-addr.arpa" {
+	type master;
+	file "/etc/bind/zones/72.0.120.in-addr.arpa.zone";
+};
