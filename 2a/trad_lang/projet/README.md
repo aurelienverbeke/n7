@@ -139,6 +139,39 @@ On aurait pu créer un type référence, et les traiter comme des pointeurs. Cep
 
 ## Enumérations
 
+Les types énumérés sont des types personnalisés définis avant le bloc de définition des fonctions. Les variables de ce type peuvent prendre plusieurs valeurs, qui doivent être uniques parmis tous les types énumérés. De même, deux types énumérés ne peuvent pas avoir le même nom.
+
+### Modification du lexer et du parser
+
+Afin de pouvoir traiter l'ajout des types énumérés, il est nécessaire de rajouter l'expression régulière associée au token `tid`, qui définit un identifiant où la première lettre est nécessairement en majuscules. On rajoute également le token `ENUM`, qui permet ensuite au parser de détecter une définition de type énuméré.
+
+### Jugements de typage
+
+$$\frac{\sigma \vdash x : Enum t  |  \sigma \vdash TID \in Enum t}{\sigma \vdash x = TID : Enum t}; \text{(Déclaration ou affectation de valeurs de types énumérés)}$$
+
+$$\frac{\sigma \vdash x : Enum t1  |  \sigma \vdash y : Enum t2  |  \sigma \vdash t1 = t2}{\sigma \vdash x = y : Bool} ; \text{(Egalité de valeurs de types énumérés)}$$
+
+### Modification de l'AST, des types et de la table des symboles
+
+On ajoute dans le type info deux nouvelles infos : 
+ - `InfoValEnum` afin de stocker le nom du type énuméré de la variable, son nom ainsi que l'indice auquel sa valeur apparait dans la liste des valeurs du type énuméré
+ - `InfoEnum` qui stocke le nom du type énuméré ainsi que la liste des valeurs
+
+Il est également nécessaire de rajouter le type `Enum` afin de permettre les comparaisons entre des variables du même type énuméré.
+
+Finalement, on ajoute l'expression `Enum` afin de gérer l'affectation et la déclaration de valeurs de type énuméré.
+
+### Modification des passes
+
+Passe de **gestion des identifiants** : on vérifie que les expressions sous forme de tid aient déjà bien été déclarées, car elles doivent déjà exister dans la TDS comme elles ont été enregistrées lors de la déclaration des types énumérés. On vérifie également que le token vérifié est bien une valeur de type énuméré et non un nom de type énuméré. On ajoute également une méthode pour inscrire dans la table des symboles principale le nom de chaque type énuméré déclaré ainsi que toutes ses valeurs.
+
+Passe de **typage** : on ajoute ici la surcharge de l'opérateur égal pour les types énumérés, en comparant les valeurs numériques stockées dans les `InfoValEnum`. Comme les déclarations de types énumérés ont déjà été traitées, il n'y a pas besoin de les traiter dans cette passe.
+
+Passe de **placement mémoire** : pas de modifications majeures. Il faut noter qu'une valeur de type énuméré n'occupe qu'un espace mémoire, comme on la traite comme un entier en mémoire.
+
+Passe de **conversion en code TAM** : lorsqu'on rencontre une expression désignant une valeur d'un type énuméré, il nous suffit de récupérer la valeur numérique dans l'`InfoValEnum` et de l'inscrire dans le registre via un `loadl_int`.
+
+
 # Conclusion
 
 Ce projet nous a permis de mieux comprendre le fonctionnement d'un compilateur, en particulier l'implémentation de certains mécanismes essentiels comme les pointeurs, références et énumérations.
