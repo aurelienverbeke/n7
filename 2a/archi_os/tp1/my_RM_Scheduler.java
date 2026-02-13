@@ -1,0 +1,84 @@
+import storm.Schedulers.Scheduler;
+import java.util.*;
+import storm.*;
+import storm.Processors.*;
+import storm.Tasks.*;
+
+
+public class my_RM_Scheduler extends Scheduler {
+
+    class ReadyList extends LinkedList implements Comparator {
+	
+		public int compare(Object obj0, Object obj1) {
+			Task t0 = (Task) obj0;
+			Task t1 = (Task) obj1;
+
+			int d0 = 0;
+			int d1 = 0;
+
+			if (d1>d0) return -1;
+			else if (d1 == d0) return 0;
+			else return 1;
+		}
+    }
+    
+    private ReadyList list_ready;
+    private Boolean todo = false;
+	
+    public void init() {
+		list_ready = new ReadyList();
+    }
+	
+    public void onActivate(EvtContext c) {
+		list_ready.addLast(c.getCible());
+		todo = true;
+    }
+    
+    public void onUnBlock(EvtContext c){
+		list_ready.addLast(c.getSource());
+		todo = true;
+    }
+    
+    public void onBlock(EvtContext c){
+		list_ready.remove(c.getCible());
+		todo = true;
+    }
+    
+    public void onTerminated(EvtContext c){
+		list_ready.remove(c.getCible());
+		todo = true;
+    }
+
+    public void onTick() {
+		todo = false;
+    }
+    
+    public void sched(){
+		if (todo) {
+			select();
+			todo = false;
+		}
+    }
+    
+    public void select() {
+		// Pour trier la liste des taches prêtes
+		Collections.sort(list_ready, list_ready);
+
+		ArrayList CPUS= this.Kernel.getTasksListeManager().getProcessors();
+		Iterator itCPU= CPUS.iterator();
+
+		while (itCPU.hasNext()) {
+			Processor p= (Processor) itCPU.next();
+			if (!p.isRunning()) {
+				Boolean taskSelected= false;
+				for (int i= 0; i<list_ready.size() && !taskSelected; i++) {
+					Task t= (Task) list_ready.get(i);
+					if (!t.isIsrunning()) {
+					t.runningOn(p);
+					taskSelected= true;
+					}
+				}
+			}
+		}
+    }
+}

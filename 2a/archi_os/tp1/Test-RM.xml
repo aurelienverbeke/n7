@@ -1,0 +1,19 @@
+<!-- MOnoprocessor -->
+
+<SIMULATION duration="150">
+
+  <SCHED className="my_RM_Scheduler"> </SCHED>
+
+<CPUS>
+  <CPU className="storm.Processors.CT11MPCore" name ="CPU A" id="1"></CPU>	 		 
+</CPUS>
+	
+<TASKS>
+  <TASK className="storm.Tasks.PTask_NAM" name ="T1" id="1" activationDate="0" WCET="6" period="10" > </TASK>
+  <TASK className="storm.Tasks.PTask_NAM" name ="T2" id="2" activationDate="2" WCET="2" period="9"> </TASK>
+  <TASK className="storm.Tasks.PTask_NAM" name ="T3" id="3" activationDate="3" WCET="4" period="8"> </TASK> 
+  <TASK className="storm.Tasks.PTask_NAM" name ="T4" id="4" activationDate="5" WCET="2" period="7"> </TASK> 
+</TASKS>
+
+	
+</SIMULATION>
