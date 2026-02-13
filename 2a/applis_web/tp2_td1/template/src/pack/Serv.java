@@ -1,4 +1,4 @@
-package td1;
+package pack;
 
 import java.io.IOException;
 
@@ -26,10 +26,12 @@ public class Serv extends HttpServlet {
                 String nom = request.getParameter("nom");
                 String prenom = request.getParameter("prenom");
                 f.ajoutPersonne(nom, prenom);
+                response.sendRedirect("ajoutp.html");
                 break;
             case "ajouta":
                 String adresse = request.getParameter("adresse");
                 f.ajoutAdresse(adresse);
+                response.sendRedirect("ajouta.html");
                 break;
             case "associer":
                 request.setAttribute("lp", f.listePersonnes());
@@ -42,5 +44,14 @@ public class Serv extends HttpServlet {
                 request.getRequestDispatcher("lister.jsp").forward(request, response);
                 break;
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int idPersonne = Integer.parseInt(request.getParameter("idP"));
+        int idAdresse = Integer.parseInt(request.getParameter("idA"));
+
+        f.associer(idPersonne, idAdresse);
+        response.sendRedirect("Serv?op=associer");
     }
 }

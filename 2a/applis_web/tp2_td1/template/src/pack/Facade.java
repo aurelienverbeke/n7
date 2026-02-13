@@ -1,4 +1,4 @@
-package td1;
+package pack;
 
 import java.util.Collection;
 import java.util.Hashtable;

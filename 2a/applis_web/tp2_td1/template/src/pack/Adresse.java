@@ -1,4 +1,4 @@
-package td1;
+package pack;
 
 public class Adresse {
     int id;
