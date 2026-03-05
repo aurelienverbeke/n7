@@ -29,7 +29,7 @@ public interface Facade {
     @GET
     @Path("/listeradresses")
     @Produces("application/json")
-    Collection<Personne> listeAdresses();
+    Collection<Adresse> listeAdresses();
 
     @POST
     @Path("/associer")

@@ -15,8 +15,14 @@ public class Adresse {
     // Constructeur
     public Adresse () {}
     
+    /*
     public Adresse (int id, String adresse) {
         this.id = id;
+        this.adresse = adresse;
+    }
+    */
+
+    public Adresse (String adresse) {
         this.adresse = adresse;
     }
 }

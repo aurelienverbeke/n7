@@ -22,11 +22,18 @@ public class Personne {
         return adresses;
     }
 
+    // Constructeur
     public Personne () {}
 
-    // Constructeur
+    /*
     public Personne (int id, String nom, String prenom) {
         this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+    }
+    */
+
+    public Personne (String nom, String prenom) {
         this.nom = nom;
         this.prenom = prenom;
     }
