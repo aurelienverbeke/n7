@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 #Job name
-#SBATCH -J abuttari
+#SBATCH -J ave9761
 # Asking for one node
 #SBATCH -N 1
 #SBATCH -n 1
@@ -14,13 +14,11 @@
 #SBATCH -t 0:10:00
 ##SBATCH --exclusive
 
-
 module purge
-cd ${SLURM_SUBMIT_DIR}
-source ./env_cpuonly.sh
+source ${HOME}/ave9761/openmp/env_cpuonly.sh
 export OMP_MAX_TASK_PRIORITY=999
 
-# export OMP_NUM_THREADS=80
+cd ${SLURM_SUBMIT_DIR}
 
 ./bench_strong 200 60
 
