@@ -5,6 +5,7 @@ int main(int argc, char **argv){
   int    i, j, n, nthreads;
   int *x;
   long ts, te;
+  int thread;
 
    /* Command line argument */
   if ( argc == 3 ) {
@@ -22,7 +23,19 @@ int main(int argc, char **argv){
   printf("Starting loop\n\n");
   
   ts = usecs();
-  for(i=0; i<n; i++) x[i] = update(i, nthreads);
+
+  #pragma omp parallel num_threads(nthreads) private(i, thread)
+  {
+    thread = omp_get_thread_num();
+    i = thread;
+    while(i<n) {
+      #pragma omp task firstprivate(i)
+      x[i] = update(i, nthreads);
+      i += nthreads;
+    }
+
+    #pragma omp taskwait
+  }
   te = usecs()-ts;
   printf("Execution time: %6ld  msec.\n",te/1000);
   

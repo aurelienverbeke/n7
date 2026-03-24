@@ -39,19 +39,36 @@ int main(int argc, char **argv){
 
   ts = usecs();
 /* =================================================================================== */
-  student=0;
-  books_list = get_my_books_list(student, nbooks);
-  for(i=0; i<nbooks; i++){
-    /* Get next book from the list and from the shelf */
-    book = books_list[i];
-
-    /* Get one available desk. Note that in the sequential code there
-       is only one student and thus desk 0 is always available */
-    desk = 0;
-    
-    /* Read book */
-    printf("Student %2d reads book %2d on desk %2d\n", student, book, desk);
-    read_book(student, book, desk, nbooks);
+  #pragma omp parallel for num_threads(nstudents) private(i, student, books_list, book, desk)
+  for(student=0; student<nstudents; student++)
+  {
+    books_list = get_my_books_list(student, nbooks);
+    for(i=0; i<nbooks; i++){
+      /* Get next book from the list and from the shelf */
+      book = books_list[i];
+      while(!omp_test_lock(book_locks+book)) {} // wait the book to be available
+      
+      /* Get one available desk. Note that in the sequential code there
+      is only one student and thus desk 0 is always available */
+      desk = 0;
+      while(1) {
+        if(omp_test_lock(desk_locks+desk)) {
+          // desk available
+          break;
+        }
+        if(desk==ndesks-1) {
+          desk=0;
+        } else {
+          desk++;
+        }
+      }
+      
+      /* Read book */
+      printf("Student %2d reads book %2d on desk %2d\n", student, book, desk);
+      read_book(student, book, desk, nbooks);
+      omp_unset_lock(book_locks+book);
+      omp_unset_lock(desk_locks+desk);
+    }
   }
 /* =================================================================================== */
 
