@@ -8,6 +8,7 @@ OBJCOPY= objcopy
 LIBS= lib/lib.o
 
 QEMU = qemu-system-i386
+#QEMUOPTS = -d int,cpu_reset -cpu pentium -rtc base=localtime -k fr -m 256M  -kernel kernel.bin
 QEMUOPTS = -cpu pentium -rtc base=localtime -k fr -m 256M  -kernel kernel.bin
 QEMUGDB= -s -S -gdb tcp::1234
 

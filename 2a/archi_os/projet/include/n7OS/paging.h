@@ -7,12 +7,21 @@
 
 #include <inttypes.h>
 
+
 /**
  * @brief Description d'une ligne de la table de page
  * 
  */
 typedef struct {
-    // a completer
+    uint32_t present : 1;
+    uint32_t write : 1;
+    uint32_t user : 1;
+    uint32_t rsvd_1 : 2;
+    uint32_t accessed : 1;
+    uint32_t dirty : 1;
+    uint32_t rsvd_2 : 2;
+    uint32_t available : 3;
+    uint32_t page : 20;
 } page_table_entry_t;
 
 /**
@@ -28,7 +37,62 @@ typedef union {
  * @brief Une table de page (PageTable) est un tableau de descripteurs de page
  * 
  */
-typedef PTE * PageTable;
+typedef PTE* PageTable;
+
+/**
+ * Nombre d'entrées dans la table de pages
+ */
+#define PAGE_TABLE_ENTRIES_NB 1024
+
+
+
+/**
+ * @brief Description d'une ligne du répertoire de page
+ * 
+ */
+typedef struct {
+    uint32_t present : 1;
+    uint32_t write : 1;
+    uint32_t user : 1;
+    uint32_t reserved : 9;
+    uint32_t page : 20;
+} page_dir_entry_t;
+
+/**
+ * @brief Une entrée dans le répertoire de page peut être manipulée en utilisant
+ *        la structure page_dir_entry_t ou directement la valeur
+ */
+typedef union {
+    page_dir_entry_t page_entry;
+    uint32_t value;
+} PDE; // PDE = Page Directory Entry 
+
+/**
+ * @brief Un répertoire de page (PageDir) est un tableau de descripteurs de tables de page
+ * 
+ */
+typedef PDE* PageDir;
+
+/**
+ * Nombre d'entrées dans le répertoire de pages
+ */
+#define PAGE_DIR_ENTRIES_NB 1024
+
+
+
+/**
+ * Nombre de tables de pages
+ */
+#define PAGE_TABLES_NB (PAGE_TABLE_ENTRIES_NB*PAGE_DIR_ENTRIES_NB)
+
+
+
+/**
+ * Répertoire de page du noyau
+ */
+extern PageDir pageDir;
+
+
 
 /**
  * @brief Cette fonction initialise le répertoire de page, alloue les pages de table du noyau
@@ -46,4 +110,5 @@ void initialise_paging();
  * @return PageTable    La table de page modifiée
  */
 PageTable alloc_page_entry(uint32_t address, int is_writeable, int is_kernel);
+
 #endif

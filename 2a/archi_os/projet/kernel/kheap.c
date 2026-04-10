@@ -4,8 +4,8 @@
  * @brief Lorsque tout le code du noyau est compilé, le tas du noyau commence juste après.
  * 
  */
-extern uint32_t mem_heap;
-uint32_t placement_address = (uint32_t)&mem_heap;
+extern uint32_t mem_heap; // rempli dans boot/kernel.lds
+uint32_t placement_address; // dynamique, bouge avec les allocations successives
 
 uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys) {
     uint32_t address;
@@ -17,7 +17,7 @@ uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys) {
     if (phys) {
         *phys = placement_address;
     }
-    address= placement_address;
+    address = placement_address;
     placement_address += sz;
     return address;
 }
@@ -36,4 +36,8 @@ uint32_t kmalloc_ap(uint32_t sz, uint32_t *phys) {
 
 uint32_t kmalloc(uint32_t sz) {
     return kmalloc_int(sz, 0, 0);
+}
+
+void kmalloc_init() {
+    placement_address = (uint32_t)&mem_heap;
 }

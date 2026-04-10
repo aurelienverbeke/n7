@@ -4,18 +4,26 @@
 #include <n7OS/console.h>
 #include <n7OS/fibonacci.h>
 #include <stdio.h>
+#include <n7OS/paging.h>
+#include <n7OS/mem.h>
 
 void kernel_start(void)
 {
     //int a = fibonacci();
-    
-    init_console();
-    setup_base(0 /* la memoire virtuelle n'est pas encore definie */);
 
+    init_console();
+    
+    initialise_paging();
+    
     // lancement des interruptions
     sti();
 
-    printf("\fHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello World!\nHello le monde!\nHello le monde!\nHello le monde!\nHello le monde!\nHello le monde!\nHello le monde!\nHello le monde!\nHello le monde!");
+    /** POUR DEBUG, doit crash si on enlève l'allocation avant pour pagefault
+    alloc_page_entry(0xA0000000, 1, 1);
+    uint32_t* pointeur_trop_loin = 0xA0000000;
+    uint32_t valeur = *pointeur_trop_loin;
+    valeur++;
+    */
 
     // on ne doit jamais sortir de kernel_start
     while (1) {

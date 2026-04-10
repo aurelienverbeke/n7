@@ -7,6 +7,10 @@
 #define _MEM_H
 
 #include <inttypes.h>
+#include <n7OS/paging.h>
+#include <debug.h>
+
+
 
 /**
  * @brief Adresse de la dernière ligne adressable de la mémoire
@@ -21,6 +25,37 @@
  * Ici, 0x1000 -> 2^10 * 4 = 4096 octets
  */
 #define PAGE_SIZE 0x1000
+
+/**
+ * @brief Nombre de pages adressables
+ * 
+ * Pour une mémoire de 16Mo et des pages de 4096 octets
+ */
+#define PAGES_NB (LAST_MEMORY_INDEX/PAGE_SIZE)
+
+/**
+ * @brief Taille des groupes dans la bitmap
+ */
+#define GROUPS_SIZE 32
+
+/**
+ * @brief Nombre de groupes dans la bitmap
+ * 
+ * Pour des cases de 32 bits
+ */
+#define GROUPS_NB (PAGES_NB/GROUPS_SIZE)
+
+
+/**
+ * @brief Bitmap des pages disponibles
+ * 
+ * @attention Doit respecter GROUPS_SIZE
+ * 
+ * Indices : octet 0 [page 7, page 6, ..., page 0], octet 1 [page 15, page 14, ..., page 8], ...
+ */
+extern uint32_t free_pages_bitmap[GROUPS_NB];
+
+
 
 /**
  * @brief Marque la page allouée
