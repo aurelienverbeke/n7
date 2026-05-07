@@ -48,4 +48,6 @@ void init_console();
  */
 void console_putbytes(const char *s, int len);
 
+void console_print_time();
+
 #endif

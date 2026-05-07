@@ -1,5 +1,7 @@
 #include <n7OS/console.h>
 #include <n7OS/cpu.h>
+#include <n7OS/time.h>
+#include <stdio.h>
 
 uint16_t *scr_tab;
 uint16_t pos;
@@ -79,4 +81,12 @@ void console_putbytes(const char *s, int len) {
     for (int i= 0; i<len; i++) {
         console_putchar(s[i]);
     }
+}
+
+void console_print_time() {
+    time_t time = timer_to_time(timer);
+    uint32_t old_pos = pos;
+    pos = VGA_WIDTH-8; // positionner le curseur à 8 caractères de la fin de la première ligne
+    printf("%02u:%02u:%02u", time.hours, time.minutes, time.seconds);
+    pos = old_pos;
 }

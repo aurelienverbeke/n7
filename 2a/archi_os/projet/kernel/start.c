@@ -6,11 +6,14 @@
 #include <stdio.h>
 #include <n7OS/paging.h>
 #include <n7OS/mem.h>
-
-void init_irq();
+#include <n7OS/irq.h>
+#include <n7OS/time.h>
 
 void kernel_start(void)
 {
+    time_t time;
+    uint8_t old_seconds = 0;
+    
     //int a = fibonacci();
     
     init_console();
@@ -18,6 +21,8 @@ void kernel_start(void)
     initialise_paging();
     
     init_irq();
+    
+    init_timer();
     
     // lancement des interruptions
     sti();
@@ -34,9 +39,20 @@ void kernel_start(void)
     __asm__ ("int $50" : : );
     */
 
+    printf("\f");
+    console_print_time();
+
     // on ne doit jamais sortir de kernel_start
     while (1) {
+        /*
         // cette fonction arrete le processeur
         hlt();
+        */
+
+        time = timer_to_time(timer);
+        if (time.seconds != old_seconds) {
+            old_seconds = time.seconds;
+            console_print_time();
+        }
     }
 }
