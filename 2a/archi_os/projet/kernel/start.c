@@ -7,13 +7,17 @@
 #include <n7OS/paging.h>
 #include <n7OS/mem.h>
 
+void init_irq();
+
 void kernel_start(void)
 {
     //int a = fibonacci();
-
+    
     init_console();
     
     initialise_paging();
+    
+    init_irq();
     
     // lancement des interruptions
     sti();
@@ -23,6 +27,11 @@ void kernel_start(void)
     uint32_t* pointeur_trop_loin = 0xA0000000;
     uint32_t valeur = *pointeur_trop_loin;
     valeur++;
+    */
+
+    /** POUR TESTER LES INTERRUPTIONS
+    // lancer l'interruption 50
+    __asm__ ("int $50" : : );
     */
 
     // on ne doit jamais sortir de kernel_start
