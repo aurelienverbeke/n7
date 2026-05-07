@@ -3,6 +3,7 @@
 #include <n7OS/kheap.h>
 #include <string.h>
 #include <n7OS/mem.h>
+#include <n7OS/processor_structs.h>
 
 PageDir pageDir;
 extern uint32_t placement_address;
@@ -15,7 +16,6 @@ extern uint32_t placement_address;
  * @param pte Si spécifié (!=NULL), donne l'entrée de table de page associée sous forme de pointeur
  */
 void getPTPTEFromAddress(uint32_t addr, PageTable* _table, PTE** pte) {
-    PageDir directory;
     uint16_t directory_index;
     PDE directory_entry;
     PageTable table;
