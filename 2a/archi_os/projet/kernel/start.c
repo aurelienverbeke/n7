@@ -8,6 +8,8 @@
 #include <n7OS/mem.h>
 #include <n7OS/irq.h>
 #include <n7OS/time.h>
+#include <n7OS/sys.h>
+#include <unistd.h>
 
 void kernel_start(void)
 {
@@ -24,8 +26,11 @@ void kernel_start(void)
     
     init_timer();
     
+    init_syscall();
+
     // lancement des interruptions
     sti();
+
 
     /** POUR DEBUG, doit crash si on enlève l'allocation avant pour pagefault
     alloc_page_entry(0xA0000000, 1, 1);
@@ -42,6 +47,15 @@ void kernel_start(void)
     printf("\f");
     console_print_time();
 
+    
+    /*if(example() == 1) {
+        printf("L'appel systeme example fonctionne !\n");
+    } else {
+        printf("L'appel systeme example ne fonctionne pas !\n");
+    }
+
+    printf("Test\n");*/
+
     // on ne doit jamais sortir de kernel_start
     while (1) {
         /*
@@ -50,9 +64,16 @@ void kernel_start(void)
         */
 
         time = timer_to_time(timer);
+        //printf("Time: %d seconds\n", time.seconds);
         if (time.seconds != old_seconds) {
             old_seconds = time.seconds;
             console_print_time();
         }
+        
+        /* POUR TESTER LES INTERRUPTIONS
+        if(time.seconds == 10) {
+            shutdown(1);
+        }
+        */
     }
 }
