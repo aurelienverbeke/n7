@@ -6,6 +6,7 @@
 #include <n7OS/cpu.h>
 
 extern void handler_syscall();
+extern void console_putchar(const char c);
 
 void init_syscall() {
   // ajout de la fonction de traitement de l'appel systeme
@@ -31,7 +32,7 @@ int sys_shutdown (int n) {
 }
 
 int sys_write(const char* buf, int count) {
-  for (size_t i = 0; i < count; i++) {
+  for (size_t i = 0; i < (size_t)count; i++) {
     console_putchar(buf[i]);
   }
   return count;
