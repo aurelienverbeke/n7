@@ -10,6 +10,7 @@
 #include <n7OS/time.h>
 #include <n7OS/sys.h>
 #include <unistd.h>
+#include <n7OS/keyboard.h>
 
 void kernel_start(void)
 {
@@ -28,6 +29,8 @@ void kernel_start(void)
     
     init_syscall();
 
+    init_keyboard();
+
     // lancement des interruptions
     sti();
 
@@ -44,7 +47,7 @@ void kernel_start(void)
     __asm__ ("int $50" : : );
     */
 
-    printf("\f");
+    init_console();
     console_print_time();
 
     
@@ -75,5 +78,17 @@ void kernel_start(void)
             shutdown(1);
         }
         */
+
+        // Traitement du clavier : on affiche les caractères tapés
+        uint16_t c = kgetch();
+        if(c) {
+            if (c == KEY_RETURN) {
+                printf("\n");
+            } else if (c == KEY_BACKSPACE) {
+                printf("\b \b");
+            } else {
+                printf("%c", c);
+            }
+        }
     }
 }

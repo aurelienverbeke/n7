@@ -9,6 +9,9 @@
 #define PORT_CHANNEL_0_PIT 0x40
 #define PORT_COMMANDE_PIT 0x43
 
+#define NUMERO_PORT_IRQ_TIMER 0x00
+#define ID_INT_TIMER 0x20
+
 extern uint32_t timer;
 
 typedef struct {

@@ -8,9 +8,6 @@
 #define PORT_COMMANDE_PIC 0x20
 #define PORT_DONNEES_PIC 0x21
 
-#define NUMERO_PORT_IRQ_TIMER 0x00
-#define ID_INT_TIMER 0x20
-
 /*
 Une entrée dans l'IDT est sur 64 bits
 

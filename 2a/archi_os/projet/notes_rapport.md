@@ -1,0 +1,2 @@
+- Ajout de quelques commandes dans la table de correspondance du clavier et support de alt
+- A faire : gérer pavé numérique (attention aux flèches normales en [e0 ..])

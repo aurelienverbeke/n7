@@ -3,6 +3,13 @@
 
 #include <inttypes.h>
 
+extern uint16_t key_buffer[256];
+extern uint8_t key_buffer_begin;
+extern uint8_t key_buffer_size;
+extern uint8_t shift_pressed;
+extern uint8_t ctrl_pressed;
+extern uint8_t alt_pressed;
+
 // Keyboard ports
 #define KEYB_ENCODER        0x60 
 #define KEYB_CONTROLLER     0x64
@@ -224,73 +231,104 @@ enum KEYCODE {
 };
 
 static uint16_t scancode_map[] = {
-	0, KEY_ESCAPE, KEY_AMPERSAND, KEY_e, KEY_QUOTEDOUBLE, KEY_QUOTE, KEY_LEFTPARENTHESIS, KEY_MINUS, KEY_e, KEY_UNDERSCORE, KEY_c, KEY_a, KEY_RIGHTPARENTHESIS, KEY_EQUAL, KEY_BACKSPACE, // first line
-	KEY_TAB, KEY_a, KEY_z, KEY_e, KEY_r, KEY_t, KEY_y, KEY_u, KEY_i, KEY_o, KEY_p, KEY_CARRET, KEY_DOLLAR, KEY_RETURN, // second line
+	0, KEY_ESCAPE, KEY_AMPERSAND, KEY_e, KEY_QUOTEDOUBLE, KEY_QUOTE, KEY_LEFTPARENTHESIS, KEY_MINUS, KEY_e, KEY_UNDERSCORE, KEY_c, KEY_a, KEY_RIGHTPARENTHESIS, KEY_EQUAL, KEY_BACKSPACE,
+	KEY_TAB, KEY_a, KEY_z, KEY_e, KEY_r, KEY_t, KEY_y, KEY_u, KEY_i, KEY_o, KEY_p, KEY_CARRET, KEY_DOLLAR, KEY_RETURN,
 	0, // left control, 
-	KEY_q, KEY_s, KEY_d, KEY_f, KEY_g, KEY_h, KEY_j, KEY_k, KEY_l, KEY_m, KEY_u, KEY_2, // third line
+	KEY_q, KEY_s, KEY_d, KEY_f, KEY_g, KEY_h, KEY_j, KEY_k, KEY_l, KEY_m, KEY_u, KEY_2,
 	0, // left shift
-	KEY_ASTERISK, KEY_w, KEY_x, KEY_c, KEY_v, KEY_b, KEY_n, KEY_COMMA, KEY_SEMICOLON, KEY_COLON, KEY_EXCLAMATION, 0, // fourth line
+	KEY_ASTERISK, KEY_w, KEY_x, KEY_c, KEY_v, KEY_b, KEY_n, KEY_COMMA, KEY_SEMICOLON, KEY_COLON, KEY_EXCLAMATION, 0, // right shift
 	KEY_ASTERISK, 0, // Alt
-	KEY_SPACE, 0, // Maj
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // F1 à F10
-	0, // Numlock
-	0, // Scrolllock
-	0, // Home
-	0, // Up
-	0, // Page up
+	KEY_SPACE, KEY_CAPSLOCK,
+	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10,
+	KEY_KP_NUMLOCK,
+	KEY_SCROLLLOCK,
+	KEY_HOME,
+	KEY_UP,
+	KEY_PAGEUP,
 	KEY_MINUS,
-	0, // Left
-	0, 
-	0, // Right
+	KEY_LEFT,
+	KEY_KP_5, 
+	KEY_RIGHT,
 	KEY_PLUS,
-	0, // End
-	0, // Down
-	0, // Page down
-	0, // Insert
-	0, // Delete
-	0, // Snapshot
-	0,  
+	KEY_END,
+	KEY_DOWN,
+	KEY_PAGEDOWN,
+	KEY_INSERT,
+	KEY_DELETE,
+	0, // Alt SysRq
+	0, // Nothing
 	KEY_LESS,
-	0, 0, // F11, F12
-}; 
+	KEY_F11, KEY_F12,
+};
 
 // scancode_map_shift is the same as scancode_map but with shift pressed
 static uint16_t scancode_map_shift[] = {
 	0, KEY_ESCAPE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, 0, // degre
 	KEY_PLUS, KEY_BACKSPACE, // first line
-	KEY_TAB, KEY_A, KEY_Z, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_COMMA, KEY_POUND, KEY_RETURN, // second line
+	KEY_TAB, KEY_A, KEY_Z, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_COMMA, KEY_POUND, KEY_RETURN,
 	0, // left control, 
-	KEY_Q, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_M, KEY_PERCENT, 0, // third line
+	KEY_Q, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_M, KEY_PERCENT, KEY_ASTERISK,
 	0, // left shift
-	KEY_u, KEY_W, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_QUESTION, KEY_DOT, KEY_SLASH, KEY_EXCLAMATION, 0, // fourth line
+	KEY_u, KEY_W, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_QUESTION, KEY_DOT, KEY_SLASH, KEY_EXCLAMATION, 0, // right shift
 	KEY_ASTERISK, 0, // Alt
-	KEY_SPACE, 0, // Maj
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // F1 à F10
-	0, // Numlock
-	0, // Scrolllock
-	0, // Home
-	0, // Up
-	0, // Page up
+	KEY_SPACE, KEY_CAPSLOCK,
+	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, // F1 à F10
+	KEY_KP_NUMLOCK,
+	KEY_SCROLLLOCK,
+	KEY_HOME,
+	KEY_UP,
+	KEY_PAGEUP,
 	KEY_MINUS,
-	0, // Left
-	0, 
-	0, // Right
+	KEY_LEFT,
+	KEY_KP_5, 
+	KEY_RIGHT,
 	KEY_PLUS,
-	0, // End
-	0, // Down
-	0, // Page down
-	0, // Insert
-	0, // Delete
-	0, // Snapshot
-	0,  
+	KEY_END,
+	KEY_DOWN,
+	KEY_PAGEDOWN,
+	KEY_INSERT,
+	KEY_DELETE,
+	0, // Alt SysRq
+	0, // Nothing
+	KEY_GREATER,
+	KEY_F11, KEY_F12, // F11, F12
+};
+
+static uint16_t scancode_map_alt[] = {
+	0, KEY_ESCAPE, KEY_AMPERSAND, KEY_TILDE, KEY_HASH, KEY_LEFTCURL, KEY_LEFTBRACKET, KEY_BAR, KEY_GRAVE, KEY_BACKSLASH, KEY_CARRET, KEY_AT, KEY_RIGHTBRACKET, KEY_RIGHTCURL, KEY_BACKSPACE,
+	KEY_TAB, KEY_a, KEY_z, KEY_e, KEY_r, KEY_t, KEY_y, KEY_u, KEY_i, KEY_o, KEY_p, KEY_CARRET, KEY_DOLLAR, KEY_RETURN,
+	0, // left control, 
+	KEY_q, KEY_s, KEY_d, KEY_f, KEY_g, KEY_h, KEY_j, KEY_k, KEY_l, KEY_m, KEY_u, KEY_2,
+	0, // left shift
+	KEY_ASTERISK, KEY_w, KEY_x, KEY_c, KEY_v, KEY_b, KEY_n, KEY_COMMA, KEY_SEMICOLON, KEY_COLON, KEY_EXCLAMATION, 0, // right shift
+	KEY_ASTERISK, 0, // Alt
+	KEY_SPACE, KEY_CAPSLOCK,
+	KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10,
+	KEY_KP_NUMLOCK,
+	KEY_SCROLLLOCK,
+	KEY_HOME,
+	KEY_UP,
+	KEY_PAGEUP,
+	KEY_MINUS,
+	KEY_LEFT,
+	KEY_KP_5, 
+	KEY_RIGHT,
+	KEY_PLUS,
+	KEY_END,
+	KEY_DOWN,
+	KEY_PAGEDOWN,
+	KEY_INSERT,
+	KEY_DELETE,
+	0, // Alt SysRq
+	0, // Nothing
 	KEY_LESS,
-	0, 0, // F11, F12
-}; 
+	KEY_F11, KEY_F12,
+};
 
 // Keyboard initialization function
 void init_keyboard();
 
 // Keyboard get character function
-char kgetch();
+uint16_t kgetch();
 
 #endif
