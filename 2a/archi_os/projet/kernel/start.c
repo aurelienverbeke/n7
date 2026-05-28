@@ -11,6 +11,9 @@
 #include <n7OS/sys.h>
 #include <unistd.h>
 #include <n7OS/keyboard.h>
+#include <n7OS/processus.h>
+
+extern void processus1();
 
 void kernel_start(void)
 {
@@ -47,7 +50,6 @@ void kernel_start(void)
     __asm__ ("int $50" : : );
     */
 
-    init_console();
     console_print_time();
 
     
@@ -55,16 +57,17 @@ void kernel_start(void)
         printf("L'appel systeme example fonctionne !\n");
     } else {
         printf("L'appel systeme example ne fonctionne pas !\n");
-    }
+    }*/
 
-    printf("Test\n");*/
+    //printf("Test\n");
+
+    init_processus();
+    creer_processus("test", 1, processus1);
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
-        /*
         // cette fonction arrete le processeur
         hlt();
-        */
 
         time = timer_to_time(timer);
         //printf("Time: %d seconds\n", time.seconds);
@@ -90,5 +93,8 @@ void kernel_start(void)
                 printf("%c", c);
             }
         }
+
+        // On rend la main au reste
+        schedule();
     }
 }

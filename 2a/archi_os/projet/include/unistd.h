@@ -1,9 +1,15 @@
 #ifndef __UNISTD_H__
 #define __UNISTD_H__
 
+#include <n7OS/processus.h>
+
 #define NR_example 0
 #define NR_shutdown 1
 #define NR_write 2
+#define NR_fork 3
+#define NR_exit 4
+#define NR_getpid 5
+#define NR_sleep 6
 
 // Fonction d'enveloppe sans argument
 #define syscall0(type,name) \
@@ -49,8 +55,50 @@ __asm__ volatile ("int $0x80" \
 return __res;\
 }
 
+/**
+ * @brief Appel système d'exemple
+ * @return Toujours 1
+ */
 int example();
+
+/**
+ * @brief Appel système pour éteindre le système
+ * @param n Doit valoir 1 pour éteindre le système, sinon ne fait rien
+ * @return Ne retourne jamais car le système s'arrête
+ */
 int shutdown (int n);
+
+/**
+ * @brief Appel système pour écrire une chaîne de caractères sur la console
+ * @param s Chaîne de caractères à écrire
+ * @param len Longueur de la chaîne de caractères
+ * @return Nombre de caractères écrits
+ */
 int write(const char *s, int len);
+
+/**
+ * @brief Appel système pour créer un processus
+ * @return L'identifiant du processus fils, ou -1 en cas d'erreur
+ */
+pid_t fork();
+
+/**
+ * @brief Appel système pour terminer un processus
+ * @return 0 en cas de succès, -1 en cas d'erreur
+ */
+int exit();
+
+/**
+ * @brief Appel système pour obtenir l'identifiant du processus courant
+ * @return Identifiant du processus courant
+ */
+pid_t getpid();
+
+/**
+ * @brief Appel système pour mettre le processus en sommeil
+ * @param seconds Nombre de secondes pendant lesquelles le processus doit être en sommeil
+ * @return 0 en cas de succès, -1 en cas d'erreur
+ */
+int sleep(int seconds);
 
 #endif

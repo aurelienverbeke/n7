@@ -8,9 +8,9 @@ extern void handler_IT_timer();
 extern void handler_IT_keyboard();
 
 void handler_timer() {
+        timer++;
         // Acquitter le PIC
         outb(0x20, PORT_COMMANDE_PIC);
-        timer++;
 }
 
 void handler_keyboard() {
@@ -21,7 +21,6 @@ void handler_keyboard() {
 
         // Lire la touche pressée
         uint8_t scancode = inb(KEYB_ENCODER);
-        printf("Scancode: 0x%x\n", scancode); // Affiche le scancode pour le débogage
 
         // Gérer les touches spéciales (Shift, Ctrl, Alt)
         if (scancode == SHIFT_PRESSED) {
