@@ -14,6 +14,9 @@
 // Taille max du nom du processus
 #define TAILLE_MAX_NOM_PROC 255
 
+// Intervalle de déclenchement du scheduler automatique par timer en millisecondes
+#define DELAI_SCHED_TIMER 3000
+
 // Type PID pour ne pas se tromper
 typedef int32_t pid_t;
 
@@ -33,10 +36,10 @@ typedef struct {
         pid_t pid;
         etat_processus etat;
         char nom[TAILLE_MAX_NOM_PROC+1];
-        uint8_t priorite; // Priorité du processus (0 = plus prioritaire)
         uint32_t* stack; // Pile du processus
         uint32_t registres[5]; // Registres ebx, esp, ebp, esi et edi pour le contexte de commutation
         fnptr fonction; // Fonction à exécuter par le processus
+        uint32_t sleep_end_time;
 } processus_t;
 
 // Table des processus
@@ -52,11 +55,10 @@ void init_processus();
 /**
  * @brief Crée un processus
  * @param nom Nom du processus
- * @param priorite Priorité du processus (0 = plus prioritaire)
  * @param fonction Fonction à exécuter par le processus
  * @return PID du processus créé, ou -1 en cas d'erreur
  */
-pid_t creer_processus(char* nom, uint8_t priorite, fnptr fonction);
+pid_t processus_fork(char* nom, fnptr fonction);
 
 /**
  * @brief Supprime un processus
@@ -64,12 +66,6 @@ pid_t creer_processus(char* nom, uint8_t priorite, fnptr fonction);
  * @return 0 en cas de succès, -1 en cas d'erreur (PID invalide ou processus non existant)
  */
 int supprimer_processus(pid_t pid);
-
-/**
- * @brief Appel système pour créer un processus
- * @return L'identifiant du processus fils, ou -1 en cas d'erreur
- */
-pid_t processus_fork();
 
 /**
  * @brief Appel système pour terminer un processus
@@ -89,5 +85,11 @@ pid_t processus_getpid();
  * @return 0 en cas de succès, -1 en cas d'erreur
  */
 int processus_sleep(int seconds);
+
+/**
+ * @brief Planificateur de processus simple (round-robin)
+ * Pas de prise en compte de la priorité pour l'instant, on parcourt simplement la table des processus à la recherche du prochain processus prêt à s'exécuter
+ */
+void schedule();
 
 #endif

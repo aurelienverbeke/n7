@@ -3,14 +3,32 @@
 #include <n7OS/time.h>
 #include <n7OS/cpu.h>
 #include <n7OS/keyboard.h>
+#include <n7OS/processus.h>
+#include <n7OS/console.h>
 
 extern void handler_IT_timer();
 extern void handler_IT_keyboard();
 
+uint8_t declencher_scheduler = 0;
+
 void handler_timer() {
         timer++;
+        console_print_time();
+
         // Acquitter le PIC
         outb(0x20, PORT_COMMANDE_PIC);
+
+        // Reveiller les processus qui ont eu un sleep
+        for (uint16_t pid=0 ; pid < NB_PROC ; pid++) {
+                if (table_processus[pid] != NULL && table_processus[pid]->etat == BLOQUE && table_processus[pid]->sleep_end_time <= timer) {
+                        table_processus[pid]->etat = PRET;
+                }
+        }
+
+        // Lancer le scheduler
+        if (declencher_scheduler && timer%DELAI_SCHED_TIMER==0) {
+                schedule();
+        }
 }
 
 void handler_keyboard() {
@@ -38,20 +56,26 @@ void handler_keyboard() {
         // Si la touche est pressée (pas relâchée), on l'ajoute au buffer puisque c'est une touche normale
         } else if (!IS_KEY_RELEASED(scancode) && scancode < 0x58) { // On vérifie que le scancode est dans la plage des touches reconnues
                 // Ajouter la touche au buffer
-                if(key_buffer_size < 256) {
-                        // Convertir le code de scancode en caractère en prenant en compte les touches spéciales
-                        if (shift_pressed & !alt_pressed) {
-                                character = scancode_map_shift[scancode];
-                        } else if (alt_pressed & !shift_pressed) {
-                                character = scancode_map_alt[scancode];
-                        } else {
-                                character = scancode_map[scancode];
-                        }
+                // Convertir le code de scancode en caractère en prenant en compte les touches spéciales
+                if (shift_pressed & !alt_pressed) {
+                        character = scancode_map_shift[scancode];
+                } else if (alt_pressed & !shift_pressed) {
+                        character = scancode_map_alt[scancode];
+                } else {
+                        character = scancode_map[scancode];
+                }
 
-                        // Si la touche est reconnue, l'ajouter au buffer
-                        if(character != 0) {
-                                key_buffer[(key_buffer_begin + key_buffer_size) % 256] = character;
-                                key_buffer_size++;
+                // Si la touche est reconnue, l'ajouter au buffer
+                if(character != 0) {
+                        key_buffer[(key_buffer_begin + key_buffer_size) % KEY_BUFFER_SIZE] = character;
+                        key_buffer_size++;
+                        // On affiche la touche au clavier par défaut
+                        if (character == KEY_RETURN) {
+                                printf("\n");
+                        } else if (character == KEY_BACKSPACE) {
+                                printf("\b \b");
+                        } else {
+                                printf("%c", character);
                         }
                 }
         }

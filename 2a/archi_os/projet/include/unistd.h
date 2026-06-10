@@ -10,6 +10,7 @@
 #define NR_exit 4
 #define NR_getpid 5
 #define NR_sleep 6
+#define NR_getline 7
 
 // Fonction d'enveloppe sans argument
 #define syscall0(type,name) \
@@ -77,10 +78,12 @@ int shutdown (int n);
 int write(const char *s, int len);
 
 /**
- * @brief Appel système pour créer un processus
- * @return L'identifiant du processus fils, ou -1 en cas d'erreur
+ * @brief Crée un processus
+ * @param nom Nom du processus
+ * @param fonction Fonction à exécuter par le processus
+ * @return PID du processus créé, ou -1 en cas d'erreur
  */
-pid_t fork();
+pid_t fork(char* nom, fnptr fonction);
 
 /**
  * @brief Appel système pour terminer un processus
@@ -100,5 +103,14 @@ pid_t getpid();
  * @return 0 en cas de succès, -1 en cas d'erreur
  */
 int sleep(int seconds);
+
+/**
+ * @brief Appel système pour mettre lire une ligne dans le buffer du clavier
+ * Ne copie pas le caractère de fin de ligne
+ * @param dst Buffer de destination dans lequel la ligne sera copiée
+ * @param max_len Taille du buffer de destination
+ * @return Nombre de caractères copiés
+ */
+int getline(uint8_t* dst, uint16_t max_len);
 
 #endif

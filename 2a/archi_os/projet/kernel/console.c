@@ -14,6 +14,16 @@ void clear_cells(uint16_t *start, uint32_t count) {
     }
 }
 
+void console_cursor(uint16_t position) {
+    uint8_t low_byte = (uint8_t)(position & 0xFF);
+    uint8_t high_byte = (uint8_t)(position >> 8);
+
+    outb(CMD_LOW, PORT_CMD);
+    outb(low_byte, PORT_DATA);
+    outb(CMD_HIGH, PORT_CMD);
+    outb(high_byte, PORT_DATA);
+}
+
 void init_console() {
     scr_tab= (uint16_t *) SCREEN_ADDR;
     pos = 0;
@@ -38,16 +48,6 @@ void scroll(uint16_t necessaryCharNumber) {
         // erase last lines for new characters
         clear_cells(scr_tab+pos, VGA_WIDTH*VGA_HEIGHT - pos);
     }
-}
-
-void console_cursor(uint16_t position) {
-    uint8_t low_byte = (uint8_t)(position & 0xFF);
-    uint8_t high_byte = (uint8_t)(position >> 8);
-
-    outb(CMD_LOW, PORT_CMD);
-    outb(low_byte, PORT_DATA);
-    outb(CMD_HIGH, PORT_CMD);
-    outb(high_byte, PORT_DATA);
 }
 
 void console_putchar(const char c) {

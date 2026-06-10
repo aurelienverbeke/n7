@@ -5,6 +5,8 @@
 #include <n7OS/irq.h>
 #include <unistd.h>
 #include <n7OS/cpu.h>
+#include <n7OS/keyboard.h>
+#include <n7OS/processus.h>
 
 extern void handler_syscall();
 extern void console_putchar(const char c);
@@ -14,10 +16,11 @@ void init_syscall() {
     add_syscall(NR_example, sys_example);
     add_syscall(NR_shutdown, sys_shutdown);
     add_syscall(NR_write, sys_write);
-    add_syscall(NR_fork, sys_fork);
-    add_syscall(NR_exit, sys_exit);
-    add_syscall(NR_getpid, sys_getpid);
-    add_syscall(NR_sleep, sys_sleep);
+    add_syscall(NR_fork, processus_fork);
+    add_syscall(NR_exit, processus_exit);
+    add_syscall(NR_getpid, processus_getpid);
+    add_syscall(NR_sleep, processus_sleep);
+    add_syscall(NR_getline, (fn_ptr)kgetline);
     // initialisation de l'IT soft qui gère les appels systeme
     init_irq_entry(0x80, (uint32_t) handler_syscall);
 }
@@ -41,20 +44,4 @@ int sys_write(const char* buf, int count) {
         console_putchar(buf[i]);
     }
     return count;
-}
-
-pid_t sys_fork() {
-    return processus_fork();
-}
-
-int sys_exit() {
-    return processus_exit();
-}
-
-pid_t sys_getpid() {
-    return processus_getpid();
-}
-
-int sys_sleep(int seconds) {
-    return processus_sleep(seconds);
 }

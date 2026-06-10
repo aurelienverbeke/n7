@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-void processus1() {
+void processus2() {
   while(1){
-    printf("Hello, world from P1\n");
+    printf("Hello, world from P2\n");
   }
 }

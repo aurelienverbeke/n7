@@ -1,4 +1,0 @@
-- Ajout de quelques commandes dans la table de correspondance du clavier et support de alt
-- A faire : gérer pavé numérique (attention aux flèches normales en [e0 ..])
-- Un processus doit appeler exit() pour signifier qu'il a fini
-- A faire : gestion de priorité pour les processus

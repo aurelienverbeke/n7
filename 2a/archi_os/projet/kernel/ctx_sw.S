@@ -18,6 +18,8 @@ ctx_sw:
     movl 8(%eax), %ebp
     movl 12(%eax), %esi
     movl 16(%eax), %edi
+    # reactiver les interruptions
+    sti
     # on passe la main au nouveau processus
     ret
 

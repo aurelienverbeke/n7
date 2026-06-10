@@ -14,12 +14,11 @@
 #include <n7OS/processus.h>
 
 extern void processus1();
+extern void processus2();
+extern void terminal();
 
 void kernel_start(void)
 {
-    time_t time;
-    uint8_t old_seconds = 0;
-    
     //int a = fibonacci();
     
     init_console();
@@ -62,39 +61,19 @@ void kernel_start(void)
     //printf("Test\n");
 
     init_processus();
-    creer_processus("test", 1, processus1);
+    fork("terminal", terminal);
 
     // on ne doit jamais sortir de kernel_start
     while (1) {
         // cette fonction arrete le processeur
         hlt();
 
-        time = timer_to_time(timer);
-        //printf("Time: %d seconds\n", time.seconds);
-        if (time.seconds != old_seconds) {
-            old_seconds = time.seconds;
-            console_print_time();
-        }
-        
         /* POUR TESTER LES INTERRUPTIONS
         if(time.seconds == 10) {
             shutdown(1);
         }
         */
 
-        // Traitement du clavier : on affiche les caractères tapés
-        uint16_t c = kgetch();
-        if(c) {
-            if (c == KEY_RETURN) {
-                printf("\n");
-            } else if (c == KEY_BACKSPACE) {
-                printf("\b \b");
-            } else {
-                printf("%c", c);
-            }
-        }
-
-        // On rend la main au reste
         schedule();
     }
 }

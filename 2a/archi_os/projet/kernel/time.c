@@ -13,13 +13,13 @@ void init_timer() {
         outb((diviseur >> 8) & 0xFF, PORT_CHANNEL_0_PIT);
 }
 
-time_t timer_to_time(uint32_t timer) {
+time_t timer_to_time(uint32_t _timer) {
         time_t time;
 
-        timer /= FREQUENCE_CIBLE; // Convertir les ticks en secondes
+        _timer /= FREQUENCE_CIBLE; // Convertir les ticks en secondes
 
-        time.seconds = timer % 60;
-        time.minutes = (timer / 60) % 60;
-        time.hours = (timer / 3600) % 24;
+        time.seconds = _timer % 60;
+        time.minutes = (_timer / 60) % 60;
+        time.hours = (_timer / 3600) % 24;
         return time;
 }

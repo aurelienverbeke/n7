@@ -3,7 +3,9 @@
 
 #include <inttypes.h>
 
-extern uint16_t key_buffer[256];
+#define KEY_BUFFER_SIZE 256
+
+extern uint16_t key_buffer[KEY_BUFFER_SIZE];
 extern uint8_t key_buffer_begin;
 extern uint8_t key_buffer_size;
 extern uint8_t shift_pressed;
@@ -203,7 +205,7 @@ enum KEYCODE {
 	KEY_KP_NUMLOCK        = 0x300f,
 	KEY_KP_ENTER          = 0x3010,
 
-	KEY_TAB               = 0x4000,
+	KEY_TAB               = '\t',
 	KEY_CAPSLOCK          = 0x4001,
 
 // Modify keys ////////////////////////////
@@ -325,10 +327,25 @@ static uint16_t scancode_map_alt[] = {
 	KEY_F11, KEY_F12,
 };
 
-// Keyboard initialization function
+/**
+ * @brief Initialiser le clavier
+ * Placeholder, pour l'instant ne fait rien
+ */
 void init_keyboard();
 
-// Keyboard get character function
+/**
+ * @brief Récupère un caractère lu au clavier dans le buffer clavier et l'en enlève
+ * @return Le caractère lu au clavier
+ */
 uint16_t kgetch();
+
+/**
+ * @brief Appel système pour mettre lire une ligne dans le buffer du clavier
+ * Ne copie pas le caractère de fin de ligne
+ * @param dst Buffer de destination dans lequel la ligne sera copiée
+ * @param max_len Taille du buffer de destination
+ * @return Nombre de caractères copiés
+ */
+int kgetline(uint8_t* dst, uint16_t max_len);
 
 #endif
