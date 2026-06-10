@@ -1,8 +1,12 @@
+Aurélien VERBEKE et Matteo PLANCHET
+
+2025-2026
+
 # TP1
 
-| Charge (ρ) | 0.3 | 0.6  | 0.9  |
+| Charge ($\rho$) | 0.3 | 0.6  | 0.9  |
 | ---------- | --- | ---- | ---- |
-| λ = μ * ρ  | 9,9 | 18,8 | 27,7 |
+| $\lambda$ = $\mu$ \* $\rho$ | 9,9 | 18,8 | 27,7 |
 
 ## File M/M/1
 
@@ -10,8 +14,8 @@
 
 |                    | 0.3   | 0.6   | 0.9   |
 | ------------------ | ----- | ----- | ----- |
-| E[L] = ρ / (1 - ρ) | 0,427 | 1,500 | 9,000 |
-| E[R] = E[L] / λ    | 0,043 | 0,080 | 0,325 |
+| E[L] = $\rho$ / (1 - $\rho$) | 0,427 | 1,500 | 9,000 |
+| E[R] = E[L] / $\lambda$    | 0,043 | 0,080 | 0,325 |
 
 ### Résultats obtenus par simulation
 
@@ -24,18 +28,18 @@
 
 ### Commentaires sur la précision des résultats
 
-La plupart des résultats simulés que nous observons ici ne correspondent pas aux résultats théoriques. Il est même à noter que pour ρ=0,9, plus nous prenons un temps de simulation long, plus nous nous écartons de la valeur théorique, et ce avec une précision qui augmente. Cela peut notamment provenir de l'accumulation d'erreurs lors de la simulation.
+La plupart des résultats simulés que nous observons ici ne correspondent pas aux résultats théoriques. Il est même à noter que pour $\rho$=0,9, plus nous prenons un temps de simulation long, plus nous nous écartons de la valeur théorique, et ce avec une précision qui augmente. Cela peut notamment provenir de l'accumulation d'erreurs lors de la simulation.
 
-Cependant, à part pour E[L] (T=1000s) et E[R] (T=10000s, ρ=0,3), nous avons $\frac{\text{intervalle de confiance}}{\text{valeur moyenne}} \le 7\%$, ce qui indique des résultats précis.
+Cependant, à part pour E[L] (T=1000s) et E[R] (T=10000s, $\rho$=0,3), nous avons $\frac{\text{intervalle de confiance}}{\text{valeur moyenne}} \le 7\%$, ce qui indique des résultats précis.
 
 ## File M/D/1
 
 ### Résultats analytiques
 
-|                                 | 0.3   | 0.6   | 0.9   |
-| ------------------------------- | ----- | ----- | ----- |
-| E[L] = ρ(2 - ρ) / (2 * (1 - ρ)) | 0,364 | 1,050 | 4,950 |
-| E[R] = E[L] / λ                 | 0,037 | 0,056 | 0,179 |
+|                                  | 0.3   | 0.6   | 0.9   |
+| -------------------------------- | ----- | ----- | ----- |
+| E[L] = $\rho$(2 - $\rho$) / (2 \* (1 - $\rho$)) | 0,364 | 1,050 | 4,950 |
+| E[R] = E[L] / $\lambda$                  | 0,037 | 0,056 | 0,179 |
 
 ### Résultats obtenus par simulation
 
@@ -62,15 +66,23 @@ $$
 $$
 -->
 
-Probabilité de rejet pour K=2, λ=20, μ=33, paquets exponentiels : 13%
+Probabilité de rejet pour K=2, $\lambda$=20, $\mu$=33, paquets exponentiels : 13%
 
-Probabilité de rejet pour K=2, λ=20, μ=33, paquets constants : 6%
+Probabilité de rejet pour K=2, $\lambda$=20, $\mu$=33, paquets constants : 6%
 
 ![Taux rejet](tp1/taux_rejet.png)
 
-## Temps de réponse d'un système composé de deux noeuds
+## Simulation d'un système composé de deux noeuds de commutation
+
+### Temps de réponse
 
 Dans le cas où la source et la destination sont séparées par un nœud de commutation, le paquet traverse deux files en série identiques. Le temps de réponse total est alors la somme des temps de réponse de chaque nœud. Ainsi, en régime stationnaire et si les files sont indépendantes, le temps de réponse moyen du système est simplement doublé par rapport au cas à un seul nœud, soit E[R total]=2E[R], que ce soit pour des paquets de taille exponentiellement distribuée ou constante.
+
+1. La loi d'arrivée des paquets de la 2ème file est la même que celle de la première file, une loi Poisson de paramètre $\lambda$, selon le théorème de Burke.
+
+2. On observe que le temps de réponse du premier serveur est d'environ ~0.25 et celui du deuxième serveur est d’environ ~0.15. Sur une durée plus longue (2000 ticks), les estimations se stabilisent, mais il y a toujours un écart dû à la durée finie de la simulation et à l’initialisation du système à vide.
+
+3. En simulation, la première file M/D/1 se stabilise vers ~0.2, tandis que la deuxième file reste quasi constante autour de ~0.03. Ce comportement s’explique par le service déterministe : il réduit fortement la variabilité du flux de sortie de la première file. La deuxième file reçoit donc un flux très régulier (presque périodique), ce qui limite les congestions et rend son temps de réponse très faible et stable.
 
 # TP2 : Méthodes d'accès Aloha
 
@@ -78,17 +90,18 @@ Dans le cas où la source et la destination sont séparées par un nœud de comm
 
 On fait varier le nombre de noeuds {100, 150, 200} et on trace la charge utile G en fonction de la charge du système rho.
 
-![N=100](tp2/plots/1-N100.png)
-![N=150](tp2/plots/1-N150.png)
-![N=200](tp2/plots/1-N200.png)
+| 100 noeuds | 150 noeuds | 200 noeuds |
+| --- | --- | --- |
+| ![N=100](tp2/plots/1-N100.png) | ![N=150](tp2/plots/1-N150.png) | ![N=200](tp2/plots/1-N200.png) |
 
 ## 2. Optimisation du temps de backoff
 
 On fixe idle_time = 0.17 => G = 1/2 et on trace le mean backoff time en fonction de la charge du système rho_s et de la moyenne de temps de réponse E_r.
 On observe un maximum de charge en sortie de 0.163 et un minimum de temps de réponse de 19.2s pour un temps de backoff de 0.05s
 
-![rhoS](tp2/plots/2-rhoS.png)
-![E_r](tp2/plots/2-E_r.png)
+| $E[R]$ | $\rho_S$ |
+| --- | --- |
+| ![E_r](tp2/plots/2-E_r.png){width=100%} | ![rhoS](tp2/plots/2-rhoS.png){width=100%} |
 
 ## 3. Influence du nombre de noeuds sur la charge en sortie
 
@@ -96,7 +109,7 @@ Notre valeur de mean backoff optimale est donc de 0.05s, on fait varier le nombr
 
 On observe que la charge est sortie est maximale pour un nombre de noeuds de 125, avec une charge maximale de 0.163, ce qui correspond à notre résultat précédent.
 
-![rhoS](tp2/plots/3-rhoS.png)
+![](tp2/plots/3-rhoS.png)
 
 ## Conclusion
 
@@ -114,7 +127,9 @@ La différence peut être expliquée par le fait que notre simulation est basée
    Pour Slotted Aloha, la formule est
    $$S = G \cdot e^{-G}$$
 3. Tracé de $S$ en fonction de $G$ pour les deux méthodes d'accès :
-   ![Débit en fonction de la charge pour Pure Aloha et Slotted Aloha](tp3_projet/aloha.png)
+
+![Débit en fonction de la charge pour Pure Aloha et Slotted Aloha](tp3_projet/aloha.png)
+
 4. On a trouvé Grant-Free Random Access (GFRA) qui est une méthode d'accès aléatoire sans réservation. Elle permet aux utilisateurs de transmettre des données sans attendre une autorisation préalable, ce qui peut réduire la latence et améliorer l'efficacité du réseau dans certaines situations. Cependant, elle peut également entraîner des collisions et une surcharge du réseau si de nombreux utilisateurs tentent de transmettre en même temps.
 
 Sources : Grant-Free Random Access in Machine-Type
@@ -146,33 +161,17 @@ $$G_max = n \cdot \exp(-1)$$
 
 1. D'après la théorie pour $n=54$, le débit maximal est atteint pour une charge de $G = 54 \cdot e^{-1} \approx 19.9$. On a bien cette valeur dans la simulation, où à G=19, le système est stable et à G=20, il devient instable.
 
-<div style="display:flex; gap:20px; align-items:flex-start;">
-  <div style="text-align:center;">
-    <div>Débit pour G = 19</div>
-    <img src="tp3_projet/sans_cc_charge_19.png" width="300px" />
-  </div>
-  <div style="text-align:center;">
-    <div>Débit pour G = 20</div>
-    <img src="tp3_projet/sans_cc_charge_20.png" width="300px" />
-  </div>
-</div>
+| Débit pour G = 19 | Débit pour G = 20 |
+|-------------------|-------------------|
+| ![](tp3_projet/sans_cc_charge_19.png) | ![](tp3_projet/sans_cc_charge_20.png) |
 
 2. En enlevant le backoff aléatoire, on remarque que le système devient instable plus rapidement.
 
-<div style="display:flex; gap:20px; align-items:flex-start;">
-  <div style="text-align:center;">
-    <div>Débit pour G = 20 (utilisateurs patients)</div>
-    <img src="tp3_projet/sans_cc_charge_20_patient.png" width="300px" />
-  </div>
-  <div style="text-align:center;">
-    <div>Débit pour G = 20 (utilisateurs impatients)</div>
-    <img src="tp3_projet/sans_cc_charge_20_impatient.png" width="300px" />
-  </div>
-</div>
+| Utilisateurs patients | Utilisateurs impatients |
+|----------------------|-------------------------|
+| ![](tp3_projet/sans_cc_charge_20_patient.png) | ![](tp3_projet/sans_cc_charge_20_impatient.png) |
 
 3. Si la station de base couvre une zone large, beaucoup d'utilisateurs vont s'y connecter. Alors, on peut dépasser la charge maximale admissible et beaucoup d'utilisateurs n'arriveront jamais à accéder au réseau.
-
-
 
 ## 3. Introduction au contrôle de charge
 
@@ -183,4 +182,7 @@ $$G_max = n \cdot \exp(-1)$$
 3. En expérimentant plusieurs couple de valeurs, nous avons trouvé que l'on a de meilleures performances avec $p_{access} = 0.75$ et $N_{Slot Barring} = 150$ avec le scénario donné. (Voir les graphiques ci-dessous)
 
 ![Variation p_access](tp3_projet/variation_paccess.png)
+
+\_
+
 ![Variation n_slotbarring](tp3_projet/variation_nslotbarring.png)
